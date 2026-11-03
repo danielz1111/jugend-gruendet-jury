@@ -61,6 +61,32 @@ export default function TeamNavigator({teams,members,initialScores,isAdmin}:{tea
   finally{setUploading(false);}
  }
 
+
+ async function uploadAllZips(files:FileList|null){
+  if(!files?.length)return;
+  setUploading(true);setZipMessage('');
+  const normalized=(s:string)=>s.toLowerCase().replace(/[^a-z0-9]/g,'');
+  const aliases:Record<string,string>={alpinex:'alpinex',fridgebuddy:'fridgebuddy',musikcares:'musickares',packampzack:'packzack',pastein:'pastein',nexorasecurity:'nexorasecurity',clickwatch:'clickwatch',akkuwakku:'akkuwakku',slimpower:'slimpower'};
+  const reports:string[]=[];
+  try{
+   for(const file of Array.from(files)){
+    const filename=normalized(file.name.replace(/\\.zip$/i,'').replace(/^businessplan/i,''));
+    const lookup=aliases[filename]||filename;
+    const match=teams.find(t=>normalized(t.name)===lookup);
+    if(!match){reports.push(file.name+': kein eindeutiges Team gefunden, übersprungen');continue;}
+    const data=new FormData();data.set('team_id',match.id);data.set('file',file);
+    try{
+     const response=await fetch('/api/jury/materials/zip',{method:'POST',body:data});
+     const result=await response.json() as {error?:string;imported?:number;skipped?:number;errors?:string[]};
+     if(!response.ok)throw new Error(result.error||'Import fehlgeschlagen');
+     reports.push(match.name+': '+(result.imported||0)+' neu, '+(result.skipped||0)+' bereits vorhanden'+(result.errors?.length?', Fehler: '+result.errors.join('; '):''));
+     await loadMaterials(match.id);
+    }catch(e){reports.push(match.name+': FEHLER – '+(e instanceof Error?e.message:'Import fehlgeschlagen'));}
+    setZipMessage(reports.join(' | '));
+   }
+  }finally{setUploading(false);}
+ }
+
  async function loadMaterials(teamId:string){
   try{
    const response=await fetch('/api/jury/materials?team_id='+encodeURIComponent(teamId),{cache:'no-store'});
@@ -216,6 +242,13 @@ export default function TeamNavigator({teams,members,initialScores,isAdmin}:{tea
  <div style={{display:'flex',flexWrap:'wrap',gap:8,margin:'14px 0'}}>{attachmentSections.filter(x=>!(isFour&&x.id==='E')).map(x=><button key={x.id} type="button" aria-pressed={attachmentTab===x.id} onClick={()=>setAttachmentTab(x.id)} style={{padding:'9px 12px',borderRadius:7,background:attachmentTab===x.id?'#173d53':'#eef1f2',color:attachmentTab===x.id?'white':'#173d53'}}>{isFour&&x.id==='D'?'D/E · Umsetzung & Organisation':x.label}</button>)}</div>
  {(()=>{const items=(materials[team.id]||[]).filter(m=>m.media_type!=='application/pdf'&&!/visualis|produkt|werbung|marketing/i.test(m.title+' '+m.original_filename)&&(attachmentTab==='all'||attachmentCategory(m)===attachmentTab||(isFour&&attachmentTab==='D'&&attachmentCategory(m)==='E')));
  return items.length?<div style={{display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(190px,1fr))',gap:14}}>{items.map(m=><a key={m.id} href={'/api/jury/materials/'+m.id} target="_blank" rel="noopener noreferrer" style={{display:'block',border:'1px solid #d8d4cd',borderRadius:8,overflow:'hidden',color:'inherit',textDecoration:'none'}}>{m.media_type.startsWith('image/')&&<img src={'/api/jury/materials/'+m.id} alt={m.title} loading="lazy" style={{width:'100%',height:170,objectFit:'contain',background:'#f5f3ee'}}/>}<span style={{display:'block',padding:10,fontWeight:600,fontSize:13}}>{m.title}</span></a>)}</div>:<p>{materials[team.id]===undefined?'Anlagen werden geladen …':'In dieser Kategorie sind noch keine Anlagen hinterlegt.'}</p>})()}
+ </div>}
+ {isAdmin&&mainTab==='overview'&&<div className="demo-score" style={{marginTop:22}}>
+ <h2>Administration · Alle Teamunterlagen importieren</h2>
+ <p>Mehrere ZIP-Dateien gleichzeitig auswählen. Die Zuordnung erfolgt ausschließlich bei eindeutigem Teamnamen im Dateinamen; nicht zuordenbare Dateien werden übersprungen. Bereits vorhandene Dateien werden nicht doppelt importiert.</p>
+ <input type="file" accept=".zip,application/zip" multiple disabled={uploading} aria-label="Mehrere Team-ZIP-Dateien auswählen" onChange={event=>{void uploadAllZips(event.currentTarget.files);event.currentTarget.value='';}}/>
+ {uploading&&<p role="status">ZIP-Dateien werden nacheinander importiert …</p>}
+ {zipMessage&&<p role="status" style={{whiteSpace:'pre-wrap',overflowWrap:'anywhere'}}>{zipMessage}</p>}
  </div>}
  {isAdmin&&mainTab==='business'&&<div className="demo-score" style={{marginTop:18}}>
  <h2>Administration · Teamunterlagen importieren</h2>
