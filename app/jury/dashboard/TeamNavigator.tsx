@@ -8,6 +8,19 @@ const criteria=[{"key":"expert_a_score","name":"A · Markt und Zielgruppe","weig
 type Progress={submitted_count:number;total_jurors:number;others_average:number|null;own_submitted:boolean};
 export default function TeamNavigator({teams,members,initialScores}:{teams:Team[];members:Member[];initialScores:Score[]}){
  const [selected,setSelected]=useState(0);
+ const [released,setReleased]=useState<Record<string,boolean>>(()=>Object.fromEntries(initialScores.map(s=>[s.team_id,Boolean(s.submitted_at)])));
+ const [releasing,setReleasing]=useState(false);
+ const [releaseError,setReleaseError]=useState('');
+ async function release(teamId:string){
+  setReleasing(true);setReleaseError('');
+  try{
+   const response=await fetch('/api/jury/submit',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({team_id:teamId})});
+   if(!response.ok){const data=await response.json() as {error?:string};throw new Error(data.error||'Freigabe fehlgeschlagen');}
+   setReleased(old=>({...old,[teamId]:true}));await refreshProgress(teamId);
+  }catch(error){setReleaseError(error instanceof Error?error.message:'Freigabe fehlgeschlagen');}
+  finally{setReleasing(false);}
+ }
+
  const [progress,setProgress]=useState<Record<string,Progress>>({});
  const [progressError,setProgressError]=useState<Record<string,boolean>>({});
  async function refreshProgress(teamId:string){try{const r=await fetch('/api/jury/progress?team_id='+encodeURIComponent(teamId),{cache:'no-store'});if(!r.ok)throw Error('Progress');const p=await r.json() as Progress;setProgress(old=>({...old,[teamId]:p}));setProgressError(old=>({...old,[teamId]:false}));}catch{setProgressError(old=>({...old,[teamId]:true}));}}
@@ -29,6 +42,7 @@ export default function TeamNavigator({teams,members,initialScores}:{teams:Team[
  }
  if(!teams.length)return <section className="demo-score"><h2>Teamdaten noch nicht eingerichtet</h2><p>In Supabase ist derzeit kein Unternehmerteam für die Jury sichtbar. Bitte zunächst die vorbereitete Teamnamen-Migration ausführen. Es werden keine Demo-Teams als echte Daten ausgegeben.</p></section>;
  const team=teams[selected];
+ const isReleased=Boolean(released[team.id]);
  const teamMembers=members.filter(m=>m.team_id===team.id);
  const isFour=teamMembers.length===4;
  const activeCriteria=criteria.filter(c=>!(isFour&&c.key==='expert_e_score'));
@@ -52,7 +66,7 @@ export default function TeamNavigator({teams,members,initialScores}:{teams:Team[
   return <div key={c.key}>{phaseHeader}<div style={{border:'1px solid '+color,borderRadius:8,padding:14,marginTop:12,background:state==='saved'?'#f0faf3':state==='saving'?'#fff9e9':state==='error'?'#fff3f2':'#f7f8f9'}}>
    <div style={{display:'flex',justifyContent:'space-between',gap:8,flexWrap:'wrap'}}><strong>{isFour&&c.key==='expert_d_score'?'D/E · Umsetzung, Organisation und Rechtsform':c.name}</strong><span style={{fontSize:12,color}}>{state==='saved'?'✓ Gespeichert':state==='saving'?'Speichert …':state==='error'?'Fehler':'Offen'}</span></div>
    <div style={{display:'flex',alignItems:'center',gap:12,marginTop:12}}>
-    <input type="range" min={1} max={10} step={1} value={current??5} aria-label={c.name} style={{width:'100%',accentColor:color}}
+    <input type="range" min={1} max={10} step={1} value={current??5} disabled={isReleased} aria-label={c.name} style={{width:'100%',accentColor:color}}
      onChange={event=>{const value=Number(event.currentTarget.value);setPending(old=>({...old,[id]:value}));setStatus(old=>({...old,[id]:'open'}))}}
      onPointerUp={event=>{const value=Number(event.currentTarget.value);if(value!==saved)void save(team.id,c.key,value)}}
      onKeyUp={event=>{if(['ArrowLeft','ArrowRight','Home','End','PageUp','PageDown'].includes(event.key)){const value=Number(event.currentTarget.value);if(value!==saved)void save(team.id,c.key,value)}}}
@@ -77,6 +91,17 @@ export default function TeamNavigator({teams,members,initialScores}:{teams:Team[
  <p><strong>{Number(progress[team.id].others_average).toFixed(2)} / 10</strong></p>
  </>:<p>Noch keine andere vollständige Bewertung abgegeben.</p>:<p>Der Vergleich wird nach Abschluss deiner eigenen Bewertung sichtbar.</p>}
  {progressError[team.id]&&<button type="button" onClick={()=>void refreshProgress(team.id)}>Abgabestand erneut laden</button>}
+ </div>
+ <div style={{marginTop:20,padding:18,border:'1px solid #d8d4cd',borderRadius:10}}>
+ <h3>Bewertung freigeben</h3>
+ {isReleased?<p style={{color:'#18794e',fontWeight:700}}>✓ Bewertung verbindlich freigegeben. Die Punkte sind jetzt gesperrt.</p>:<>
+ <p>Deine Punkte werden als Entwurf gespeichert. Erst mit der Freigabe zählen sie zum Juryergebnis.</p>
+ <button type="button" disabled={releasing||!activeCriteria.every(c=>scores[team.id]?.[c.key]!==undefined)||activeCriteria.some(c=>status[team.id+':'+c.key]==='saving'||status[team.id+':'+c.key]==='error'||pending[team.id+':'+c.key]!==undefined)}
+ onClick={()=>void release(team.id)} style={{background:'#173d53',color:'white',padding:'12px 20px',borderRadius:8,cursor:'pointer',opacity:releasing?0.6:1}}>
+ {releasing?'Freigabe läuft …':'Bewertung verbindlich freigeben'}
+ </button>
+ {releaseError&&<p role="alert" style={{color:'#b42318'}}>{releaseError}</p>}
+ </>}
  </div>
  </div>
  <div className="demo-notes"><h2>Persönliche Notizen</h2><p>Private Notizen werden im nächsten Schritt ergänzt. Derzeit werden keine Daten erfasst oder gespeichert.</p></div>
