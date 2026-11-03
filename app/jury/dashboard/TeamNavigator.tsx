@@ -25,10 +25,10 @@ const expertEvidence:Record<string,Partial<Record<'A'|'B'|'C'|'D'|'E',[string|nu
 const gradeGuide='1–2: kaum erfüllt · 3–4: eher schwach · 5–6: teilweise erfüllt · 7–8: gut erfüllt · 9–10: hervorragend erfüllt';
 type Material={id:string;title:string;original_filename:string;media_type:string;created_at:string};
 type Progress={submitted_count:number;total_jurors:number;others_average:number|null;own_submitted:boolean};
-export default function TeamNavigator({teams,members,initialScores,isAdmin}:{teams:Team[];members:Member[];initialScores:Score[];isAdmin:boolean}){
+export default function TeamNavigator({teams,members,initialScores,isAdmin,initialSection='overview'}:{teams:Team[];members:Member[];initialScores:Score[];isAdmin:boolean;initialSection?:'overview'|'business'|'pitch'}){
  const [selected,setSelected]=useState(0);
  const [enlargedImage,setEnlargedImage]=useState<Material|null>(null);
- const [mainTab,setMainTab]=useState<'overview'|'business'|'pitch'>('overview');
+ const [mainTab,setMainTab]=useState<'overview'|'business'|'pitch'>(initialSection);
  const [expertTab,setExpertTab]=useState('A');
  const [attachmentTab,setAttachmentTab]=useState('all');
  const expertSections=[{id:'A',label:'A · Markt und Zielgruppe'},{id:'B',label:'B · Marketing und Vertrieb'},{id:'C',label:'C · Finanzen und Wirtschaftlichkeit'},{id:'D',label:'D · Umsetzung und Realisierbarkeit'},{id:'E',label:'E · Organisation und Rechtsform'}];
@@ -181,8 +181,8 @@ export default function TeamNavigator({teams,members,initialScores,isAdmin}:{tea
  const productImage=(materials[team.id]||[]).find(m=>m.media_type.startsWith('image/')&&/visualis|produkt/i.test(m.title+' '+m.original_filename));
  const activeCriteria=criteria.filter(c=>!(isFour&&c.key==='expert_e_score'));
  const weightFor=(key:string)=>isFour&&key.startsWith('expert_')?12.5:criteria.find(c=>c.key===key)?.weight??0;
- return <div className="demo-shell" style={{minHeight:600,marginTop:32,border:'1px solid #e4e0d9'}}>
- <aside className="demo-sidebar"><span className="demo-overline">UNTERNEHMERTEAMS · {teams.length}</span>{teams.map((t,i)=><button key={t.id} className={selected===i?'selected':''} aria-pressed={selected===i} onClick={()=>{setSelected(i);setMainTab('overview');setExpertTab('A');setAttachmentTab('all')}}><span>{String(t.position).padStart(2,'0')}</span>{t.name}</button>)}</aside>
+ return <div className="demo-shell jury-wide-shell" style={{minHeight:600,marginTop:24,border:'1px solid #e4e0d9'}}>
+ <nav className="jury-team-picker" aria-label="Unternehmerteam auswählen"><div className="jury-team-picker-head"><span className="demo-overline">DIE NEUN UNTERNEHMERTEAMS</span><span>Team auswählen, um die Unterlagen zu öffnen</span></div><div className="jury-team-grid">{teams.map((t,i)=><button type="button" key={t.id} className={selected===i?'jury-team-tile active':'jury-team-tile'} aria-pressed={selected===i} onClick={()=>{setSelected(i);setMainTab(initialSection);setExpertTab('A');setAttachmentTab('all')}}><small>{String(t.position).padStart(2,'0')}</small><strong>{t.name}</strong><ArrowRight size={16}/></button>)}</div></nav>
  <section className="demo-main">
  <style>{`
  @keyframes juryReveal{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
