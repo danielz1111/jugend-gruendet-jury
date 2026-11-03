@@ -16,6 +16,7 @@ const hints:Record<string,string>={
  questions_confidence_score:'Reagiert das Team ruhig, sicher und respektvoll auf Nachfragen?',
  questions_reasoning_score:'Werden Aussagen schlüssig begründet und Einwände überzeugend aufgegriffen?'
 };
+const slimpowerReview=[["Das Kundenproblem und Wettbewerber Baseus/INIU werden genannt.","Konkrete Wettbewerber und ein verständliches Alltagsproblem.","Breite Zielgruppe; Marktgröße und Validierung nicht ausreichend ausgewertet.","Welche Ergebnisse zeigen echte Kaufbereitschaft?",2],["Eigener Onlineshop und Elektronikgeschäfte; Slogan und Werbegrafik vorhanden.","Slogan, Werbemotiv und Vertriebskanäle sind benannt.","Werbebudget und konkrete Kundengewinnung fehlen.","Wie gewinnt ihr eure ersten 100 Kunden?",2],["50.000 € Gründungskosten; Umsatz- und Absatzplanung im dritten Jahr nicht belastbar ausgefüllt.","Kapitalbedarf wird genannt.","Kosten nicht aufgeschlüsselt; Preis, Umsatz und Gewinn nicht nachvollziehbar.","Wie setzen sich die 50.000 € zusammen?",1],["Bestehende MagSafe-Powerbank mit eigenem, möglicherweise 3D-gedrucktem Gehäuse.","Greifbarer Prototypansatz durch Nutzung vorhandener Technik.","Messwerte für Dicke, Ladeleistung und Sicherheitsnachweise fehlen.","Was ist messbar besser als bei der Konkurrenz?",2],["Teamaufgaben und mögliche externe Entwicklungs- und Prüfpartner werden genannt.","Externe technische und sicherheitsbezogene Anforderungen erkannt.","Partnerzusagen, Zeitplan und Rechtsform nicht belegt.","Welche Partner wurden tatsächlich kontaktiert?",2]] as const;
 const gradeGuide='1–2: kaum erfüllt · 3–4: eher schwach · 5–6: teilweise erfüllt · 7–8: gut erfüllt · 9–10: hervorragend erfüllt';
 type Material={id:string;title:string;original_filename:string;media_type:string;created_at:string};
 type Progress={submitted_count:number;total_jurors:number;others_average:number|null;own_submitted:boolean};
@@ -123,6 +124,8 @@ export default function TeamNavigator({teams,members,initialScores,isAdmin}:{tea
  const isReleased=Boolean(released[team.id]);
  const teamMembers=members.filter(m=>m.team_id===team.id);
  const isFour=teamMembers.length===4;
+ const isSlimpower=team.name.toLowerCase().replace(/[^a-z]/g,'')==='slimpower';
+ const review=slimpowerReview['ABCDE'.indexOf(expertTab)];
  const activeCriteria=criteria.filter(c=>!(isFour&&c.key==='expert_e_score'));
  const weightFor=(key:string)=>isFour&&key.startsWith('expert_')?12.5:criteria.find(c=>c.key===key)?.weight??0;
  return <div className="demo-shell" style={{minHeight:600,marginTop:32,border:'1px solid #e4e0d9'}}>
@@ -138,8 +141,17 @@ export default function TeamNavigator({teams,members,initialScores,isAdmin}:{tea
  <h3 style={{marginTop:20}}>Expertenbereiche</h3>
  <p>Alle Teams haben dieselbe Gliederung. Die Inhalte werden aus dem Original-Businessplan übernommen.</p>
  <div style={{display:'flex',flexWrap:'wrap',gap:8,margin:'14px 0'}}>{expertSections.filter(x=>!(isFour&&x.id==='E')).map(x=><button key={x.id} type="button" aria-pressed={expertTab===x.id} onClick={()=>setExpertTab(x.id)} style={{padding:'10px 12px',borderRadius:7,background:expertTab===x.id?'#173d53':'#eef1f2',color:expertTab===x.id?'white':'#173d53'}}>{isFour&&x.id==='D'?'D/E · Umsetzung & Organisation':x.label}</button>)}</div>
- <h3>{isFour&&expertTab==='D'?'D/E · Umsetzung, Organisation und Rechtsform':expertSections.find(x=>x.id===expertTab)?.label}</h3>
- <p>Die zugehörigen Angaben aus dem Businessplan werden hier strukturiert dargestellt. Fehlende Angaben werden nicht ergänzt.</p>
+ <div style={{display:'grid',gridTemplateColumns:'minmax(0,1fr) minmax(0,1fr)',gap:12,marginTop:16}}>
+ <div style={{border:'1px solid #d8d4cd',borderRadius:9,padding:15,background:'#fff'}}>
+ <h3>{isFour&&expertTab==='D'?'D/E · Umsetzung und Organisation':expertSections.find(x=>x.id===expertTab)?.label}</h3>
+ <p>{isSlimpower?review[0]:'Inhaltliche Zusammenfassung folgt nach Prüfung des Businessplans.'}</p>
+ {isSlimpower&&<p style={{color:'#a16a16',fontSize:20}} aria-label={review[4]+' von 5 Sternen'}>{'★'.repeat(review[4])}{'☆'.repeat(5-review[4])} <span style={{fontSize:12,color:'#667480'}}>Vorläufig · {review[4]}/5</span></p>}
+ </div>
+ <div style={{display:'grid',gap:10}}>
+ <div style={{background:'#eff9f2',border:'1px solid #a8d5ba',padding:14,borderRadius:9}}><strong style={{color:'#17633c'}}>Besonders stark</strong><p>{isSlimpower?review[1]:'Wird nach Prüfung ergänzt.'}</p></div>
+ <div style={{background:'#fff7e9',border:'1px solid #e6c58c',padding:14,borderRadius:9}}><strong style={{color:'#875513'}}>Schwachstellen und offene Fragen</strong><p>{isSlimpower?review[2]:'Wird nach Prüfung ergänzt.'}</p></div>
+ <div style={{background:'#f0f6fa',border:'1px solid #cddce5',padding:14,borderRadius:9}}><strong>Mögliche Juryfrage</strong><p>{isSlimpower?review[3]:'Wird nach Prüfung ergänzt.'}</p></div>
+ </div></div>
  <h3 style={{marginTop:24}}>Vollständiger Businessplan</h3>
  {(materials[team.id]||[]).filter(m=>m.media_type==='application/pdf').length?<ul>{(materials[team.id]||[]).filter(m=>m.media_type==='application/pdf').map(m=><li key={m.id}><a href={'/api/jury/materials/'+m.id} target="_blank" rel="noopener noreferrer">{m.title} · Original-PDF öffnen</a></li>)}</ul>:<p>Der vollständige Businessplan wurde noch nicht hinterlegt.</p>}
  <h3 style={{marginTop:24}}>Produkt- und Werbematerial</h3>
@@ -147,7 +159,7 @@ export default function TeamNavigator({teams,members,initialScores,isAdmin}:{tea
  <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(210px,1fr))',gap:14}}>
  {(materials[team.id]||[]).filter(m=>m.media_type.startsWith('image/')&&/visualis|produkt|werbung|marketing/i.test(m.title+' '+m.original_filename)).map(m=><button key={m.id} type="button" onClick={()=>setEnlargedImage(m)} style={{padding:0,textAlign:'left',border:'1px solid #d8d4cd',borderRadius:8,overflow:'hidden',background:'white',cursor:'zoom-in'}}><img src={'/api/jury/materials/'+m.id} alt={m.title} loading="lazy" style={{width:'100%',height:220,objectFit:'contain',background:'#f5f3ee'}}/><span style={{display:'block',padding:10,fontWeight:600}}>{m.title} · Vergrößern</span></button>)}
  </div>
- <h3 style={{marginTop:24}}>Anlagen zum Businessplan</h3>
+ <h3 style={{marginTop:24}}>Weitere Anlagen</h3>
  <div style={{display:'flex',flexWrap:'wrap',gap:8,margin:'14px 0'}}>{attachmentSections.filter(x=>!(isFour&&x.id==='E')).map(x=><button key={x.id} type="button" aria-pressed={attachmentTab===x.id} onClick={()=>setAttachmentTab(x.id)} style={{padding:'9px 12px',borderRadius:7,background:attachmentTab===x.id?'#173d53':'#eef1f2',color:attachmentTab===x.id?'white':'#173d53'}}>{isFour&&x.id==='D'?'D/E · Umsetzung & Organisation':x.label}</button>)}</div>
  {(()=>{const items=(materials[team.id]||[]).filter(m=>m.media_type!=='application/pdf'&&!/visualis|produkt|werbung|marketing/i.test(m.title+' '+m.original_filename)&&(attachmentTab==='all'||attachmentCategory(m)===attachmentTab||(isFour&&attachmentTab==='D'&&attachmentCategory(m)==='E')));
  return items.length?<div style={{display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(190px,1fr))',gap:14}}>{items.map(m=><a key={m.id} href={'/api/jury/materials/'+m.id} target="_blank" rel="noopener noreferrer" style={{display:'block',border:'1px solid #d8d4cd',borderRadius:8,overflow:'hidden',color:'inherit',textDecoration:'none'}}>{m.media_type.startsWith('image/')&&<img src={'/api/jury/materials/'+m.id} alt={m.title} loading="lazy" style={{width:'100%',height:170,objectFit:'contain',background:'#f5f3ee'}}/>}<span style={{display:'block',padding:10,fontWeight:600,fontSize:13}}>{m.title}</span></a>)}</div>:<p>{materials[team.id]===undefined?'Anlagen werden geladen …':'In dieser Kategorie sind noch keine Anlagen hinterlegt.'}</p>})()}
