@@ -25,7 +25,7 @@ const expertEvidence:Record<string,Partial<Record<'A'|'B'|'C'|'D'|'E',[string|nu
 const gradeGuide='1–2: kaum erfüllt · 3–4: eher schwach · 5–6: teilweise erfüllt · 7–8: gut erfüllt · 9–10: hervorragend erfüllt';
 type Material={id:string;title:string;original_filename:string;media_type:string;created_at:string};
 type Progress={submitted_count:number;total_jurors:number;others_average:number|null;own_submitted:boolean};
-export default function TeamNavigator({teams,members,initialScores,isAdmin,initialSection='overview',adminMode=false,activeTeamId=null}:{teams:Team[];members:Member[];initialScores:Score[];isAdmin:boolean;initialSection?:'overview'|'business'|'pitch';adminMode?:boolean;activeTeamId?:string|null}){
+export default function TeamNavigator({teams,members,initialScores,isAdmin,initialSection='pitch',adminMode=false,activeTeamId=null}:{teams:Team[];members:Member[];initialScores:Score[];isAdmin:boolean;initialSection?:'overview'|'business'|'pitch';adminMode?:boolean;activeTeamId?:string|null}){
  const [selected,setSelected]=useState(0);
  useEffect(()=>{if(activeTeamId){const index=teams.findIndex(t=>t.id===activeTeamId);if(index>=0)setSelected(index);}},[activeTeamId,teams]);
  const [enlargedImage,setEnlargedImage]=useState<Material|null>(null);
@@ -184,10 +184,10 @@ export default function TeamNavigator({teams,members,initialScores,isAdmin,initi
  const activeCriteria=criteria.filter(c=>!(isFour&&c.key==='expert_e_score'));
  const weightFor=(key:string)=>isFour&&key.startsWith('expert_')?12.5:criteria.find(c=>c.key===key)?.weight??0;
  return <div className="demo-shell jury-wide-shell" style={{minHeight:600,marginTop:24,border:'1px solid #e4e0d9'}}>
- <nav className="jury-team-picker" aria-label="Unternehmerteam auswählen"><div className="jury-team-picker-head"><span className="demo-overline">DIE NEUN UNTERNEHMERTEAMS</span><span>Team auswählen, um die Unterlagen zu öffnen</span></div><div className="jury-team-grid">{teams.map((t,i)=><button type="button" key={t.id} className={selected===i?'jury-team-tile active':'jury-team-tile'} aria-pressed={selected===i} onClick={()=>{setSelected(i);setExpertTab('A');setAttachmentTab('all')}}><small>{String(t.position).padStart(2,'0')}</small><span className="jury-team-photo" aria-hidden="true">{t.jury_photo_path?<img src={'/api/jury/team-photo/'+t.id} alt="" loading="lazy"/>:<Users size={18}/>}</span><strong>{t.name}</strong><ArrowRight size={16}/></button>)}</div></nav>
+ <nav className="jury-team-picker" aria-label="Unternehmerteam auswählen"><div className="jury-team-picker-head"><span className="demo-overline">DIE NEUN UNTERNEHMERTEAMS</span><span>Team auswählen · Bewertung öffnet sich direkt</span></div><div className="jury-team-grid">{teams.map((t,i)=><button type="button" key={t.id} className={selected===i?'jury-team-tile active':'jury-team-tile'} aria-pressed={selected===i} onClick={()=>{setSelected(i);setExpertTab('A');setAttachmentTab('all');if(!adminMode)setMainTab('pitch')}}><small>{String(t.position).padStart(2,'0')}</small><span className="jury-team-photo" aria-hidden="true">{t.jury_photo_path?<img src={'/api/jury/team-photo/'+t.id} alt="" loading="lazy"/>:<Users size={18}/>}</span><strong>{t.name}</strong><ArrowRight size={16}/></button>)}</div></nav>
  <section className="demo-main">
  <nav aria-label="Bereiche des ausgewählten Unternehmens" style={{display:'flex',flexWrap:'wrap',gap:10,padding:'18px 20px 0'}}>
- {([{id:'overview',label:'Unternehmensprofil'},{id:'business',label:'Businessplan & Anlagen'},{id:'pitch',label:'Pitch & Jurybewertung'}] as const).map(tab=><button key={tab.id} type="button" aria-current={mainTab===tab.id?'page':undefined} onClick={()=>setMainTab(tab.id)} style={{border:'1px solid #cbd5df',borderRadius:9,padding:'11px 15px',fontWeight:700,background:mainTab===tab.id?'#173d53':'#fff',color:mainTab===tab.id?'#fff':'#173d53'}}>{tab.label}</button>)}
+ {([{id:'pitch',label:'01 · Jurybewertung'},{id:'overview',label:'02 · Unternehmensprofil'},{id:'business',label:'03 · Unterlagen'}] as const).map(tab=><button key={tab.id} type="button" aria-current={mainTab===tab.id?'page':undefined} onClick={()=>setMainTab(tab.id)} style={{border:'1px solid #cbd5df',borderRadius:9,padding:'11px 15px',fontWeight:700,background:mainTab===tab.id?'#173d53':'#fff',color:mainTab===tab.id?'#fff':'#173d53'}}>{tab.label}</button>)}
  </nav>
  <style>{`
  @keyframes juryReveal{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
@@ -200,9 +200,9 @@ export default function TeamNavigator({teams,members,initialScores,isAdmin,initi
  @media(prefers-reduced-motion:reduce){.jury-reveal,.jury-star{animation:none!important}.jury-card{transition:none!important}}
  `}</style>
  <div className="demo-heading" style={{alignItems:'center'}}>
- <div><span className="demo-overline">JUGEND GRÜNDET · UNTERNEHMERTEAM {String(team.position).padStart(2,'0')} / {String(teams.length).padStart(2,'0')}</span><h1 style={{fontSize:'clamp(2.3rem,5vw,3.7rem)',letterSpacing:'-.045em',margin:'10px 0'}}>{team.name}</h1><p style={{fontSize:'1.1rem',fontStyle:profile?.slogan?'italic':'normal'}}>{profile?.slogan||'Slogan: '+missing}</p></div>
+ <div><span className="demo-overline">JUGEND GRÜNDET · UNTERNEHMERTEAM {String(team.position).padStart(2,'0')} / {String(teams.length).padStart(2,'0')}</span><h1 style={{fontSize:'clamp(2.3rem,5vw,3.7rem)',letterSpacing:'-.045em',margin:'10px 0'}}>{team.name}</h1><p style={{fontSize:'1.1rem',fontStyle:profile?.slogan?'italic':'normal'}}>{profile?.slogan||'Junge Geschäftsidee im Wettbewerb'}</p><p className="jury-team-elevator">{profile?.idea||team.description||'Das Unternehmensprofil wird nach Vorliegen weiterer Angaben ergänzt.'}</p></div>
  <div className="demo-pagination"><button disabled={selected===0} onClick={()=>{setSelected(v=>v-1);setExpertTab('A');setAttachmentTab('all')}} aria-label="Vorheriges Team"><ArrowLeft size={18}/></button><button disabled={selected===teams.length-1} onClick={()=>{setSelected(v=>v+1);setExpertTab('A');setAttachmentTab('all')}} aria-label="Nächstes Team"><ArrowRight size={18}/></button></div></div>
- {!adminMode&&mainTab!=='overview'&&<button type="button" onClick={()=>setMainTab('overview')} style={{margin:'12px 0 6px',padding:'9px 0',background:'transparent',color:'#173d53',display:'flex',alignItems:'center',gap:8,fontWeight:700}}><ArrowLeft size={16}/> Zur Unternehmensübersicht</button>}
+ {!adminMode&&mainTab!=='overview'&&<button type="button" onClick={()=>setMainTab('overview')} className="jury-profile-switch"><Users size={16}/> Unternehmensprofil ansehen <ArrowRight size={16}/></button>}
  {!adminMode&&mainTab==='overview'&&<div key={team.id} className="jury-reveal" style={{display:'grid',gap:22,marginTop:20}}>
  <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(245px,1fr))',gap:20,alignItems:'center',padding:'clamp(18px,3vw,34px)',borderRadius:18,background:'linear-gradient(125deg,#102f43,#214c61)',color:'#fff'}}>
  <div><span style={{fontSize:11,letterSpacing:2,textTransform:'uppercase',opacity:.75}}>Die Geschäftsidee</span><h2 style={{fontSize:'clamp(1.4rem,3vw,2.15rem)',lineHeight:1.22,margin:'14px 0',color:'#fff'}}>{profile?.idea||missing}</h2><p style={{opacity:.82,lineHeight:1.6,fontSize:13}}>Grundlage: eingereichter Businessplan · keine ergänzten Angaben</p></div>
@@ -274,22 +274,9 @@ export default function TeamNavigator({teams,members,initialScores,isAdmin,initi
  <button type="submit" disabled={uploading} style={{padding:'10px 16px',background:'#173d53',color:'white',borderRadius:6}}>{uploading?'Lädt hoch …':'Datei sicher hochladen'}</button>
  </div></form>}</div>}
 {!adminMode&&mainTab==='pitch'&&<>
- <div className="demo-score" style={{marginTop:24}}><div className="demo-score-heading"><h2>Das Unternehmerteam</h2><span>NUR FÜR DIE JURY</span></div>{team.jury_photo_path?<img className="jury-team-portrait" src={'/api/jury/team-photo/'+team.id} alt={'Teamfoto '+team.name}/>:<div style={{background:'#f5f3ee',border:'1px dashed #d8d4cd',padding:'38px 16px',textAlign:'center',margin:'18px 0 22px'}}><Users size={28} style={{margin:'0 auto 8px',color:'#a88b5f'}}/><p style={{fontSize:13,margin:0}}>Gemeinsames Teamfoto wird nach Einwilligungsprüfung hochgeladen.</p></div>}</div>
- <div className="demo-score" style={{marginTop:20}}>
- <h2>Vertrauliche Businesspläne</h2>
- <p>Die PDF-Dateien sind nur für angemeldete Jurymitglieder zugänglich.</p>
- {materialsError[team.id]&&<p role="alert" style={{color:'#b42318'}}>{materialsError[team.id]}</p>}
- {materials[team.id]===undefined?<p>Unterlagen werden geladen …</p>:materials[team.id].length===0?<p>Für dieses Team sind noch keine Unterlagen hinterlegt.</p>:<>
- <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(190px,1fr))',gap:14,margin:'18px 0'}}>
- {materials[team.id].filter(m=>m.media_type.startsWith('image/')).map(m=><button key={m.id} type="button" onClick={()=>setEnlargedImage(m)} style={{display:'block',border:'1px solid #d8d4cd',borderRadius:8,overflow:'hidden',textDecoration:'none',color:'inherit'}}>
- <img src={'/api/jury/materials/'+m.id} alt={m.title} loading="lazy" style={{width:'100%',height:170,objectFit:'contain',background:'#f5f3ee'}}/>
- <span style={{display:'block',padding:10,fontSize:13,fontWeight:600}}>{m.title}</span></button>)}
- </div>
- <ul>{materials[team.id].filter(m=>m.media_type==='application/pdf').map(m=><li key={m.id} style={{margin:'10px 0'}}><button type="button" className="jury-pdf-open" onClick={()=>setEnlargedImage(m)}>{m.title} · PDF hier ansehen</button></li>)}</ul>
- </>}
- 
- </div>
- <div className="demo-score">
+
+<section className="jury-assessment-lead"><div><span className="demo-overline">IHR JURYBOGEN · TEAM {String(team.position).padStart(2,'0')}</span><h2>Jetzt ist Ihr Urteil gefragt.</h2><p>Bewerten Sie den Auftritt und die fachlichen Aussagen dieses Teams während des Pitches und der anschließenden Fragerunde. Informationen zum Unternehmen und den Originalunterlagen finden Sie in den weiteren Registern.</p></div><span className="jury-assessment-status">{isReleased?'Verbindlich abgegeben':'Persönlicher Entwurf'}</span></section>
+ <div className="demo-score jury-rating-focus" id="jury-rating-form">
  <div className="demo-score-heading"><h2>Jurybewertung · 1–10 Punkte</h2><span>AUTOMATISCHE SPEICHERUNG</span></div>
  <p style={{fontSize:13,color:'#667480'}}>Grau: offen · Gelb: speichert · Grün: gespeichert · Rot: Fehler</p>
  <p style={{fontSize:13,color:'#526575',lineHeight:1.6}}><strong>Bewertungsorientierung:</strong> {gradeGuide}</p>
@@ -358,6 +345,21 @@ export default function TeamNavigator({teams,members,initialScores,isAdmin,initi
  </div></div>;
  })}
  </>}
+ </div>
+ <div className="demo-score" style={{marginTop:24}}><div className="demo-score-heading"><h2>Das Unternehmerteam</h2><span>NUR FÜR DIE JURY</span></div>{team.jury_photo_path?<img className="jury-team-portrait" src={'/api/jury/team-photo/'+team.id} alt={'Teamfoto '+team.name}/>:<div style={{background:'#f5f3ee',border:'1px dashed #d8d4cd',padding:'38px 16px',textAlign:'center',margin:'18px 0 22px'}}><Users size={28} style={{margin:'0 auto 8px',color:'#a88b5f'}}/><p style={{fontSize:13,margin:0}}>Gemeinsames Teamfoto wird nach Einwilligungsprüfung hochgeladen.</p></div>}</div>
+ <div className="demo-score" style={{marginTop:20}}>
+ <h2>Vertrauliche Businesspläne</h2>
+ <p>Die PDF-Dateien sind nur für angemeldete Jurymitglieder zugänglich.</p>
+ {materialsError[team.id]&&<p role="alert" style={{color:'#b42318'}}>{materialsError[team.id]}</p>}
+ {materials[team.id]===undefined?<p>Unterlagen werden geladen …</p>:materials[team.id].length===0?<p>Für dieses Team sind noch keine Unterlagen hinterlegt.</p>:<>
+ <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(190px,1fr))',gap:14,margin:'18px 0'}}>
+ {materials[team.id].filter(m=>m.media_type.startsWith('image/')).map(m=><button key={m.id} type="button" onClick={()=>setEnlargedImage(m)} style={{display:'block',border:'1px solid #d8d4cd',borderRadius:8,overflow:'hidden',textDecoration:'none',color:'inherit'}}>
+ <img src={'/api/jury/materials/'+m.id} alt={m.title} loading="lazy" style={{width:'100%',height:170,objectFit:'contain',background:'#f5f3ee'}}/>
+ <span style={{display:'block',padding:10,fontSize:13,fontWeight:600}}>{m.title}</span></button>)}
+ </div>
+ <ul>{materials[team.id].filter(m=>m.media_type==='application/pdf').map(m=><li key={m.id} style={{margin:'10px 0'}}><button type="button" className="jury-pdf-open" onClick={()=>setEnlargedImage(m)}>{m.title} · PDF hier ansehen</button></li>)}</ul>
+ </>}
+ 
  </div>
  </>}
  {enlargedImage&&<div role="presentation" onClick={()=>setEnlargedImage(null)} style={{position:'fixed',inset:0,zIndex:1000,background:'rgba(8,19,28,.88)',display:'flex',alignItems:'center',justifyContent:'center',padding:24}}>
