@@ -70,7 +70,7 @@ export default function TeamNavigator({teams,members,initialScores,isAdmin}:{tea
   const reports:string[]=[];
   try{
    for(const file of Array.from(files)){
-    const filename=normalized(file.name.replace(/\\.zip$/i,'').replace(/^businessplan/i,''));
+    const filename=normalized(file.name.replace(/\.zip$/i,'').replace(/^businessplan/i,''));
     const lookup=aliases[filename]||filename;
     const match=teams.find(t=>normalized(t.name)===lookup);
     if(!match){reports.push(file.name+': kein eindeutiges Team gefunden, übersprungen');continue;}
