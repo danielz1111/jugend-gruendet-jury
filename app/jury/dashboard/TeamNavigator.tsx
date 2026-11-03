@@ -21,6 +21,21 @@ type Material={id:string;title:string;original_filename:string;media_type:string
 type Progress={submitted_count:number;total_jurors:number;others_average:number|null;own_submitted:boolean};
 export default function TeamNavigator({teams,members,initialScores,isAdmin}:{teams:Team[];members:Member[];initialScores:Score[];isAdmin:boolean}){
  const [selected,setSelected]=useState(0);
+ const [mainTab,setMainTab]=useState<'business'|'pitch'>('business');
+ const [expertTab,setExpertTab]=useState('A');
+ const [attachmentTab,setAttachmentTab]=useState('all');
+ const expertSections=[{id:'A',label:'A · Markt und Zielgruppe'},{id:'B',label:'B · Marketing und Vertrieb'},{id:'C',label:'C · Finanzen und Wirtschaftlichkeit'},{id:'D',label:'D · Umsetzung und Realisierbarkeit'},{id:'E',label:'E · Organisation und Rechtsform'}];
+ const attachmentSections=[{id:'all',label:'Alle Anlagen'},{id:'A',label:'A · Markt'},{id:'B',label:'B · Marketing'},{id:'C',label:'C · Finanzen'},{id:'D',label:'D · Umsetzung'},{id:'E',label:'E · Organisation'}];
+ const attachmentCategory=(m:Material)=>{
+  const name=(m.title+' '+m.original_filename).toLowerCase();
+  if(/umfrage|validier|markt|zielgruppe|wettbewerb/.test(name))return 'A';
+  if(/werbung|marketing|vertrieb|social|plakat/.test(name))return 'B';
+  if(/kalkulat|finanz|kosten|preis|umsatz|bilanz|tabelle/.test(name))return 'C';
+  if(/visualis|produkt|prototyp|herstell|umsetz/.test(name))return 'D';
+  if(/organis|rechtsform|team|aufgaben/.test(name))return 'E';
+  return 'other';
+ };
+
  const [materials,setMaterials]=useState<Record<string,Material[]>>({});
  const [materialsError,setMaterialsError]=useState<Record<string,string>>({});
  const [uploading,setUploading]=useState(false);
@@ -110,9 +125,28 @@ export default function TeamNavigator({teams,members,initialScores,isAdmin}:{tea
  const activeCriteria=criteria.filter(c=>!(isFour&&c.key==='expert_e_score'));
  const weightFor=(key:string)=>isFour&&key.startsWith('expert_')?12.5:criteria.find(c=>c.key===key)?.weight??0;
  return <div className="demo-shell" style={{minHeight:600,marginTop:32,border:'1px solid #e4e0d9'}}>
- <aside className="demo-sidebar"><span className="demo-overline">UNTERNEHMERTEAMS · {teams.length}</span>{teams.map((t,i)=><button key={t.id} className={selected===i?'selected':''} aria-pressed={selected===i} onClick={()=>setSelected(i)}><span>{String(t.position).padStart(2,'0')}</span>{t.name}</button>)}</aside>
- <section className="demo-main"><div className="demo-heading"><div><span className="demo-overline">TEAM {String(team.position).padStart(2,'0')} · JURYANSICHT</span><h1>{team.name}</h1><p>{team.tagline||'Unternehmerteam · Jugend gründet 2026/27'}</p></div><div className="demo-pagination"><button disabled={selected===0} onClick={()=>setSelected(v=>v-1)} aria-label="Vorheriges Team"><ArrowLeft size={18}/></button><button disabled={selected===teams.length-1} onClick={()=>setSelected(v=>v+1)} aria-label="Nächstes Team"><ArrowRight size={18}/></button></div></div>
- {team.description&&<p style={{lineHeight:1.8,color:'#526575'}}>{team.description}</p>}
+ <aside className="demo-sidebar"><span className="demo-overline">UNTERNEHMERTEAMS · {teams.length}</span>{teams.map((t,i)=><button key={t.id} className={selected===i?'selected':''} aria-pressed={selected===i} onClick={()=>{setSelected(i);setMainTab('business');setExpertTab('A');setAttachmentTab('all')}}><span>{String(t.position).padStart(2,'0')}</span>{t.name}</button>)}</aside>
+ <section className="demo-main"><div className="demo-heading"><div><span className="demo-overline">TEAM {String(team.position).padStart(2,'0')} · JURYANSICHT</span><h1>{team.name}</h1><p>{team.tagline||'Unternehmerteam · Jugend gründet 2026/27'}</p></div><div className="demo-pagination"><button disabled={selected===0} onClick={()=>{setSelected(v=>v-1);setMainTab('business');setExpertTab('A');setAttachmentTab('all')}} aria-label="Vorheriges Team"><ArrowLeft size={18}/></button><button disabled={selected===teams.length-1} onClick={()=>{setSelected(v=>v+1);setMainTab('business');setExpertTab('A');setAttachmentTab('all')}} aria-label="Nächstes Team"><ArrowRight size={18}/></button></div></div>
+ <div role="tablist" aria-label="Bereiche des Juryportals" style={{display:'flex',gap:10,margin:'24px 0 12px',flexWrap:'wrap'}}>
+ <button type="button" role="tab" aria-selected={mainTab==='business'} onClick={()=>setMainTab('business')} style={{padding:'12px 20px',borderRadius:8,background:mainTab==='business'?'#173d53':'#eef1f2',color:mainTab==='business'?'white':'#173d53',fontWeight:700}}>Businessplan</button>
+ <button type="button" role="tab" aria-selected={mainTab==='pitch'} onClick={()=>setMainTab('pitch')} style={{padding:'12px 20px',borderRadius:8,background:mainTab==='pitch'?'#173d53':'#eef1f2',color:mainTab==='pitch'?'white':'#173d53',fontWeight:700}}>Pitch &amp; Juryfragen</button>
+ </div>
+ {mainTab==='business'&&<div className="demo-score" style={{marginTop:12}}>
+ <h2>Unternehmensübersicht</h2>
+ <p>{team.description||'Eine geprüfte Zusammenfassung aus dem eingereichten Businessplan wird ergänzt.'}</p>
+ <h3 style={{marginTop:20}}>Expertenbereiche</h3>
+ <p>Alle Teams haben dieselbe Gliederung. Die Inhalte werden aus dem Original-Businessplan übernommen.</p>
+ <div style={{display:'flex',flexWrap:'wrap',gap:8,margin:'14px 0'}}>{expertSections.filter(x=>!(isFour&&x.id==='E')).map(x=><button key={x.id} type="button" aria-pressed={expertTab===x.id} onClick={()=>setExpertTab(x.id)} style={{padding:'10px 12px',borderRadius:7,background:expertTab===x.id?'#173d53':'#eef1f2',color:expertTab===x.id?'white':'#173d53'}}>{isFour&&x.id==='D'?'D/E · Umsetzung & Organisation':x.label}</button>)}</div>
+ <h3>{isFour&&expertTab==='D'?'D/E · Umsetzung, Organisation und Rechtsform':expertSections.find(x=>x.id===expertTab)?.label}</h3>
+ <p>Die zugehörigen Angaben aus dem Businessplan werden hier strukturiert dargestellt. Fehlende Angaben werden nicht ergänzt.</p>
+ <h3 style={{marginTop:24}}>Vollständiger Businessplan</h3>
+ {(materials[team.id]||[]).filter(m=>m.media_type==='application/pdf').length?<ul>{(materials[team.id]||[]).filter(m=>m.media_type==='application/pdf').map(m=><li key={m.id}><a href={'/api/jury/materials/'+m.id} target="_blank" rel="noopener noreferrer">{m.title} · Original-PDF öffnen</a></li>)}</ul>:<p>Der vollständige Businessplan wurde noch nicht hinterlegt.</p>}
+ <h3 style={{marginTop:24}}>Anlagen zum Businessplan</h3>
+ <div style={{display:'flex',flexWrap:'wrap',gap:8,margin:'14px 0'}}>{attachmentSections.filter(x=>!(isFour&&x.id==='E')).map(x=><button key={x.id} type="button" aria-pressed={attachmentTab===x.id} onClick={()=>setAttachmentTab(x.id)} style={{padding:'9px 12px',borderRadius:7,background:attachmentTab===x.id?'#173d53':'#eef1f2',color:attachmentTab===x.id?'white':'#173d53'}}>{isFour&&x.id==='D'?'D/E · Umsetzung & Organisation':x.label}</button>)}</div>
+ {(()=>{const items=(materials[team.id]||[]).filter(m=>m.media_type!=='application/pdf'&&(attachmentTab==='all'||attachmentCategory(m)===attachmentTab||(isFour&&attachmentTab==='D'&&attachmentCategory(m)==='E')));
+ return items.length?<div style={{display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(190px,1fr))',gap:14}}>{items.map(m=><a key={m.id} href={'/api/jury/materials/'+m.id} target="_blank" rel="noopener noreferrer" style={{display:'block',border:'1px solid #d8d4cd',borderRadius:8,overflow:'hidden',color:'inherit',textDecoration:'none'}}>{m.media_type.startsWith('image/')&&<img src={'/api/jury/materials/'+m.id} alt={m.title} loading="lazy" style={{width:'100%',height:170,objectFit:'contain',background:'#f5f3ee'}}/>}<span style={{display:'block',padding:10,fontWeight:600,fontSize:13}}>{m.title}</span></a>)}</div>:<p>{materials[team.id]===undefined?'Anlagen werden geladen …':'In dieser Kategorie sind noch keine Anlagen hinterlegt.'}</p>})()}
+ </div>}
+ {mainTab==='pitch'&&<>
  <div className="demo-score" style={{marginTop:24}}><div className="demo-score-heading"><h2>Teammitglieder und Expertenbereiche</h2><span>NUR FÜR DIE JURY</span></div><div style={{background:'#f5f3ee',border:'1px dashed #d8d4cd',padding:'38px 16px',textAlign:'center',margin:'18px 0 22px'}}><Users size={28} style={{margin:'0 auto 8px',color:'#a88b5f'}}/><p style={{fontSize:13,margin:0}}>Gemeinsames Teamfoto wird nach Einwilligungsprüfung hochgeladen.</p></div>{teamMembers.length?<div style={{display:'grid',gap:10}}>{teamMembers.map(m=><div key={m.id} style={{display:'flex',justifyContent:'space-between',gap:16,padding:'13px 0',borderBottom:'1px solid #e7e4df'}}><strong>{m.display_name}</strong><span style={{fontSize:13,color:'#667480',textAlign:'right'}}>{m.expert_role||'Expertenbereich noch nicht eingetragen'}</span></div>)}</div>:<p>Für dieses Team wurden noch keine Mitglieder hinterlegt. Die bestätigten Zuordnungen werden geschützt ergänzt.</p>}</div>
  <div className="demo-resources"><div><Users size={20}/><strong>Teammitglieder</strong><small><LockKeyhole size={12} style={{display:'inline'}}/> {teamMembers.length} Mitglieder hinterlegt</small></div><div><FileText size={20}/><strong>Businessplan</strong><small>{materials[team.id]?.length?materials[team.id].length+" PDF-Datei(en) hinterlegt":"Noch keine PDF hinterlegt"}</small></div><div><Presentation size={20}/><strong>Präsentation</strong><small>Wird zum Wettbewerb ergänzt</small></div></div>
  <div className="demo-score" style={{marginTop:20}}>
@@ -205,5 +239,6 @@ export default function TeamNavigator({teams,members,initialScores,isAdmin}:{tea
  })}
  </>}
  </div>
+ </>}
  </section></div>;
 }
