@@ -5,8 +5,8 @@ import TeamNavigator from './TeamNavigator';
 export const dynamic='force-dynamic';
 type Team={id:string;name:string;position:number;tagline:string|null;description:string|null};
 type Member={id:string;team_id:string;display_name:string;expert_role:string|null;display_order:number};
-type Score={team_id:string;idea_score:number|null;economics_score:number|null;pitch_score:number|null;answers_score:number|null;team_score:number|null};
-async function getScores(token:string):Promise<Score[]>{const url=process.env.NEXT_PUBLIC_SUPABASE_URL,key=process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;if(!url||!key)throw new Error('Supabase nicht konfiguriert');const res=await fetch(url+'/rest/v1/evaluations?select=team_id,idea_score,economics_score,pitch_score,answers_score,team_score',{headers:{apikey:key,Authorization:'Bearer '+token},cache:'no-store'});if(!res.ok)throw new Error('Bewertungen konnten nicht geladen werden');return await res.json() as Score[];}
+type Score={team_id:string;[key:string]:string|number|null};
+async function getScores(token:string):Promise<Score[]>{const url=process.env.NEXT_PUBLIC_SUPABASE_URL,key=process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;if(!url||!key)throw new Error('Supabase nicht konfiguriert');const res=await fetch(url+'/rest/v1/evaluations?select=team_id,expert_a_score,expert_b_score,expert_c_score,expert_d_score,expert_e_score,presentation_impact_score,questions_quality_score,questions_confidence_score,questions_reasoning_score',{headers:{apikey:key,Authorization:'Bearer '+token},cache:'no-store'});if(!res.ok)throw new Error('Bewertungen konnten nicht geladen werden');return await res.json() as Score[];}
 async function getTeams(token:string):Promise<Team[]>{
  const url=process.env.NEXT_PUBLIC_SUPABASE_URL,key=process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
  if(!url||!key)throw new Error('Supabase nicht konfiguriert');
