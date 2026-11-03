@@ -89,7 +89,7 @@ export default function HomeClient({ publishedTeams = [] }: { publishedTeams: Pu
             <span className="lm-emblem" aria-hidden="true"><span>L</span><i/></span>
             <span className="lm-wordmark-type"><strong>LANDHEIM AMMERSEE</strong><small>JUGEND GRÜNDET · 2026/27</small></span>
           </a>
-          <nav className={menuOpen ? 'lm-nav lm-nav-open' : 'lm-nav'} aria-label="Hauptnavigation">
+          <nav id="lm-mobile-navigation" className={menuOpen ? 'lm-nav lm-nav-open' : 'lm-nav'} aria-label="Hauptnavigation">
             <a href="#idee" onClick={closeMenu}>Die Idee</a>
             <a href="#weg" onClick={closeMenu}>Unser Weg</a>
             <a href="#teams" onClick={closeMenu}>Die Teams</a>
