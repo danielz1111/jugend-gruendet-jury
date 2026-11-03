@@ -1,0 +1,1 @@
+Freigegebene Bilder hier ablegen: campus.jpg, teams.jpg, ammersee.jpg. Bis dahin erscheint ein dunkelblauer Hintergrund. Keine personenbezogenen Schuelerdaten oder vertraulichen Dokumente im Repository speichern.
