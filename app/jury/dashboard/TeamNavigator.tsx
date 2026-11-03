@@ -8,7 +8,7 @@ const criteria=[{key:'idea_score',name:'Geschäftsidee & Kundennutzen',weight:20
 export default function TeamNavigator({teams,members,initialScores}:{teams:Team[];members:Member[];initialScores:Score[]}){
  const [selected,setSelected]=useState(0);
  const [scores,setScores]=useState<Record<string,Record<string,number>>>(()=>Object.fromEntries(initialScores.map(s=>[s.team_id,Object.fromEntries(criteria.filter(c=>s[c.key]!==null).map(c=>[c.key,s[c.key] as number]))])));
- const [status,setStatus]=useState<Record<string,'saving'|'saved'|'error'>>({});
+ const [status,setStatus]=useState<Record<string,'open'|'saving'|'saved'|'error'>>({});
  const [pending,setPending]=useState<Record<string,number>>({});
  async function save(teamId:string,field:string,value:number){
   const id=teamId+':'+field;
