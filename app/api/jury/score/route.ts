@@ -11,7 +11,7 @@ export async function POST(req:Request){
  const url=process.env.NEXT_PUBLIC_SUPABASE_URL,key=process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
  if(!url||!key)return NextResponse.json({error:'Datenbank nicht eingerichtet'},{status:503});
  const headers={apikey:key,Authorization:'Bearer '+session.token,'Content-Type':'application/json'};
- const lookup=await fetch(url+'/rest/v1/evaluations?select=id,'+keys.join(',')+'&team_id=eq.'+encodeURIComponent(team_id)+'&juror_id=eq.'+session.userId,{headers,cache:'no-store'});
+ const lookup=await fetch(url+'/rest/v1/evaluations?select=id,submitted_at,'+keys.join(',')+'&team_id=eq.'+encodeURIComponent(team_id)+'&juror_id=eq.'+session.userId,{headers,cache:'no-store'});
  if(!lookup.ok)return NextResponse.json({error:'Bewertung konnte nicht geprüft werden'},{status:502});
  const membersResponse=await fetch(url+'/rest/v1/team_members?select=id&team_id=eq.'+encodeURIComponent(team_id),{headers,cache:'no-store'});
  if(!membersResponse.ok)return NextResponse.json({error:'Teamgröße konnte nicht geprüft werden'},{status:502});
@@ -19,10 +19,9 @@ export async function POST(req:Request){
  const isFour=memberRows.length===4;
  if(memberRows.length!==4&&memberRows.length!==5)return NextResponse.json({error:'Teamgröße ist nicht eindeutig'},{status:409});
  if(isFour&&field==='expert_e_score')return NextResponse.json({error:'D/E wird gemeinsam bewertet'},{status:400});
- const existing=await lookup.json() as Array<{id:string}&Record<string,number|null>>;
- const complete=keys.filter(k=>!(isFour&&k==='expert_e_score')).every(k=>k===field||existing[0]?.[k]!=null);
- const submitted_at=complete?new Date().toISOString():null;
- const values:Record<string,number|string|null>={[field as string]:Number(score),submitted_at};
+ const existing=await lookup.json() as Array<{id:string;submitted_at:string|null}&Record<string,number|null>>;
+ if(existing[0]?.submitted_at)return NextResponse.json({error:'Bewertung bereits freigegeben'},{status:409});
+ const values:Record<string,number|string|null>={[field as string]:Number(score)};
  if(isFour&&field==='expert_d_score')values.expert_e_score=Number(score);
  const payload=existing.length?{...values,updated_at:new Date().toISOString()}:{team_id,juror_id:session.userId,...values};
  const target=existing.length?url+'/rest/v1/evaluations?id=eq.'+existing[0].id:url+'/rest/v1/evaluations';
