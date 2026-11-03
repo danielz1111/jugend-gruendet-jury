@@ -34,4 +34,4 @@ export async function middleware(request:NextRequest){
   return response;
  }catch{return NextResponse.next()}
 }
-export const config={matcher:['/jury/dashboard/:path*','/api/jury/:path*']};
+export const config={matcher:['/jury','/jury/dashboard/:path*','/api/jury/:path*']};
