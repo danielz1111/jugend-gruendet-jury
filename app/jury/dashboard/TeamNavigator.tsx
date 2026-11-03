@@ -17,9 +17,33 @@ const hints:Record<string,string>={
  questions_reasoning_score:'Werden Aussagen schlüssig begründet und Einwände überzeugend aufgegriffen?'
 };
 const gradeGuide='1–2: kaum erfüllt · 3–4: eher schwach · 5–6: teilweise erfüllt · 7–8: gut erfüllt · 9–10: hervorragend erfüllt';
+type Material={id:string;title:string;original_filename:string;created_at:string};
 type Progress={submitted_count:number;total_jurors:number;others_average:number|null;own_submitted:boolean};
-export default function TeamNavigator({teams,members,initialScores}:{teams:Team[];members:Member[];initialScores:Score[]}){
+export default function TeamNavigator({teams,members,initialScores,isAdmin}:{teams:Team[];members:Member[];initialScores:Score[];isAdmin:boolean}){
  const [selected,setSelected]=useState(0);
+ const [materials,setMaterials]=useState<Record<string,Material[]>>({});
+ const [materialsError,setMaterialsError]=useState<Record<string,string>>({});
+ const [uploading,setUploading]=useState(false);
+ async function loadMaterials(teamId:string){
+  try{
+   const response=await fetch('/api/jury/materials?team_id='+encodeURIComponent(teamId),{cache:'no-store'});
+   if(!response.ok)throw new Error('Unterlagen nicht verfügbar');
+   const rows=await response.json() as Material[];
+   setMaterials(old=>({...old,[teamId]:rows}));
+   setMaterialsError(old=>({...old,[teamId]:''}));
+  }catch{setMaterialsError(old=>({...old,[teamId]:'Unterlagen konnten nicht geladen werden.'}));}
+ }
+ async function uploadMaterial(teamId:string,form:HTMLFormElement){
+  const data=new FormData(form);data.set('team_id',teamId);
+  setUploading(true);setMaterialsError(old=>({...old,[teamId]:''}));
+  try{
+   const response=await fetch('/api/jury/materials',{method:'POST',body:data});
+   if(!response.ok){const error=await response.json() as {error?:string};throw new Error(error.error||'Upload fehlgeschlagen');}
+   form.reset();await loadMaterials(teamId);
+  }catch(error){setMaterialsError(old=>({...old,[teamId]:error instanceof Error?error.message:'Upload fehlgeschlagen'}));}
+  finally{setUploading(false);}
+ }
+
  const [notes,setNotes]=useState<Record<string,string>>({});
  const [notesLoaded,setNotesLoaded]=useState<Record<string,boolean>>({});
  const [notesError,setNotesError]=useState<Record<string,string>>({});
@@ -62,7 +86,7 @@ export default function TeamNavigator({teams,members,initialScores}:{teams:Team[
  const [progress,setProgress]=useState<Record<string,Progress>>({});
  const [progressError,setProgressError]=useState<Record<string,boolean>>({});
  async function refreshProgress(teamId:string){try{const r=await fetch('/api/jury/progress?team_id='+encodeURIComponent(teamId),{cache:'no-store'});if(!r.ok)throw Error('Progress');const p=await r.json() as Progress;setProgress(old=>({...old,[teamId]:p}));setProgressError(old=>({...old,[teamId]:false}));}catch{setProgressError(old=>({...old,[teamId]:true}));}}
- useEffect(()=>{if(teams[selected]){void refreshProgress(teams[selected].id);void loadNotes(teams[selected].id);}},[selected,teams]);
+ useEffect(()=>{if(teams[selected]){void refreshProgress(teams[selected].id);void loadNotes(teams[selected].id);void loadMaterials(teams[selected].id);}},[selected,teams]);
  const [scores,setScores]=useState<Record<string,Record<string,number>>>(()=>Object.fromEntries(initialScores.map(s=>[s.team_id,Object.fromEntries(criteria.filter(c=>s[c.key]!==null).map(c=>[c.key,s[c.key] as number]))])));
  const [status,setStatus]=useState<Record<string,'open'|'saving'|'saved'|'error'>>({});
  const [pending,setPending]=useState<Record<string,number>>({});
@@ -90,7 +114,20 @@ export default function TeamNavigator({teams,members,initialScores}:{teams:Team[
  <section className="demo-main"><div className="demo-heading"><div><span className="demo-overline">TEAM {String(team.position).padStart(2,'0')} · JURYANSICHT</span><h1>{team.name}</h1><p>{team.tagline||'Unternehmerteam · Jugend gründet 2026/27'}</p></div><div className="demo-pagination"><button disabled={selected===0} onClick={()=>setSelected(v=>v-1)} aria-label="Vorheriges Team"><ArrowLeft size={18}/></button><button disabled={selected===teams.length-1} onClick={()=>setSelected(v=>v+1)} aria-label="Nächstes Team"><ArrowRight size={18}/></button></div></div>
  {team.description&&<p style={{lineHeight:1.8,color:'#526575'}}>{team.description}</p>}
  <div className="demo-score" style={{marginTop:24}}><div className="demo-score-heading"><h2>Teammitglieder und Expertenbereiche</h2><span>NUR FÜR DIE JURY</span></div><div style={{background:'#f5f3ee',border:'1px dashed #d8d4cd',padding:'38px 16px',textAlign:'center',margin:'18px 0 22px'}}><Users size={28} style={{margin:'0 auto 8px',color:'#a88b5f'}}/><p style={{fontSize:13,margin:0}}>Gemeinsames Teamfoto wird nach Einwilligungsprüfung hochgeladen.</p></div>{teamMembers.length?<div style={{display:'grid',gap:10}}>{teamMembers.map(m=><div key={m.id} style={{display:'flex',justifyContent:'space-between',gap:16,padding:'13px 0',borderBottom:'1px solid #e7e4df'}}><strong>{m.display_name}</strong><span style={{fontSize:13,color:'#667480',textAlign:'right'}}>{m.expert_role||'Expertenbereich noch nicht eingetragen'}</span></div>)}</div>:<p>Für dieses Team wurden noch keine Mitglieder hinterlegt. Die bestätigten Zuordnungen werden geschützt ergänzt.</p>}</div>
- <div className="demo-resources"><div><Users size={20}/><strong>Teammitglieder</strong><small><LockKeyhole size={12} style={{display:'inline'}}/> {teamMembers.length} Mitglieder hinterlegt</small></div><div><FileText size={20}/><strong>Businessplan</strong><small>Vertrauliche Unterlagen folgen</small></div><div><Presentation size={20}/><strong>Präsentation</strong><small>Wird zum Wettbewerb ergänzt</small></div></div>
+ <div className="demo-resources"><div><Users size={20}/><strong>Teammitglieder</strong><small><LockKeyhole size={12} style={{display:'inline'}}/> {teamMembers.length} Mitglieder hinterlegt</small></div><div><FileText size={20}/><strong>Businessplan</strong><small>{materials[team.id]?.length?materials[team.id].length+" PDF-Datei(en) hinterlegt":"Noch keine PDF hinterlegt"}</small></div><div><Presentation size={20}/><strong>Präsentation</strong><small>Wird zum Wettbewerb ergänzt</small></div></div>
+ <div className="demo-score" style={{marginTop:20}}>
+ <h2>Vertrauliche Businesspläne</h2>
+ <p>Die PDF-Dateien sind nur für angemeldete Jurymitglieder zugänglich.</p>
+ {materialsError[team.id]&&<p role="alert" style={{color:'#b42318'}}>{materialsError[team.id]}</p>}
+ {materials[team.id]===undefined?<p>Unterlagen werden geladen …</p>:materials[team.id].length===0?<p>Für dieses Team ist noch kein Businessplan hinterlegt.</p>:<ul>{materials[team.id].map(m=><li key={m.id} style={{margin:'10px 0'}}><a href={'/api/jury/materials/'+m.id} target="_blank" rel="noopener noreferrer">{m.title} · PDF öffnen</a></li>)}</ul>}
+ {isAdmin&&<form onSubmit={event=>{event.preventDefault();void uploadMaterial(team.id,event.currentTarget)}} style={{marginTop:18,padding:16,background:'#f7f8f9',borderRadius:8}}>
+ <strong>PDF hochladen (Administration)</strong>
+ <div style={{display:'grid',gap:10,marginTop:12}}>
+ <input name="title" type="text" required maxLength={120} defaultValue="Businessplan" aria-label="Dokumenttitel" style={{padding:10}}/>
+ <input name="file" type="file" required accept=".pdf,application/pdf" aria-label="Businessplan als PDF auswählen"/>
+ <button type="submit" disabled={uploading} style={{padding:'10px 16px',background:'#173d53',color:'white',borderRadius:6}}>{uploading?'Lädt hoch …':'PDF sicher hochladen'}</button>
+ </div></form>}
+ </div>
  <div className="demo-score">
  <div className="demo-score-heading"><h2>Jurybewertung · 1–10 Punkte</h2><span>AUTOMATISCHE SPEICHERUNG</span></div>
  <p style={{fontSize:13,color:'#667480'}}>Grau: offen · Gelb: speichert · Grün: gespeichert · Rot: Fehler</p>
