@@ -281,7 +281,7 @@ export default function TeamNavigator({teams,members,initialScores,isAdmin,initi
  <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(190px,1fr))',gap:14,margin:'18px 0'}}>
  {materials[team.id].filter(m=>m.media_type.startsWith('image/')).map(m=><button key={m.id} type="button" onClick={()=>setEnlargedImage(m)} style={{display:'block',border:'1px solid #d8d4cd',borderRadius:8,overflow:'hidden',textDecoration:'none',color:'inherit'}}>
  <img src={'/api/jury/materials/'+m.id} alt={m.title} loading="lazy" style={{width:'100%',height:170,objectFit:'contain',background:'#f5f3ee'}}/>
- <span style={{display:'block',padding:10,fontSize:13,fontWeight:600}}>{m.title}</span></a>)}
+ <span style={{display:'block',padding:10,fontSize:13,fontWeight:600}}>{m.title} · Vergrößern</span></button>)}
  </div>
  <ul>{materials[team.id].filter(m=>m.media_type==='application/pdf').map(m=><li key={m.id} style={{margin:'10px 0'}}><a href={'/api/jury/materials/'+m.id} target="_blank" rel="noopener noreferrer">{m.title} · PDF öffnen</a></li>)}</ul>
  </>}
