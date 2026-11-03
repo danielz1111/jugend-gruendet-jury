@@ -5,6 +5,18 @@ type Team={id:string;name:string;position:number;tagline:string|null;description
 type Member={id:string;team_id:string;display_name:string;expert_role:string|null;display_order:number};
 type Score={team_id:string;[key:string]:string|number|null};
 const criteria=[{"key":"expert_a_score","name":"A · Markt und Zielgruppe","weight":10},{"key":"expert_b_score","name":"B · Marketing und Vertrieb","weight":10},{"key":"expert_c_score","name":"C · Finanzen und Wirtschaftlichkeit","weight":10},{"key":"expert_d_score","name":"D · Umsetzung und Realisierbarkeit","weight":10},{"key":"expert_e_score","name":"E · Organisation und Rechtsform","weight":10},{"key":"presentation_impact_score","name":"Überzeugungskraft der Präsentation","weight":20},{"key":"questions_quality_score","name":"Fachliche Qualität der Antworten","weight":10},{"key":"questions_confidence_score","name":"Souveränität und Sicherheit","weight":10},{"key":"questions_reasoning_score","name":"Argumentation und Reaktionsfähigkeit","weight":10}] as const;
+const hints:Record<string,string>={
+ expert_a_score:'Sind Zielgruppe, Kundenproblem und Markt nachvollziehbar beschrieben?',
+ expert_b_score:'Ist klar, wie das Produkt bekannt gemacht und verkauft werden soll?',
+ expert_c_score:'Sind Kosten, Preisgestaltung, Finanzierung und Ertrag plausibel?',
+ expert_d_score:'Ist die Umsetzung technisch und organisatorisch realistisch?',
+ expert_e_score:'Sind Aufgabenverteilung, Organisation und Rechtsform nachvollziehbar?',
+ presentation_impact_score:'Ist der Pitch verständlich, überzeugend, gut strukturiert und adressatengerecht?',
+ questions_quality_score:'Werden die gestellten Fragen fachlich korrekt und konkret beantwortet?',
+ questions_confidence_score:'Reagiert das Team ruhig, sicher und respektvoll auf Nachfragen?',
+ questions_reasoning_score:'Werden Aussagen schlüssig begründet und Einwände überzeugend aufgegriffen?'
+};
+const gradeGuide='1–2: kaum erfüllt · 3–4: eher schwach · 5–6: teilweise erfüllt · 7–8: gut erfüllt · 9–10: hervorragend erfüllt';
 type Progress={submitted_count:number;total_jurors:number;others_average:number|null;own_submitted:boolean};
 export default function TeamNavigator({teams,members,initialScores}:{teams:Team[];members:Member[];initialScores:Score[]}){
  const [selected,setSelected]=useState(0);
@@ -56,6 +68,7 @@ export default function TeamNavigator({teams,members,initialScores}:{teams:Team[
  <div className="demo-score">
  <div className="demo-score-heading"><h2>Jurybewertung · 1–10 Punkte</h2><span>AUTOMATISCHE SPEICHERUNG</span></div>
  <p style={{fontSize:13,color:'#667480'}}>Grau: offen · Gelb: speichert · Grün: gespeichert · Rot: Fehler</p>
+ <p style={{fontSize:13,color:'#526575',lineHeight:1.6}}><strong>Bewertungsorientierung:</strong> {gradeGuide}</p>
  {activeCriteria.map((c,i)=>{
   const phaseHeader=i===0?<div style={{marginTop:22}}><h3>1 · Fachbereiche und Präsentation</h3><p>Während des Pitches</p></div>:i===(isFour?5:6)?<div style={{marginTop:24,borderTop:'2px solid #d9d4c9',paddingTop:14}}><h3>2 · Juryfragen</h3><p>Während der Fragerunde</p></div>:null;
   const id=team.id+':'+c.key;
@@ -65,6 +78,7 @@ export default function TeamNavigator({teams,members,initialScores}:{teams:Team[
   const color=state==='saved'?'#18794e':state==='saving'?'#9c6b16':state==='error'?'#b42318':'#77828b';
   return <div key={c.key}>{phaseHeader}<div style={{border:'1px solid '+color,borderRadius:8,padding:14,marginTop:12,background:state==='saved'?'#f0faf3':state==='saving'?'#fff9e9':state==='error'?'#fff3f2':'#f7f8f9'}}>
    <div style={{display:'flex',justifyContent:'space-between',gap:8,flexWrap:'wrap'}}><strong>{isFour&&c.key==='expert_d_score'?'D/E · Umsetzung, Organisation und Rechtsform':c.name}</strong><span style={{fontSize:12,color}}>{state==='saved'?'✓ Gespeichert':state==='saving'?'Speichert …':state==='error'?'Fehler':'Offen'}</span></div>
+   <p style={{fontSize:13,color:'#526575',margin:'8px 0 0'}}>{isFour&&c.key==='expert_d_score'?'Sind Umsetzung, Organisation und Rechtsform gemeinsam schlüssig und realistisch?':hints[c.key]}</p>
    <div style={{display:'flex',alignItems:'center',gap:12,marginTop:12}}>
     <input type="range" min={1} max={10} step={1} value={current??5} disabled={isReleased} aria-label={c.name} style={{width:'100%',accentColor:color}}
      onChange={event=>{const value=Number(event.currentTarget.value);setPending(old=>({...old,[id]:value}));setStatus(old=>({...old,[id]:'open'}))}}
