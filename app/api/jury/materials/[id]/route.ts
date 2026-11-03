@@ -13,9 +13,9 @@ export async function GET(_req:Request,{params}:{params:Promise<{id:string}>}){
  if(!metadata.ok)return NextResponse.json({error:'Datei nicht verfügbar'},{status:502});
  const rows=await metadata.json() as Array<{object_path:string;original_filename:string;media_type:string}>;
  const item=rows[0];
- if(!item||!item.object_path.startsWith('businessplans/')||!item.object_path.endsWith('.pdf'))return NextResponse.json({error:'Datei nicht gefunden'},{status:404});
+ if(!item||!item.object_path.startsWith('businessplans/')||!(/\.(pdf|jpg|png)$/.test(item.object_path)))return NextResponse.json({error:'Datei nicht gefunden'},{status:404});
  const res=await fetch(url+'/storage/v1/object/authenticated/team-private/'+item.object_path,{headers,cache:'no-store'});
  if(!res.ok)return NextResponse.json({error:'PDF konnte nicht geladen werden'},{status:502});
  const filename=item.original_filename.replace(/[\r\n"\\]/g,'_').slice(0,120);
- return new NextResponse(res.body,{headers:{'Content-Type':'application/pdf','Content-Disposition':'inline; filename="'+filename+'"','Cache-Control':'private, no-store','X-Content-Type-Options':'nosniff'}});
+ return new NextResponse(res.body,{headers:{'Content-Type':['application/pdf','image/jpeg','image/png'].includes(item.media_type)?item.media_type:'application/octet-stream','Content-Disposition':'inline; filename="'+filename+'"','Cache-Control':'private, no-store','X-Content-Type-Options':'nosniff'}});
 }
