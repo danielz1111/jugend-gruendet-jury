@@ -72,7 +72,7 @@ export default function TeamNavigator({teams,members,initialScores}:{teams:Team[
  {progress[team.id]?.own_submitted?progress[team.id].others_average!==null?<>
  <div style={{height:16,background:'#d8e6ef',borderRadius:12,overflow:'hidden'}}><div style={{height:'100%',width:Number(progress[team.id].others_average)*10+'%',background:'#408dab'}}/></div>
  <p><strong>{Number(progress[team.id].others_average).toFixed(2)} / 10</strong></p>
- </>:<p>Noch keine andere vollständige Bewertung abgegeben.</>:<p>Der Vergleich wird nach Abschluss deiner eigenen Bewertung sichtbar.</p>}
+ </>:<p>Noch keine andere vollständige Bewertung abgegeben.</p>:<p>Der Vergleich wird nach Abschluss deiner eigenen Bewertung sichtbar.</p>}
  {progressError[team.id]&&<button type="button" onClick={()=>void refreshProgress(team.id)}>Abgabestand erneut laden</button>}
  </div>
  </div>
