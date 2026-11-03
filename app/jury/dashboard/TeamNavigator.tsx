@@ -173,7 +173,9 @@ export default function TeamNavigator({teams,members,initialScores,isAdmin}:{tea
  const isSlimpower=team.name.toLowerCase().replace(/[^a-z]/g,'')==='slimpower';
  const review=slimpowerReview['ABCDE'.indexOf(expertTab)];
  const profile=teamProfiles.find(p=>p.key===team.name.toLowerCase().replace(/[^a-z]/g,''));
- const evidence=expertEvidence[profile?.key||'']?.[expertTab as 'A'|'B'|'C'|'D'|'E'];
+ const baseEvidence=expertEvidence[profile?.key||'']?.[expertTab as 'A'|'B'|'C'|'D'|'E'];
+ const combinedEvidence=expertEvidence[profile?.key||'']?.E;
+ const evidence=isFour&&expertTab==='D'&&combinedEvidence?([0,1,2,3].map(i=>[baseEvidence?.[i],combinedEvidence?.[i]].filter(Boolean).join(' ')||null) as [string|null,string|null,string|null,string|null]):baseEvidence;
  const profileFields=[profile?.idea,profile?.problem,profile?.solution,profile?.audience,profile?.model];
  const completedFields=profileFields.filter(Boolean).length;
  const productImage=(materials[team.id]||[]).find(m=>m.media_type.startsWith('image/')&&/visualis|produkt/i.test(m.title+' '+m.original_filename));
