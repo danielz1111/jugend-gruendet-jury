@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import {redirect} from 'next/navigation';
 import {getJurySession} from '../../../lib/jury-session';
-import TeamNavigator from './TeamNavigator';
+import PortalHome from './PortalHome';
 export const dynamic='force-dynamic';
 type Team={id:string;name:string;position:number;tagline:string|null;description:string|null};
 type Member={id:string;team_id:string;display_name:string;expert_role:string|null;display_order:number};
@@ -26,5 +26,5 @@ export default async function Dashboard(){
  if(!session)redirect('/jury');
  let teams:Team[]=[];let members:Member[]=[];let scores:Score[]=[];let error=false;
  try{[teams,members,scores]=await Promise.all([getTeams(session.token),getMembers(session.token),getScores(session.token)])}catch{error=true}
- return <main className="demo"><header className="demo-header"><Link href="/">← Startseite</Link><strong>JUGEND GRÜNDET <span> / JURYPORTAL</span></strong><form action="/api/jury/logout" method="post"><button style={{background:'transparent',color:'white',border:'1px solid #c9a66b',padding:'10px 16px',cursor:'pointer'}}>Abmelden</button></form></header><section style={{maxWidth:1200,margin:'0 auto',padding:'48px 24px'}}><span className="demo-overline">GESCHÜTZTER JURYBEREICH · {session.isAdmin?'ADMINISTRATOR':'JURYMITGLIED'}</span><h1 style={{fontSize:'clamp(38px,5vw,58px)',margin:'16px 0'}}>Willkommen, {session.displayName}.</h1><p>Wähle ein Unternehmerteam. Die Navigation ist unabhängig von der späteren zentralen Wettbewerbssteuerung.</p>{error?<div role="alert" className="demo-score"><h2>Verbindung vorübergehend nicht verfügbar</h2><p>Die Teamdaten konnten nicht aus Supabase geladen werden. Bitte später erneut versuchen.</p></div>:<TeamNavigator teams={teams} members={members} initialScores={scores} isAdmin={session.isAdmin}/>}<p style={{fontSize:12,color:'#667480',marginTop:25}}>Teamnamen werden aus Supabase geladen. Mitgliederlisten sind nur für angemeldete Jurymitglieder abrufbar. Teamfotos folgen. Persönliche Notizen und vertrauliche PDF-Unterlagen sind im Jurybereich vorgesehen. Bewertungen werden nur für das jeweilige Jurymitglied gespeichert. Die Sitzung läuft nach spätestens einer Stunde ab.</p></section></main>;
+ return <main className="demo"><header className="demo-header"><Link href="/">← Zur Website</Link><strong>JUGEND GRÜNDET <span> / JURYPORTAL</span></strong><form action="/api/jury/logout" method="post"><button className="jury-logout">Abmelden</button></form></header>{error?<section className="jury-portal"><div role="alert" className="demo-score"><h2>Verbindung vorübergehend nicht verfügbar</h2><p>Die Teamdaten konnten nicht geladen werden. Bitte versuchen Sie es später erneut.</p></div></section>:<PortalHome displayName={session.displayName} teams={teams} members={members} scores={scores} isAdmin={session.isAdmin}/>}</main>;
 }
