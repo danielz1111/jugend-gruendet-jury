@@ -20,6 +20,32 @@ const gradeGuide='1–2: kaum erfüllt · 3–4: eher schwach · 5–6: teilweis
 type Progress={submitted_count:number;total_jurors:number;others_average:number|null;own_submitted:boolean};
 export default function TeamNavigator({teams,members,initialScores}:{teams:Team[];members:Member[];initialScores:Score[]}){
  const [selected,setSelected]=useState(0);
+ const [notes,setNotes]=useState<Record<string,string>>({});
+ const [notesLoaded,setNotesLoaded]=useState<Record<string,boolean>>({});
+ const [notesError,setNotesError]=useState<Record<string,string>>({});
+ const [notesSaving,setNotesSaving]=useState<Record<string,boolean>>({});
+ const noteKey=(teamId:string,memberId:string|null)=>teamId+':'+(memberId||'team');
+ async function loadNotes(teamId:string){
+  try{
+   const response=await fetch('/api/jury/notes?team_id='+encodeURIComponent(teamId),{cache:'no-store'});
+   if(!response.ok)throw new Error('Notizen konnten nicht geladen werden');
+   const rows=await response.json() as Array<{member_id:string|null;content:string}>;
+   setNotes(old=>({...old,...Object.fromEntries(rows.map(n=>[noteKey(teamId,n.member_id),n.content]))}));
+   setNotesLoaded(old=>({...old,[teamId]:true}));
+   setNotesError(old=>({...old,[teamId]:''}));
+  }catch{setNotesError(old=>({...old,[teamId]:'Notizen konnten nicht geladen werden.'}));}
+ }
+ async function saveNote(teamId:string,memberId:string|null){
+  const key=noteKey(teamId,memberId);
+  setNotesSaving(old=>({...old,[key]:true}));
+  setNotesError(old=>({...old,[key]:''}));
+  try{
+   const response=await fetch('/api/jury/notes',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({team_id:teamId,member_id:memberId,content:notes[key]||''})});
+   if(!response.ok)throw new Error('Speichern fehlgeschlagen');
+  }catch{setNotesError(old=>({...old,[key]:'Speichern fehlgeschlagen. Bitte erneut versuchen.'}));}
+  finally{setNotesSaving(old=>({...old,[key]:false}));}
+ }
+
  const [released,setReleased]=useState<Record<string,boolean>>(()=>Object.fromEntries(initialScores.map(s=>[s.team_id,Boolean(s.submitted_at)])));
  const [releasing,setReleasing]=useState(false);
  const [releaseError,setReleaseError]=useState('');
@@ -36,7 +62,7 @@ export default function TeamNavigator({teams,members,initialScores}:{teams:Team[
  const [progress,setProgress]=useState<Record<string,Progress>>({});
  const [progressError,setProgressError]=useState<Record<string,boolean>>({});
  async function refreshProgress(teamId:string){try{const r=await fetch('/api/jury/progress?team_id='+encodeURIComponent(teamId),{cache:'no-store'});if(!r.ok)throw Error('Progress');const p=await r.json() as Progress;setProgress(old=>({...old,[teamId]:p}));setProgressError(old=>({...old,[teamId]:false}));}catch{setProgressError(old=>({...old,[teamId]:true}));}}
- useEffect(()=>{if(teams[selected])void refreshProgress(teams[selected].id);},[selected,teams]);
+ useEffect(()=>{if(teams[selected]){void refreshProgress(teams[selected].id);void loadNotes(teams[selected].id);}},[selected,teams]);
  const [scores,setScores]=useState<Record<string,Record<string,number>>>(()=>Object.fromEntries(initialScores.map(s=>[s.team_id,Object.fromEntries(criteria.filter(c=>s[c.key]!==null).map(c=>[c.key,s[c.key] as number]))])));
  const [status,setStatus]=useState<Record<string,'open'|'saving'|'saved'|'error'>>({});
  const [pending,setPending]=useState<Record<string,number>>({});
@@ -118,6 +144,22 @@ export default function TeamNavigator({teams,members,initialScores}:{teams:Team[
  </>}
  </div>
  </div>
- <div className="demo-notes"><h2>Persönliche Notizen</h2><p>Private Notizen werden im nächsten Schritt ergänzt. Derzeit werden keine Daten erfasst oder gespeichert.</p></div>
+ <div className="demo-notes">
+ <h2>Persönliche Jurynotizen</h2>
+ <p>Nur für dich sichtbar. Diese Notizen fließen nicht in die Punktebewertung ein.</p>
+ {notesError[team.id]&&<p role="alert" style={{color:'#b42318'}}>{notesError[team.id]} <button type="button" onClick={()=>void loadNotes(team.id)}>Erneut laden</button></p>}
+ {!notesLoaded[team.id]?<p>Notizen werden geladen …</p>:<>
+ {[{id:null as string|null,display_name:'Notizen zum gesamten Team'},...teamMembers.map(m=>({id:m.id as string|null,display_name:m.display_name}))].map(person=>{
+ const key=noteKey(team.id,person.id);
+ return <div key={key} style={{marginTop:18}}>
+ <label htmlFor={'note-'+key} style={{display:'block',fontWeight:700,marginBottom:8}}>{person.display_name}</label>
+ <textarea id={'note-'+key} value={notes[key]||''} maxLength={10000} rows={3} onChange={event=>setNotes(old=>({...old,[key]:event.target.value}))} placeholder="Private Beobachtungen festhalten …" style={{width:'100%',padding:12,border:'1px solid #cdd5d9',borderRadius:8,resize:'vertical',font:'inherit'}}/>
+ <div style={{display:'flex',alignItems:'center',gap:12,marginTop:6}}>
+ <button type="button" disabled={notesSaving[key]} onClick={()=>void saveNote(team.id,person.id)} style={{background:'#173d53',color:'white',padding:'8px 14px',borderRadius:6,cursor:'pointer'}}>{notesSaving[key]?'Speichert …':'Notiz speichern'}</button>
+ {notesError[key]&&<span role="alert" style={{color:'#b42318',fontSize:13}}>{notesError[key]}</span>}
+ </div></div>;
+ })}
+ </>}
+ </div>
  </section></div>;
 }
