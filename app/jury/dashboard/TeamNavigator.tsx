@@ -41,6 +41,21 @@ export default function TeamNavigator({teams,members,initialScores,isAdmin}:{tea
  const [materials,setMaterials]=useState<Record<string,Material[]>>({});
  const [materialsError,setMaterialsError]=useState<Record<string,string>>({});
  const [uploading,setUploading]=useState(false);
+ const [zipMessage,setZipMessage]=useState('');
+ async function uploadZip(teamId:string,form:HTMLFormElement){
+  setUploading(true);setZipMessage('');
+  try{
+   const data=new FormData(form);data.set('team_id',teamId);
+   const response=await fetch('/api/jury/materials/zip',{method:'POST',body:data});
+   const result=await response.json() as {error?:string;imported?:number;skipped?:number;errors?:string[]};
+   if(!response.ok)throw new Error(result.error||'ZIP-Import fehlgeschlagen');
+   setZipMessage((result.imported||0)+' Dateien importiert, '+(result.skipped||0)+' bereits vorhanden.'+(result.errors?.length?' Fehler: '+result.errors.join('; '):''));
+   if(!result.errors?.length)form.reset();
+   await loadMaterials(teamId);
+  }catch(e){setZipMessage(e instanceof Error?e.message:'ZIP-Import fehlgeschlagen');}
+  finally{setUploading(false);}
+ }
+
  async function loadMaterials(teamId:string){
   try{
    const response=await fetch('/api/jury/materials?team_id='+encodeURIComponent(teamId),{cache:'no-store'});
@@ -163,6 +178,15 @@ export default function TeamNavigator({teams,members,initialScores,isAdmin}:{tea
  <div style={{display:'flex',flexWrap:'wrap',gap:8,margin:'14px 0'}}>{attachmentSections.filter(x=>!(isFour&&x.id==='E')).map(x=><button key={x.id} type="button" aria-pressed={attachmentTab===x.id} onClick={()=>setAttachmentTab(x.id)} style={{padding:'9px 12px',borderRadius:7,background:attachmentTab===x.id?'#173d53':'#eef1f2',color:attachmentTab===x.id?'white':'#173d53'}}>{isFour&&x.id==='D'?'D/E · Umsetzung & Organisation':x.label}</button>)}</div>
  {(()=>{const items=(materials[team.id]||[]).filter(m=>m.media_type!=='application/pdf'&&!/visualis|produkt|werbung|marketing/i.test(m.title+' '+m.original_filename)&&(attachmentTab==='all'||attachmentCategory(m)===attachmentTab||(isFour&&attachmentTab==='D'&&attachmentCategory(m)==='E')));
  return items.length?<div style={{display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(190px,1fr))',gap:14}}>{items.map(m=><a key={m.id} href={'/api/jury/materials/'+m.id} target="_blank" rel="noopener noreferrer" style={{display:'block',border:'1px solid #d8d4cd',borderRadius:8,overflow:'hidden',color:'inherit',textDecoration:'none'}}>{m.media_type.startsWith('image/')&&<img src={'/api/jury/materials/'+m.id} alt={m.title} loading="lazy" style={{width:'100%',height:170,objectFit:'contain',background:'#f5f3ee'}}/>}<span style={{display:'block',padding:10,fontWeight:600,fontSize:13}}>{m.title}</span></a>)}</div>:<p>{materials[team.id]===undefined?'Anlagen werden geladen …':'In dieser Kategorie sind noch keine Anlagen hinterlegt.'}</p>})()}
+ </div>}
+ {isAdmin&&mainTab==='business'&&<div className="demo-score" style={{marginTop:18}}>
+ <h2>Teamunterlagen als ZIP importieren · Administration</h2>
+ <p>Eine ZIP-Datei mit Businessplan-PDF, Produktbildern, Werbung und weiteren Anlagen auswählen. Die Dateien werden automatisch dem aktuell ausgewählten Team zugeordnet. Bereits vorhandene Dateinamen werden übersprungen.</p>
+ <form onSubmit={event=>{event.preventDefault();void uploadZip(team.id,event.currentTarget)}} style={{display:'grid',gap:12}}>
+ <input type="file" name="file" accept=".zip,application/zip,application/x-zip-compressed" required aria-label="ZIP-Datei auswählen"/>
+ <button type="submit" disabled={uploading} style={{padding:'12px 16px',background:'#173d53',color:'white',borderRadius:8}}>{uploading?'ZIP wird importiert …':'ZIP für '+team.name+' importieren'}</button>
+ </form>
+ {zipMessage&&<p role="status">{zipMessage}</p>}
  </div>}
  {mainTab==='pitch'&&<>
  <div className="demo-score" style={{marginTop:24}}><div className="demo-score-heading"><h2>Teammitglieder und Expertenbereiche</h2><span>NUR FÜR DIE JURY</span></div><div style={{background:'#f5f3ee',border:'1px dashed #d8d4cd',padding:'38px 16px',textAlign:'center',margin:'18px 0 22px'}}><Users size={28} style={{margin:'0 auto 8px',color:'#a88b5f'}}/><p style={{fontSize:13,margin:0}}>Gemeinsames Teamfoto wird nach Einwilligungsprüfung hochgeladen.</p></div>{teamMembers.length?<div style={{display:'grid',gap:10}}>{teamMembers.map(m=><div key={m.id} style={{display:'flex',justifyContent:'space-between',gap:16,padding:'13px 0',borderBottom:'1px solid #e7e4df'}}><strong>{m.display_name}</strong><span style={{fontSize:13,color:'#667480',textAlign:'right'}}>{m.expert_role||'Expertenbereich noch nicht eingetragen'}</span></div>)}</div>:<p>Für dieses Team wurden noch keine Mitglieder hinterlegt. Die bestätigten Zuordnungen werden geschützt ergänzt.</p>}</div>
