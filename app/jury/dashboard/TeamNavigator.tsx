@@ -17,7 +17,7 @@ const hints:Record<string,string>={
  questions_reasoning_score:'Werden Aussagen schlüssig begründet und Einwände überzeugend aufgegriffen?'
 };
 const gradeGuide='1–2: kaum erfüllt · 3–4: eher schwach · 5–6: teilweise erfüllt · 7–8: gut erfüllt · 9–10: hervorragend erfüllt';
-type Material={id:string;title:string;original_filename:string;created_at:string};
+type Material={id:string;title:string;original_filename:string;media_type:string;created_at:string};
 type Progress={submitted_count:number;total_jurors:number;others_average:number|null;own_submitted:boolean};
 export default function TeamNavigator({teams,members,initialScores,isAdmin}:{teams:Team[];members:Member[];initialScores:Score[];isAdmin:boolean}){
  const [selected,setSelected]=useState(0);
@@ -119,13 +119,20 @@ export default function TeamNavigator({teams,members,initialScores,isAdmin}:{tea
  <h2>Vertrauliche Businesspläne</h2>
  <p>Die PDF-Dateien sind nur für angemeldete Jurymitglieder zugänglich.</p>
  {materialsError[team.id]&&<p role="alert" style={{color:'#b42318'}}>{materialsError[team.id]}</p>}
- {materials[team.id]===undefined?<p>Unterlagen werden geladen …</p>:materials[team.id].length===0?<p>Für dieses Team ist noch kein Businessplan hinterlegt.</p>:<ul>{materials[team.id].map(m=><li key={m.id} style={{margin:'10px 0'}}><a href={'/api/jury/materials/'+m.id} target="_blank" rel="noopener noreferrer">{m.title} · PDF öffnen</a></li>)}</ul>}
+ {materials[team.id]===undefined?<p>Unterlagen werden geladen …</p>:materials[team.id].length===0?<p>Für dieses Team sind noch keine Unterlagen hinterlegt.</p>:<>
+ <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(190px,1fr))',gap:14,margin:'18px 0'}}>
+ {materials[team.id].filter(m=>m.media_type.startsWith('image/')).map(m=><a key={m.id} href={'/api/jury/materials/'+m.id} target="_blank" rel="noopener noreferrer" style={{display:'block',border:'1px solid #d8d4cd',borderRadius:8,overflow:'hidden',textDecoration:'none',color:'inherit'}}>
+ <img src={'/api/jury/materials/'+m.id} alt={m.title} loading="lazy" style={{width:'100%',height:170,objectFit:'contain',background:'#f5f3ee'}}/>
+ <span style={{display:'block',padding:10,fontSize:13,fontWeight:600}}>{m.title}</span></a>)}
+ </div>
+ <ul>{materials[team.id].filter(m=>m.media_type==='application/pdf').map(m=><li key={m.id} style={{margin:'10px 0'}}><a href={'/api/jury/materials/'+m.id} target="_blank" rel="noopener noreferrer">{m.title} · PDF öffnen</a></li>)}</ul>
+ </>}
  {isAdmin&&<form onSubmit={event=>{event.preventDefault();void uploadMaterial(team.id,event.currentTarget)}} style={{marginTop:18,padding:16,background:'#f7f8f9',borderRadius:8}}>
- <strong>PDF hochladen (Administration)</strong>
+ <strong>Businessplan oder Bildanlage hochladen (Administration)</strong>
  <div style={{display:'grid',gap:10,marginTop:12}}>
  <input name="title" type="text" required maxLength={120} defaultValue="Businessplan" aria-label="Dokumenttitel" style={{padding:10}}/>
- <input name="file" type="file" required accept=".pdf,application/pdf" aria-label="Businessplan als PDF auswählen"/>
- <button type="submit" disabled={uploading} style={{padding:'10px 16px',background:'#173d53',color:'white',borderRadius:6}}>{uploading?'Lädt hoch …':'PDF sicher hochladen'}</button>
+ <input name="file" type="file" required accept=".pdf,.jpg,.jpeg,.png,application/pdf,image/jpeg,image/png" aria-label="Businessplan als PDF auswählen"/>
+ <button type="submit" disabled={uploading} style={{padding:'10px 16px',background:'#173d53',color:'white',borderRadius:6}}>{uploading?'Lädt hoch …':'Datei sicher hochladen'}</button>
  </div></form>}
  </div>
  <div className="demo-score">
