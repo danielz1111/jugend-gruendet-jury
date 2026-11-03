@@ -191,21 +191,21 @@ export default function TeamNavigator({teams,members,initialScores,isAdmin}:{tea
  <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(210px,1fr))',gap:14}}>
  {(materials[team.id]||[]).filter(m=>m.media_type.startsWith('image/')&&/visualis|produkt|werbung|marketing/i.test(m.title+' '+m.original_filename)).map(m=><button key={m.id} type="button" onClick={()=>setEnlargedImage(m)} style={{padding:0,textAlign:'left',border:'1px solid #d8d4cd',borderRadius:8,overflow:'hidden',background:'white',cursor:'zoom-in'}}><img src={'/api/jury/materials/'+m.id} alt={m.title} loading="lazy" style={{width:'100%',height:220,objectFit:'contain',background:'#f5f3ee'}}/><span style={{display:'block',padding:10,fontWeight:600}}>{m.title} · Vergrößern</span></button>)}
  </div>
- <h2>Unternehmensübersicht</h2>
- <p>{team.description||'Eine geprüfte Zusammenfassung aus dem eingereichten Businessplan wird ergänzt.'}</p>
+ <h2>Geschäftsidee</h2>
+ <p>{profile?.idea||missing}</p>
  <h3 style={{marginTop:20}}>Expertenbereiche</h3>
- <p>Alle Teams haben dieselbe Gliederung. Die Inhalte werden aus dem Original-Businessplan übernommen.</p>
+ <p>Die fachliche Einordnung erfolgt ausschließlich anhand eingereichter Angaben. Fehlende Inhalte bleiben ausdrücklich unbewertet.</p>
  <div style={{display:'flex',flexWrap:'wrap',gap:8,margin:'14px 0'}}>{expertSections.filter(x=>!(isFour&&x.id==='E')).map(x=><button key={x.id} type="button" aria-pressed={expertTab===x.id} onClick={()=>setExpertTab(x.id)} style={{padding:'10px 12px',borderRadius:7,background:expertTab===x.id?'#173d53':'#eef1f2',color:expertTab===x.id?'white':'#173d53'}}>{isFour&&x.id==='D'?'D/E · Umsetzung & Organisation':x.label}</button>)}</div>
  <div style={{display:'grid',gridTemplateColumns:'minmax(0,1fr) minmax(0,1fr)',gap:12,marginTop:16}}>
  <div style={{border:'1px solid #d8d4cd',borderRadius:9,padding:15,background:'#fff'}}>
  <h3>{isFour&&expertTab==='D'?'D/E · Umsetzung und Organisation':expertSections.find(x=>x.id===expertTab)?.label}</h3>
- <p>{isSlimpower?review[0]:'Inhaltliche Zusammenfassung folgt nach Prüfung des Businessplans.'}</p>
- {isSlimpower&&<p style={{color:'#a16a16',fontSize:20}} aria-label={review[4]+' von 5 Sternen'}>{'★'.repeat(review[4])}{'☆'.repeat(5-review[4])} <span style={{fontSize:12,color:'#667480'}}>Vorläufig · {review[4]}/5</span></p>}
+ <p>{isSlimpower?review[0]:missing}</p>
+ {isSlimpower?<p style={{color:'#a16a16',fontSize:20}} aria-label={review[4]+' von 5 Sternen'}>{[1,2,3,4,5].map((n)=><span className="jury-star" key={n} style={{animationDelay:(n*.12)+'s'}}>{n<=review[4]?'★':'☆'}</span>)} <span style={{fontSize:12,color:'#667480'}}>Vorläufig · {review[4]}/5</span></p>:<p style={{color:'#687b86',fontSize:13}}>☆☆☆☆☆ · Nicht bewertet – noch keine geprüfte Einschätzung</p>}
  </div>
  <div style={{display:'grid',gap:10}}>
- <div style={{background:'#eff9f2',border:'1px solid #a8d5ba',padding:14,borderRadius:9}}><strong style={{color:'#17633c'}}>Besonders stark</strong><p>{isSlimpower?review[1]:'Wird nach Prüfung ergänzt.'}</p></div>
- <div style={{background:'#fff7e9',border:'1px solid #e6c58c',padding:14,borderRadius:9}}><strong style={{color:'#875513'}}>Schwachstellen und offene Fragen</strong><p>{isSlimpower?review[2]:'Wird nach Prüfung ergänzt.'}</p></div>
- <div style={{background:'#f0f6fa',border:'1px solid #cddce5',padding:14,borderRadius:9}}><strong>Mögliche Juryfrage</strong><p>{isSlimpower?review[3]:'Wird nach Prüfung ergänzt.'}</p></div>
+ <div style={{background:'#eff9f2',border:'1px solid #a8d5ba',padding:14,borderRadius:9}}><strong style={{color:'#17633c'}}>Besonders stark</strong><p>{isSlimpower?review[1]:'Noch nicht beurteilbar – '+missing}</p></div>
+ <div style={{background:'#fff7e9',border:'1px solid #e6c58c',padding:14,borderRadius:9}}><strong style={{color:'#875513'}}>Schwachstellen und offene Fragen</strong><p>{isSlimpower?review[2]:'Noch nicht beurteilbar – '+missing}</p></div>
+ <div style={{background:'#f0f6fa',border:'1px solid #cddce5',padding:14,borderRadius:9}}><strong>Mögliche Juryfrage</strong><p>{isSlimpower?review[3]:'Noch nicht beurteilbar – '+missing}</p></div>
  </div></div>
  <h3 style={{marginTop:24}}>Vollständiger Businessplan</h3>
  {(materials[team.id]||[]).filter(m=>m.media_type==='application/pdf').length?<ul>{(materials[team.id]||[]).filter(m=>m.media_type==='application/pdf').map(m=><li key={m.id}><a href={'/api/jury/materials/'+m.id} target="_blank" rel="noopener noreferrer">{m.title} · Original-PDF öffnen</a></li>)}</ul>:<p>Der vollständige Businessplan wurde noch nicht hinterlegt.</p>}
