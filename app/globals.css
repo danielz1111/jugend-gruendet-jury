@@ -136,3 +136,349 @@
 @media(max-width:1050px){.site-landheim{grid-template-columns:1fr!important}.site-landheim-media{min-height:350px}.site-team-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.jury-intro-hero{grid-template-columns:1fr}.jury-intro-hero-image{min-height:275px}.jury-welcome-upgrade{grid-template-columns:1fr!important}.jury-welcome-visual{min-height:300px}.jury-concept-juror{grid-template-columns:1fr}.jury-home-tile{min-height:290px}}
 @media(max-width:700px){.hero{min-height:680px}.hero-content h1{font-size:clamp(42px,11vw,64px)}.site-learning{padding:58px 21px}.site-learning-grid,.site-team-grid,.jury-concept-phase-grid{grid-template-columns:1fr}.site-learning-grid article{min-height:0;padding:25px}.site-landheim-copy{padding:35px 22px}.site-landheim-media{min-height:280px}.site-team-card-art{height:130px}.jury-welcome-copy{padding:32px 23px}.jury-welcome-visual{min-height:240px}.jury-welcome-actions button{width:100%}.jury-welcome-upgrade h1{font-size:42px}.jury-welcome-intro{font-size:30px}.jury-welcome-name{font-size:39px}.jury-concept-phases{padding:25px}.jury-concept-juror{margin:35px 0}.jury-intro-hero{gap:20px}.jury-assessment-lead{padding:20px}.site-text-link{font-size:12px}}
 @media(prefers-reduced-motion:reduce){.jury-welcome-name{animation:none}.site-learning-grid article,.site-team-card,.jury-welcome-actions button{transition:none!important}}
+
+
+/* ================================================================
+   LANDHEIM AMMERSEE — editorial public homepage (preview)
+   Unique lm-* namespace: all protected jury portal styles remain intact.
+   ================================================================ */
+.lm-page{
+  --lm-forest:#18372f;--lm-deep:#0f2924;--lm-dark:#10251f;
+  --lm-cream:#f7f5ef;--lm-paper:#fffefa;--lm-sand:#eae6da;
+  --lm-gold:#c7a778;--lm-sage:#b4c4ad;--lm-muted:#617268;
+  background:var(--lm-cream);color:var(--lm-forest);
+  overflow:hidden;font-family:'DM Sans',sans-serif;font-size:15px;
+}
+.lm-page *{box-sizing:border-box}
+.lm-page button{font:inherit}
+.lm-page a,.lm-page button{ -webkit-tap-highlight-color:transparent }
+.lm-page :where(a,button,input):focus-visible{outline:3px solid var(--lm-gold);outline-offset:4px}
+.lm-page h1,.lm-page h2,.lm-page h3{font-family:'Playfair Display',Georgia,serif;font-weight:400;letter-spacing:-.055em}
+.lm-page h1,.lm-page h2{white-space:normal}
+.lm-page p{line-height:1.76}
+.lm-container{width:min(100% - 104px,1340px);margin:0 auto}
+.lm-utility{background:#112820;color:#e8ede6;letter-spacing:.165em;font-size:9px;font-weight:700}
+.lm-utility-inner{min-height:35px;display:flex;justify-content:space-between;align-items:center;gap:16px}
+.lm-utility-dot{color:#cbb28c;margin:0 5px}
+.lm-header{position:sticky;top:0;z-index:80;background:#faf9f4;border-bottom:1px solid #e3e5d9;box-shadow:0 8px 22px #0e251b12}
+.lm-header-inner{min-height:95px;display:flex;align-items:center;justify-content:space-between;gap:36px}
+.lm-wordmark{display:flex;align-items:center;gap:16px;flex:0 0 auto}
+.lm-emblem{width:56px;height:56px;background:#203c31;border-radius:2px;position:relative;display:grid;place-items:center;color:#e7d5b4;overflow:hidden}
+.lm-emblem:before{content:'';position:absolute;inset:5px;border:1px solid #a3b3a080}
+.lm-emblem span{font:40px Georgia,serif;line-height:1;transform:translateY(-1px)}
+.lm-emblem i{position:absolute;width:33px;height:1px;bottom:12px;background:#d4b88c;transform:rotate(-26deg)}
+.lm-wordmark-type strong,.lm-wordmark-type small{display:block}
+.lm-wordmark-type strong{font-size:14px;letter-spacing:.125em;line-height:1.3;white-space:nowrap}
+.lm-wordmark-type small{font-size:10px;font-weight:600;letter-spacing:.13em;color:#849289;margin-top:6px}
+.lm-nav{display:flex;gap:31px;align-items:center}
+.lm-nav>a{font-size:12px;font-weight:700;color:#395247;transition:color .2s}
+.lm-nav>a:hover{color:#ab7946}
+.lm-nav>a.lm-nav-jury{display:inline-flex;align-items:center;gap:12px;white-space:nowrap;background:#203e33;color:#fff;padding:16px 18px;transition:background .2s,transform .2s}
+.lm-nav-jury:hover{background:#365b46!important;color:#fff!important;transform:translateY(-1px)}
+.lm-menu-button{display:none;border:1px solid #d8ded2;background:transparent;color:#1d3d30;padding:11px;align-items:center;justify-content:center}
+.lm-hero{position:relative;min-height:745px;color:white;isolation:isolate}
+.lm-hero-photo{position:absolute;inset:0;background-image:url('https://www.landheim-ammersee.de/sites/default/files/media/images/landheim-ammersee-og-image-ueber-das-landheim-luftbild.jpg');background-size:cover;background-position:center 46%;z-index:-3}
+.lm-hero-shade{position:absolute;inset:0;background:linear-gradient(90deg,#10291ff2 0%,#16372add 32%,#163b2b90 58%,#0f241b42 100%),linear-gradient(0deg,#10281de0,transparent 37%);z-index:-2}
+.lm-hero-rule{position:absolute;width:1px;height:120px;left:calc(50% - 650px);top:0;background:#d4b68f8c}
+.lm-hero-inner{display:grid;grid-template-columns:minmax(0,1fr) 212px;gap:60px;align-items:end;min-height:745px;padding-top:104px;padding-bottom:139px}
+.lm-hero-copy{max-width:925px}
+.lm-kicker{display:flex;align-items:center;gap:14px;font-size:10px;letter-spacing:.23em;font-weight:700}
+.lm-kicker-light{color:#e1cfaf}
+.lm-kicker-line{display:block;width:40px;height:1px;background:#cfb081;flex:none}
+.lm-hero h1{font-size:clamp(62px,7.4vw,121px);line-height:1.045;margin:35px 0 25px;letter-spacing:-.065em;text-wrap:balance;max-width:1000px}
+.lm-hero h1 em{color:#dfcca8;font-weight:400;white-space:nowrap}
+.lm-hero-lead{max-width:540px;font-size:clamp(17px,1.65vw,21px);font-weight:400;color:#f0f1e9;line-height:1.7!important}
+.lm-hero-actions{display:flex;align-items:center;flex-wrap:wrap;gap:31px;margin-top:35px}
+.lm-primary-cta{background:#e1c89a;color:#17332a;padding:19px 23px;display:inline-flex;align-items:center;justify-content:space-between;gap:31px;font-size:12px;letter-spacing:.02em;font-weight:700;transition:background .22s,transform .22s;box-shadow:0 14px 32px #091e1959}
+.lm-primary-cta:hover{background:#f5dfb6;transform:translateY(-3px)}
+.lm-quiet-cta{display:inline-flex;align-items:center;gap:12px;font-size:13px;font-weight:700;color:#fff;border-bottom:1px solid #dfcca8;padding:10px 0;transition:color .2s}
+.lm-quiet-cta:hover{color:#e1c89a}
+.lm-hero-seal{border:1px solid #fff6;padding:22px 23px 24px;background:#142e28a1;backdrop-filter:blur(15px);box-shadow:0 20px 55px #071d1880;align-self:end;display:flex;flex-direction:column}
+.lm-hero-seal-overline{font-size:9px;letter-spacing:.18em;color:#e6d4b7;white-space:nowrap}
+.lm-hero-seal strong{font:400 116px/.98 'Playfair Display',Georgia,serif;color:#fff6e9;letter-spacing:-.09em;margin:10px 0 12px}
+.lm-hero-seal-caption{font-size:10px;letter-spacing:.12em;line-height:1.8;font-weight:700}
+.lm-seal-divider{height:1px;background:#fff4;margin:19px 0 14px}
+.lm-seal-date{font-size:11px;font-weight:700;letter-spacing:.09em;color:#e2d2b8}
+.lm-hero-bottom{position:absolute;bottom:0;left:0;right:0;border-top:1px solid #ffffff59;background:#10302465}
+.lm-hero-bottom-inner{height:69px;display:flex;align-items:center;justify-content:space-between;gap:20px;font-size:9px;letter-spacing:.16em;font-weight:700;color:#e6e5db}
+.lm-hero-bottom-inner>a{display:flex;align-items:center;gap:12px}
+.lm-hero-bottom-inner>a:hover{color:#f0ce95}
+.lm-hero-bottom-divider{display:inline-block;width:25px;height:1px;background:#d0ba97;vertical-align:middle;margin:0 14px}
+.lm-photo-credit{font-weight:400;opacity:.7;text-transform:none;letter-spacing:.04em}
+.lm-ribbon{background:#e8e7dc;border-bottom:1px solid #d6dbcd}
+.lm-ribbon-grid{display:grid;grid-template-columns:repeat(3,1fr) 1.23fr;align-items:center;min-height:120px}
+.lm-ribbon-grid>div{padding:16px 22px 16px 0;display:flex;align-items:center;gap:17px;border-right:1px solid #c8d0c3}
+.lm-ribbon-grid>div:not(:first-child){padding-left:26px}
+.lm-ribbon-grid strong{font:400 clamp(37px,4vw,51px) 'Playfair Display',Georgia,serif;letter-spacing:-.06em;line-height:1}
+.lm-ribbon-grid div span{max-width:114px;font-size:9px;font-weight:700;line-height:1.7;letter-spacing:.1em;color:#526458}
+.lm-ribbon-grid>a{margin-left:auto;display:flex;align-items:center;gap:10px;color:#2a5441;font-size:11px;font-weight:700;letter-spacing:.03em}
+.lm-ribbon-grid>a:hover{color:#a9804c}
+.lm-section{padding:124px 0 138px}
+.lm-section-index{display:flex;align-items:center;gap:13px;font-size:10px;font-weight:700;letter-spacing:.2em;color:#6d7c6c}
+.lm-section-index>span:first-child{font-family:Georgia,serif;color:#a98152;font-size:18px;letter-spacing:0}
+.lm-section-index>span:last-child{padding-left:15px;border-left:1px solid #a8b4a8}
+.lm-index-light{color:#c9d6c7}
+.lm-index-light>span:first-child{color:#e1c89a}
+.lm-index-light>span:last-child{border-color:#bccabd80}
+.lm-intro{background:#fffefa}
+.lm-intro-layout{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,.93fr);gap:12%;align-items:center}
+.lm-intro h2{font-size:clamp(76px,9vw,141px);line-height:.97;margin:42px 0 29px;letter-spacing:-.075em}
+.lm-intro h2 em{color:#8b9e86}
+.lm-handwritten{font:italic 25px 'Playfair Display',Georgia,serif;color:#8b806a;transform:rotate(-3deg);margin-left:9px}
+.lm-intro-body{padding-top:20px}
+.lm-accent-bar{width:55px;height:4px;background:#b2bfa8;margin-bottom:30px}
+.lm-intro-body p{font-size:15px;color:#607169;margin:0 0 18px}
+.lm-intro-body .lm-intro-lead{font:400 clamp(24px,2.5vw,34px)/1.42 'Playfair Display',Georgia,serif;color:#18362d;margin-bottom:25px}
+.lm-intro-body strong{color:#244735}
+.lm-text-cta{margin-top:16px;color:#254c3a;display:inline-flex;align-items:center;gap:17px;font-size:12px;font-weight:700;padding-bottom:9px;border-bottom:1px solid #b39d7b;transition:gap .2s,color .2s}
+.lm-text-cta:hover{gap:24px;color:#9d764a}
+.lm-values{background:#e9ece3;border-top:1px solid #dbe0d4;border-bottom:1px solid #dbe0d4}
+.lm-values-grid{display:grid;grid-template-columns:repeat(3,1fr)}
+.lm-values-grid>div{padding:53px 42px 58px;border-right:1px solid #c6d0c1}
+.lm-values-grid>div:first-child{padding-left:0}
+.lm-values-grid>div:last-child{border-right:0}
+.lm-value-number{font-size:11px;letter-spacing:.13em;color:#9e845e;font-weight:700}
+.lm-values h3{font-size:clamp(35px,3.5vw,51px);margin:13px 0 8px;color:#264537}
+.lm-values p{font-size:13px;max-width:290px;color:#66776c;margin:0;line-height:1.7}
+.lm-place{position:relative;min-height:675px;background:#233e34;display:flex;align-items:center;justify-content:flex-end}
+.lm-place-image{position:absolute;inset:0;background-image:linear-gradient(90deg,#10251c20,#10251c99),url('https://www.landheim-ammersee.de/sites/default/files/styles/image_4_3__560_420/public/media/images/landheim-ammersee-ueber-das-landheim-buchenhaueser-sp-jaist-2068.jpg?h=a2bbf642&itok=6GbefgxL');background-position:center 54%;background-size:cover}
+.lm-place-panel{position:relative;z-index:1;width:min(47%,620px);margin:70px max(6vw,calc((100vw - 1340px)/2)) 70px 0;padding:57px clamp(36px,4.2vw,73px);background:#f8f6ed;box-shadow:0 28px 90px #0c201d45}
+.lm-place-panel:before{position:absolute;content:'';left:0;top:0;bottom:0;width:5px;background:#b7c5a9}
+.lm-small-label{font-size:10px;font-weight:700;letter-spacing:.2em;color:#899682}
+.lm-place-panel h2{font-size:clamp(38px,3.6vw,57px);line-height:1.14;margin:27px 0}
+.lm-place-panel h2 em{color:#819681}
+.lm-place-panel p{color:#53665b;font-size:14px;line-height:1.85}
+.lm-place-panel>a{display:inline-flex;align-items:center;gap:18px;border-bottom:1px solid #b1a080;padding:10px 0;color:#234636;font-size:12px;font-weight:700;margin-top:17px}
+.lm-place-folio{position:absolute;left:50px;bottom:31px;font-size:10px;letter-spacing:.15em;color:#fff;text-shadow:0 2px 10px #0007;font-weight:700}
+.lm-process{background:#f7f5ef}
+.lm-heading-split{display:grid;grid-template-columns:minmax(0,1.6fr) minmax(260px,.62fr);align-items:end;gap:45px}
+.lm-section-heading h2{font-size:clamp(51px,5.6vw,83px);line-height:1.11;margin:33px 0 0}
+.lm-section-heading h2 em{color:#82947c}
+.lm-section-heading>p{margin:0 0 9px;color:#67766b;font-size:15px;line-height:1.84}
+.lm-process-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px;margin:53px 0 28px}
+.lm-process-card{background:#fffefa;border:1px solid #e4e5d9;min-height:365px;display:flex;flex-direction:column;padding:33px 34px 29px;transition:transform .24s,box-shadow .24s,border-color .24s}
+.lm-process-card:hover{transform:translateY(-6px);border-color:#a3b29d;box-shadow:0 18px 46px #132c2114}
+.lm-process-top{display:flex;justify-content:space-between;align-items:center;color:#96a994;margin-bottom:51px}
+.lm-process-top>span{font:400 43px 'Playfair Display',Georgia,serif;color:#c1cab7;letter-spacing:-.07em}
+.lm-process-card>small{letter-spacing:.17em;font-size:10px;font-weight:700;color:#a38b67}
+.lm-process-card h3{font-size:clamp(29px,3vw,42px);line-height:1.2;margin:12px 0 12px}
+.lm-process-card p{font-size:13px;color:#697a6e;line-height:1.82;margin:0}
+.lm-process-footer{margin-top:auto;padding-top:29px;color:#a88f6b}
+.lm-event{position:relative;background:#18382e;overflow:hidden;color:#fff;padding:117px 0 131px;isolation:isolate}
+.lm-event:before{content:'';position:absolute;inset:0;z-index:-1;background:radial-gradient(ellipse at 4% 5%,#5f785040,transparent 43%),repeating-linear-gradient(125deg,transparent 0 72px,#ffffff04 73px,#ffffff04 74px,transparent 75px 145px)}
+.lm-event-inner{position:relative;z-index:2;display:grid;grid-template-columns:minmax(0,.85fr) minmax(0,1.1fr);gap:12%;align-items:center}
+.lm-event-date{display:flex;align-items:center;gap:29px;margin:29px 0 10px}
+.lm-event-date strong{font:400 clamp(150px,17vw,254px)/.92 'Playfair Display',Georgia,serif;letter-spacing:-.09em;color:#e3d0ab}
+.lm-event-date span{font-size:clamp(18px,2vw,25px);font-weight:700;letter-spacing:.13em;line-height:1.8;color:#dfd8c3}
+.lm-event-date-line{height:1px;background:#d3c8ab8a;width:73%;margin-top:31px}
+.lm-event-left>p{font-size:11px;letter-spacing:.15em;font-weight:700;color:#cbd7cd;margin-top:23px}
+.lm-event-left>p span{color:#cfb887;margin:0 8px}
+.lm-event-right .lm-kicker{font-size:10px}
+.lm-event-right h2{font-size:clamp(49px,5.4vw,82px);line-height:1.1;margin:31px 0}
+.lm-event-right h2 em{color:#dec399}
+.lm-event-right>p{max-width:530px;color:#d5dfd7;font-size:15px;line-height:1.9}
+.lm-event-facts{border-top:1px solid #e0ead440;margin-top:31px;display:flex;flex-wrap:wrap;gap:40px;padding-top:25px}
+.lm-event-facts>div{display:flex;gap:12px;align-items:flex-start;font-size:13px;font-weight:700}
+.lm-event-facts svg{color:#d9bd8d;flex:none}
+.lm-event-facts small{display:block;letter-spacing:.18em;font-size:9px;color:#aebfac;margin-bottom:7px}
+.lm-event-watermark{position:absolute;right:-15px;bottom:-130px;font-size:clamp(180px,28vw,430px);font-weight:700;letter-spacing:-.12em;color:#ffffff07;line-height:1;pointer-events:none}
+.lm-teams{background:#fffefa}
+.lm-team-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:17px;margin-top:51px}
+.lm-team-card{position:relative;background:#f8f8f3;border:1px solid #e0e7dd;min-height:315px;overflow:hidden;display:flex;flex-direction:column;transition:transform .22s,box-shadow .22s}
+.lm-team-card:hover{transform:translateY(-5px);box-shadow:0 14px 40px #19372b17}
+.lm-team-card-number{position:absolute;top:24px;left:27px;color:#47624d;font-size:11px;letter-spacing:.1em;font-weight:700;z-index:2}
+.lm-team-card-art{height:139px;position:relative;overflow:hidden;background:linear-gradient(118deg,#c4d1bd,#e8ebe2)}
+.lm-team-card-art:before,.lm-team-card-art:after{content:'';position:absolute;border:1px solid #ffffffa0;transform:rotate(38deg)}
+.lm-team-card-art:before{width:245px;height:245px;right:3%;top:-142px;border-radius:50%;background:#ffffff36}
+.lm-team-card-art:after{width:145px;height:145px;right:29%;top:-70px;border-radius:50%;background:#1f60401b}
+.lm-team-card-art span{position:absolute;right:35px;top:-60px;font:400 195px 'Playfair Display',Georgia,serif;color:#ffffffa6;letter-spacing:-.12em;z-index:1}
+.lm-team-card:nth-child(3n + 2) .lm-team-card-art{background:linear-gradient(118deg,#d8c8ac,#eee4d5)}
+.lm-team-card:nth-child(3n + 3) .lm-team-card-art{background:linear-gradient(118deg,#b5c7bd,#dfe9e3)}
+.lm-team-card-bottom{padding:23px 27px 28px;flex:1}
+.lm-team-card-bottom>span{font-size:9px;font-weight:700;color:#9a896d;letter-spacing:.16em}
+.lm-team-card h3{margin:11px 0 7px;font-size:clamp(27px,2.5vw,36px);line-height:1.12}
+.lm-team-card p{font-size:12px;color:#7d897f;margin:7px 0 0}
+.lm-teams-note{display:flex;align-items:center;gap:14px;background:#eef2e9;border-left:3px solid #a4b59f;padding:20px 23px;margin-top:29px;color:#53685a;font-size:13px}
+.lm-teams-note svg{flex:none;color:#758f76}
+.lm-manifesto{background:#dfe8da;padding:100px 0 102px;text-align:center}
+.lm-manifesto span{font-size:10px;font-weight:700;letter-spacing:.23em;color:#69836b}
+.lm-manifesto p{font:400 clamp(45px,5.2vw,83px)/1.22 'Playfair Display',Georgia,serif;letter-spacing:-.045em;color:#1e4131;margin:27px 0 28px}
+.lm-manifesto em{color:#778b73}
+.lm-manifesto-line{height:2px;width:74px;background:#b99f73;margin:auto}
+.lm-jury{background:#112b26;color:#fff}
+.lm-jury-layout{display:grid;grid-template-columns:minmax(0,1fr) minmax(330px,.83fr);gap:11%;align-items:center}
+.lm-jury-symbol{height:70px;width:70px;display:grid;place-items:center;border:1px solid #d0b88b6e;color:#e3cb9c;margin:58px 0 26px}
+.lm-jury-copy h2{font-size:clamp(52px,5.2vw,78px);line-height:1.13;margin:0}
+.lm-jury-copy h2 em{color:#d7bc8a}
+.lm-jury-copy>p{max-width:470px;color:#cfddd0;font-size:15px;line-height:1.94;margin:31px 0}
+.lm-jury-perks{border-top:1px solid #d5e4d33a;padding-top:24px;display:flex;gap:17px;flex-wrap:wrap}
+.lm-jury-perks span{font-size:10px;color:#bfcdbb;letter-spacing:.06em;font-weight:700}
+.lm-login-panel{background:#fffefa;box-shadow:0 24px 78px #061b156e;color:#18362a;padding:clamp(34px,4vw,59px)}
+.lm-login-overline{font-size:10px;color:#b18b5d;letter-spacing:.18em;font-weight:700}
+.lm-login-panel h3{font-size:clamp(47px,4.5vw,67px);line-height:1.08;margin:25px 0 17px}
+.lm-login-panel h3 em{color:#859a80}
+.lm-login-panel>p{font-size:13px;color:#67786a;margin:0 0 32px;line-height:1.75}
+.lm-login-panel form{display:grid;gap:10px}
+.lm-login-panel label{font-size:10px;letter-spacing:.14em;font-weight:700;color:#637869;margin-top:10px}
+.lm-login-panel input{display:block;background:#f7f9f4;color:#1b3b2b;padding:17px 15px;border:1px solid #d3dfd1;width:100%;border-radius:0;font-size:14px;outline-offset:2px}
+.lm-login-panel input::placeholder{color:#9cab9b}
+.lm-login-panel input:focus{border-color:#648268;background:#fff}
+.lm-login-panel form button{width:100%;background:#284b39;color:#fff;display:flex;justify-content:space-between;align-items:center;gap:14px;padding:19px 20px;margin-top:17px;border:none;border-radius:0;cursor:pointer;font-weight:700;font-size:13px;transition:background .2s,transform .2s}
+.lm-login-panel form button:hover:not(:disabled){background:#41694f;transform:translateY(-2px)}
+.lm-login-panel form button:disabled{opacity:.65;cursor:progress}
+.lm-login-error{color:#a63128!important;background:#fff1ed;border-left:3px solid #bb5943;font-size:13px;margin:6px 0!important;padding:10px 12px}
+.lm-login-footer{display:flex;gap:10px;align-items:center;margin-top:24px;padding-top:18px;border-top:1px solid #e1e7dc;color:#79877b;font-size:10px;line-height:1.5}
+.lm-login-footer svg{flex:none}
+.lm-footer{background:#081b17;color:#b8c8b9;padding:70px 0 27px}
+.lm-footer-main{display:grid;grid-template-columns:2fr 1fr 1fr;gap:45px;padding-bottom:70px}
+.lm-footer-main>div{display:flex;align-items:flex-start;flex-direction:column;gap:14px}
+.lm-footer-brand{font-size:12px;letter-spacing:.15em;font-weight:700;color:#e3e0d2}
+.lm-footer-main>div:first-child strong{font:400 clamp(34px,3.2vw,48px) 'Playfair Display',Georgia,serif;color:#ead8b8;letter-spacing:-.04em}
+.lm-footer-main p{font-size:13px;color:#9eb1a2;margin:0}
+.lm-footer-main>div:not(:first-child)>span{color:#d9c49c;letter-spacing:.16em;font-size:10px;margin-bottom:14px}
+.lm-footer-main a{font-size:12px;color:#c3d0c5;display:flex;align-items:center;gap:9px}
+.lm-footer-main a:hover{color:#e1c89a}
+.lm-footer-bottom{border-top:1px solid #f2fff01c;padding-top:24px;display:flex;align-items:center;justify-content:space-between;gap:20px;flex-wrap:wrap;font-size:10px;color:#849d8d;line-height:1.6}
+.lm-footer-bottom a{color:#d7be92;font-weight:700;letter-spacing:.1em}
+@media(max-width:1220px){
+ .lm-container{width:min(100% - 76px,1340px)}
+ .lm-nav{gap:18px}
+ .lm-wordmark-type strong{font-size:12px}
+ .lm-header-inner{gap:20px}
+ .lm-nav>a{font-size:11px}
+ .lm-hero-inner{gap:40px}
+ .lm-hero h1{font-size:clamp(61px,8vw,103px)}
+ .lm-place-panel{width:54%}
+ .lm-ribbon-grid>a{font-size:10px}
+}
+@media(max-width:980px){
+ .lm-container{width:calc(100% - 56px)}
+ .lm-utility-inner{font-size:8px}
+ .lm-header-inner{min-height:77px}
+ .lm-emblem{height:49px;width:49px}
+ .lm-menu-button{display:flex}
+ .lm-nav{display:none;position:absolute;left:0;right:0;top:100%;background:#fdfcf7;padding:15px 28px 24px;border-top:1px solid #e4e9e0;box-shadow:0 17px 40px #12291d2b;flex-direction:column;align-items:stretch;gap:0}
+ .lm-nav.lm-nav-open{display:flex}
+ .lm-nav>a{font-size:14px;padding:16px 9px;border-bottom:1px solid #ecede5}
+ .lm-nav>a.lm-nav-jury{justify-content:space-between;margin-top:13px;padding:17px}
+ .lm-hero,.lm-hero-inner{min-height:705px}
+ .lm-hero-inner{grid-template-columns:1fr;padding-top:95px;gap:25px}
+ .lm-hero-seal{position:absolute;right:28px;bottom:100px;width:165px;padding:16px}
+ .lm-hero-seal strong{font-size:75px}
+ .lm-hero-seal-overline{font-size:8px}
+ .lm-hero-seal-caption{font-size:8px}
+ .lm-hero-seal .lm-seal-divider{margin:11px 0}
+ .lm-hero-copy{padding-right:120px}
+ .lm-hero h1{font-size:clamp(62px,8.6vw,90px)}
+ .lm-hero-lead{max-width:480px}
+ .lm-ribbon-grid{grid-template-columns:repeat(3,1fr)}
+ .lm-ribbon-grid>a{grid-column:1/-1;justify-content:center;border-top:1px solid #ced6c9;padding:17px 0;margin:0}
+ .lm-ribbon-grid>div{padding:20px 12px}
+ .lm-ribbon-grid>div:not(:first-child){padding-left:19px}
+ .lm-section{padding:94px 0 106px}
+ .lm-intro-layout{gap:7%}
+ .lm-intro h2{font-size:clamp(75px,10vw,115px)}
+ .lm-place-panel{width:65%;margin-right:28px}
+ .lm-event-inner{gap:6%}
+ .lm-event-date strong{font-size:170px}
+ .lm-jury-layout{gap:6%}
+ .lm-login-panel{padding:36px}
+}
+@media(max-width:700px){
+ .lm-utility-inner span:last-child{display:none}
+ .lm-header-inner{min-height:76px}
+ .lm-wordmark{gap:12px}
+ .lm-wordmark-type strong{font-size:11px}
+ .lm-wordmark-type small{font-size:9px}
+ .lm-hero,.lm-hero-inner{min-height:750px}
+ .lm-hero-photo{background-position:58% 50%}
+ .lm-hero-shade{background:linear-gradient(90deg,#112a22e8,#153a2b9c),linear-gradient(0deg,#102819e0,transparent 70%)}
+ .lm-hero-inner{display:flex;align-items:center;padding-top:65px;padding-bottom:130px}
+ .lm-hero-copy{padding-right:0}
+ .lm-hero h1{font-size:clamp(60px,10vw,84px);margin:25px 0 20px}
+ .lm-hero h1 em{white-space:normal}
+ .lm-hero-lead{font-size:17px;max-width:550px}
+ .lm-hero-seal{display:none}
+ .lm-hero-bottom-inner{height:61px;font-size:8px}
+ .lm-photo-credit{display:none}
+ .lm-ribbon-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
+ .lm-ribbon-grid>div{display:block}
+ .lm-ribbon-grid strong{font-size:41px;display:block}
+ .lm-ribbon-grid div span{font-size:8px;display:block;margin-top:10px}
+ .lm-section{padding:82px 0 91px}
+ .lm-intro-layout,.lm-heading-split,.lm-event-inner,.lm-jury-layout{grid-template-columns:1fr}
+ .lm-intro h2{font-size:clamp(84px,14vw,116px)}
+ .lm-intro-body{padding-top:35px}
+ .lm-values-grid{grid-template-columns:1fr}
+ .lm-values-grid>div{border-right:0;border-bottom:1px solid #c6d0c1;padding:25px 0}
+ .lm-values-grid>div:last-child{border-bottom:0}
+ .lm-values h3{font-size:38px}
+ .lm-place{min-height:690px;align-items:flex-end}
+ .lm-place-image{background-position:center}
+ .lm-place-panel{width:calc(100% - 56px);margin:0 28px 55px;padding:35px}
+ .lm-place-panel h2{font-size:44px}
+ .lm-place-folio{display:none}
+ .lm-section-heading h2{font-size:clamp(54px,8vw,74px)}
+ .lm-process-grid{grid-template-columns:1fr;gap:14px;margin-top:33px}
+ .lm-process-card{min-height:280px;padding:28px}
+ .lm-process-top{margin-bottom:27px}
+ .lm-process-card h3{font-size:38px}
+ .lm-event{padding:84px 0}
+ .lm-event-date{margin:15px 0}
+ .lm-event-date strong{font-size:150px}
+ .lm-event-date-line{width:100%}
+ .lm-event-right{margin-top:40px}
+ .lm-event-right h2{font-size:60px}
+ .lm-team-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+ .lm-jury-layout{gap:45px}
+ .lm-jury-symbol{margin:36px 0 24px}
+ .lm-login-panel{padding:38px}
+ .lm-footer-main{grid-template-columns:1fr 1fr}
+ .lm-footer-main>div:first-child{grid-column:1/-1}
+}
+@media(max-width:480px){
+ .lm-container{width:calc(100% - 36px)}
+ .lm-utility{font-size:7px}
+ .lm-header-inner{min-height:70px}
+ .lm-emblem{width:44px;height:44px}
+ .lm-emblem span{font-size:33px}
+ .lm-wordmark-type strong{font-size:10px}
+ .lm-wordmark-type small{font-size:8px}
+ .lm-hero,.lm-hero-inner{min-height:705px}
+ .lm-hero h1{font-size:clamp(48px,12vw,69px)}
+ .lm-kicker{font-size:8px;gap:9px;letter-spacing:.16em}
+ .lm-kicker-line{width:26px}
+ .lm-hero-lead{font-size:16px}
+ .lm-hero-actions{align-items:stretch;gap:15px;flex-direction:column}
+ .lm-primary-cta{padding:17px 18px;justify-content:space-between}
+ .lm-quiet-cta{align-self:flex-start}
+ .lm-hero-bottom-inner>span:first-child{font-size:7px;letter-spacing:.08em}
+ .lm-hero-bottom-divider{width:8px;margin:0 4px}
+ .lm-hero-bottom-inner>a{font-size:7px;gap:4px}
+ .lm-ribbon-grid strong{font-size:33px}
+ .lm-ribbon-grid>div{padding:16px 7px}
+ .lm-ribbon-grid>div:not(:first-child){padding-left:8px}
+ .lm-ribbon-grid div span{font-size:7px}
+ .lm-intro h2{font-size:79px}
+ .lm-intro-body .lm-intro-lead{font-size:27px}
+ .lm-place{min-height:650px}
+ .lm-place-panel{width:calc(100% - 36px);margin:0 18px 25px;padding:28px}
+ .lm-place-panel h2{font-size:37px}
+ .lm-place-panel p{font-size:13px}
+ .lm-section-heading h2{font-size:52px}
+ .lm-team-grid{grid-template-columns:1fr}
+ .lm-team-card{min-height:294px}
+ .lm-event-date strong{font-size:130px}
+ .lm-event-right h2{font-size:52px}
+ .lm-event-facts{gap:19px}
+ .lm-jury-copy h2{font-size:53px}
+ .lm-login-panel{padding:26px}
+ .lm-login-panel h3{font-size:52px}
+ .lm-footer-main{gap:32px}
+ .lm-footer-main>div:first-child strong{font-size:38px}
+ .lm-footer-bottom{display:block}
+ .lm-footer-bottom>*{display:block;margin-bottom:12px}
+}
+@media(prefers-reduced-motion:reduce){
+ .lm-page *{scroll-behavior:auto!important;transition:none!important;animation:none!important}
+}
