@@ -30,6 +30,9 @@ export default function TeamNavigator({teams,members,initialScores}:{teams:Team[
  if(!teams.length)return <section className="demo-score"><h2>Teamdaten noch nicht eingerichtet</h2><p>In Supabase ist derzeit kein Unternehmerteam für die Jury sichtbar. Bitte zunächst die vorbereitete Teamnamen-Migration ausführen. Es werden keine Demo-Teams als echte Daten ausgegeben.</p></section>;
  const team=teams[selected];
  const teamMembers=members.filter(m=>m.team_id===team.id);
+ const isFour=teamMembers.length===4;
+ const activeCriteria=criteria.filter(c=>!(isFour&&c.key==='expert_e_score'));
+ const weightFor=(key:string)=>isFour&&key.startsWith('expert_')?12.5:criteria.find(c=>c.key===key)?.weight??0;
  return <div className="demo-shell" style={{minHeight:600,marginTop:32,border:'1px solid #e4e0d9'}}>
  <aside className="demo-sidebar"><span className="demo-overline">UNTERNEHMERTEAMS · {teams.length}</span>{teams.map((t,i)=><button key={t.id} className={selected===i?'selected':''} aria-pressed={selected===i} onClick={()=>setSelected(i)}><span>{String(t.position).padStart(2,'0')}</span>{t.name}</button>)}</aside>
  <section className="demo-main"><div className="demo-heading"><div><span className="demo-overline">TEAM {String(team.position).padStart(2,'0')} · JURYANSICHT</span><h1>{team.name}</h1><p>{team.tagline||'Unternehmerteam · Jugend gründet 2026/27'}</p></div><div className="demo-pagination"><button disabled={selected===0} onClick={()=>setSelected(v=>v-1)} aria-label="Vorheriges Team"><ArrowLeft size={18}/></button><button disabled={selected===teams.length-1} onClick={()=>setSelected(v=>v+1)} aria-label="Nächstes Team"><ArrowRight size={18}/></button></div></div>
@@ -39,15 +42,15 @@ export default function TeamNavigator({teams,members,initialScores}:{teams:Team[
  <div className="demo-score">
  <div className="demo-score-heading"><h2>Jurybewertung · 1–10 Punkte</h2><span>AUTOMATISCHE SPEICHERUNG</span></div>
  <p style={{fontSize:13,color:'#667480'}}>Grau: offen · Gelb: speichert · Grün: gespeichert · Rot: Fehler</p>
- {criteria.map((c,i)=>{
-  const phaseHeader=i===0?<div style={{marginTop:22}}><h3>1 · Fachbereiche und Präsentation</h3><p>Während des Pitches</p></div>:i===6?<div style={{marginTop:24,borderTop:'2px solid #d9d4c9',paddingTop:14}}><h3>2 · Juryfragen</h3><p>Während der Fragerunde</p></div>:null;
+ {activeCriteria.map((c,i)=>{
+  const phaseHeader=i===0?<div style={{marginTop:22}}><h3>1 · Fachbereiche und Präsentation</h3><p>Während des Pitches</p></div>:i===(isFour?5:6)?<div style={{marginTop:24,borderTop:'2px solid #d9d4c9',paddingTop:14}}><h3>2 · Juryfragen</h3><p>Während der Fragerunde</p></div>:null;
   const id=team.id+':'+c.key;
   const saved=scores[team.id]?.[c.key];
   const current=pending[id]??saved;
   const state=status[id]||(saved!==undefined?'saved':'open');
   const color=state==='saved'?'#18794e':state==='saving'?'#9c6b16':state==='error'?'#b42318':'#77828b';
   return <div key={c.key}>{phaseHeader}<div style={{border:'1px solid '+color,borderRadius:8,padding:14,marginTop:12,background:state==='saved'?'#f0faf3':state==='saving'?'#fff9e9':state==='error'?'#fff3f2':'#f7f8f9'}}>
-   <div style={{display:'flex',justifyContent:'space-between',gap:8,flexWrap:'wrap'}}><strong>{c.name}</strong><span style={{fontSize:12,color}}>{state==='saved'?'✓ Gespeichert':state==='saving'?'Speichert …':state==='error'?'Fehler':'Offen'}</span></div>
+   <div style={{display:'flex',justifyContent:'space-between',gap:8,flexWrap:'wrap'}}><strong>{isFour&&c.key==='expert_d_score'?'D/E · Umsetzung, Organisation und Rechtsform':c.name}</strong><span style={{fontSize:12,color}}>{state==='saved'?'✓ Gespeichert':state==='saving'?'Speichert …':state==='error'?'Fehler':'Offen'}</span></div>
    <div style={{display:'flex',alignItems:'center',gap:12,marginTop:12}}>
     <input type="range" min={1} max={10} step={1} value={current??5} aria-label={c.name} style={{width:'100%',accentColor:color}}
      onChange={event=>{const value=Number(event.currentTarget.value);setPending(old=>({...old,[id]:value}));setStatus(old=>({...old,[id]:'open'}))}}
@@ -56,13 +59,13 @@ export default function TeamNavigator({teams,members,initialScores}:{teams:Team[
     />
     <strong style={{minWidth:44,textAlign:'right'}}>{current===undefined?'–':current+'/10'}</strong>
    </div>
-   <div style={{display:'flex',justifyContent:'space-between',fontSize:12,color:'#667480'}}><span>Gewichtung {c.weight} %</span>{state==='error'&&<button type="button" onClick={()=>void save(team.id,c.key,current??5)}>Erneut speichern</button>}</div>
+   <div style={{display:'flex',justifyContent:'space-between',fontSize:12,color:'#667480'}}><span>Gewichtung {weightFor(c.key).toLocaleString('de-DE')} %</span>{state==='error'&&<button type="button" onClick={()=>void save(team.id,c.key,current??5)}>Erneut speichern</button>}</div>
   </div></div>
  })}
  <div style={{marginTop:24,padding:18,background:'#f7f0e2',border:'1px solid #c49a45',borderRadius:10}}>
  <h3>Meine Gesamtbewertung</h3>
- {criteria.every(c=>scores[team.id]?.[c.key]!==undefined)?(()=>{
- const result=criteria.reduce((sum,c)=>sum+(scores[team.id]?.[c.key]??0)*c.weight,0)/100;
+ {activeCriteria.every(c=>scores[team.id]?.[c.key]!==undefined)?(()=>{
+ const result=activeCriteria.reduce((sum,c)=>sum+(scores[team.id]?.[c.key]??0)*weightFor(c.key),0)/100;
  return <><div style={{height:16,background:'#e7ded0',borderRadius:12,overflow:'hidden'}}><div style={{height:'100%',width:result*10+'%',background:'#c49a45'}}/></div><p><strong>{result.toFixed(2)} / 10</strong> · Automatisch berechnet</p></>;
  })():<p>Noch nicht vollständig bewertet</p>}
  </div>
