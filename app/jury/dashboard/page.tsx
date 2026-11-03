@@ -3,14 +3,14 @@ import {redirect} from 'next/navigation';
 import {getJurySession} from '../../../lib/jury-session';
 import PortalHome from './PortalHome';
 export const dynamic='force-dynamic';
-type Team={id:string;name:string;position:number;tagline:string|null;description:string|null};
+type Team={id:string;name:string;position:number;tagline:string|null;description:string|null;jury_photo_path:string|null};
 type Member={id:string;team_id:string;display_name:string;expert_role:string|null;display_order:number};
 type Score={team_id:string;[key:string]:string|number|null};
 async function getScores(token:string):Promise<Score[]>{const url=process.env.NEXT_PUBLIC_SUPABASE_URL,key=process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;if(!url||!key)throw new Error('Supabase nicht konfiguriert');const res=await fetch(url+'/rest/v1/evaluations?select=team_id,submitted_at,expert_a_score,expert_b_score,expert_c_score,expert_d_score,expert_e_score,presentation_impact_score,questions_quality_score,questions_confidence_score,questions_reasoning_score',{headers:{apikey:key,Authorization:'Bearer '+token},cache:'no-store'});if(!res.ok)throw new Error('Bewertungen konnten nicht geladen werden');return await res.json() as Score[];}
 async function getTeams(token:string):Promise<Team[]>{
  const url=process.env.NEXT_PUBLIC_SUPABASE_URL,key=process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
  if(!url||!key)throw new Error('Supabase nicht konfiguriert');
- const res=await fetch(url+'/rest/v1/teams?select=id,name,position,tagline,description&order=position.asc',{headers:{apikey:key,Authorization:'Bearer '+token},cache:'no-store'});
+ const res=await fetch(url+'/rest/v1/teams?select=id,name,position,tagline,description,jury_photo_path&order=position.asc',{headers:{apikey:key,Authorization:'Bearer '+token},cache:'no-store'});
  if(!res.ok)throw new Error('Teamdaten konnten nicht geladen werden');
  return await res.json() as Team[];
 }
