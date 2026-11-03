@@ -52,3 +52,39 @@
 @media(max-width:900px){.jury-welcome{grid-template-columns:1fr}.jury-welcome-mark{min-height:140px}.jury-home-tiles,.jury-intro-steps{grid-template-columns:1fr}.jury-home-tile{min-height:240px}.jury-team-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}@media(max-width:560px){.jury-portal{padding:20px 14px 60px}.jury-welcome{padding:25px}.jury-home-label{display:block}.jury-home-label>p{margin-top:15px}.jury-team-grid{grid-template-columns:1fr}.jury-team-picker{padding:19px 14px}.jury-team-picker-head{display:block}.jury-team-picker-head>span:last-child{display:block;margin-top:8px}.jury-section-nav>div{width:100%;justify-content:space-between}.jury-section-nav>div button{font-size:11px;padding:10px 7px}.jury-wide-shell .demo-main{padding:18px}.demo-header{padding:0 12px}.demo-header strong{font-size:11px}}
 
 .jury-schedule{margin:28px 0;background:white;border:1px solid #e2dfd7;border-radius:16px;overflow:hidden}.jury-schedule-heading{display:flex;gap:16px;padding:22px;background:#14263d;color:white}.jury-schedule-heading p{color:#d7e0e9}.jury-schedule-row{display:grid;grid-template-columns:150px 1fr;gap:18px;padding:22px;border-top:1px solid #e9e6e0}.jury-schedule-row>span{font-weight:700;color:#99713a}.jury-schedule-row p{color:#526273}.jury-contact{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px;margin:24px 0}.jury-contact>div{display:flex;gap:14px;background:#f4f5f5;padding:22px;border-radius:13px}.jury-contact span{display:grid;gap:6px}.jury-member-avatar{width:34px;height:34px;border-radius:50%;background:#e9edf1;display:inline-flex;align-items:center;justify-content:center}.jury-wide-shell .demo-score{padding:clamp(20px,3vw,36px)}@media(max-width:640px){.jury-schedule-row{grid-template-columns:1fr}}
+
+/* Working public jury entry and dedicated sign-in screen */
+.hero-actions{display:flex;align-items:center;gap:24px;flex-wrap:wrap}
+.jury-hero-link{display:inline-flex;align-items:center;gap:10px;margin-top:35px;color:#fff;border-bottom:1px solid #c9a66b;padding:12px 0;font-weight:700;font-size:13px}
+.jury-hero-link:hover{color:#dfbe86}
+.jury-access-card{box-shadow:0 24px 50px rgba(0,0,0,.15)}
+.jury-access-button{display:flex;align-items:center;justify-content:space-between;gap:14px;background:#c9a66b;padding:17px 20px;color:#10283e;font-weight:700;font-size:13px;margin-top:26px;transition:background .2s,transform .2s}
+.jury-access-button:hover{background:#dfbe86;transform:translateY(-2px)}
+.jury-access-card>small{margin-top:17px}
+.jury-login-page{background:linear-gradient(130deg,#edf0ee,#f5f3ee 60%);min-height:100vh}
+.jury-login-layout{max-width:1180px;margin:0 auto;min-height:calc(100vh - 76px);padding:clamp(35px,6vw,90px) 30px;display:grid;grid-template-columns:minmax(0,1fr) minmax(350px,440px);gap:clamp(36px,7vw,100px);align-items:center}
+.jury-login-intro{padding:20px 0}
+.jury-login-intro h1{font-size:clamp(48px,5.7vw,86px);line-height:1.12;margin:22px 0 26px;color:#14283a;white-space:normal}
+.jury-login-intro h1 em{font-weight:400;color:#a88b5f}
+.jury-login-intro>p{font-size:18px;line-height:1.8;color:#596b77;max-width:540px}
+.jury-login-features{margin-top:42px;display:grid;gap:16px}
+.jury-login-features span{display:flex;align-items:center;gap:12px;font-size:13px;color:#526678}
+.jury-login-features svg{color:#b49361}
+.jury-login-panel{padding:clamp(28px,3.7vw,45px);background:white;border:1px solid #e1ddd6;border-radius:18px;box-shadow:0 20px 70px rgba(18,44,66,.08)}
+.jury-login-panel h2{font-size:clamp(30px,3vw,42px);margin:16px 0 10px}
+.jury-login-panel>p{line-height:1.7;color:#596b77;font-size:14px}
+.jury-google-login{margin-top:26px;display:flex;gap:12px;align-items:center;justify-content:center;background:#fff;border:1px solid #c7ced4;border-radius:9px;padding:14px 16px;font-weight:700;color:#14283a;font-size:14px;transition:border-color .2s,background .2s}
+.jury-google-login svg:last-child{margin-left:auto}.jury-google-login:hover{border-color:#c9a66b;background:#fcfaf6}
+.jury-login-divider{display:flex;align-items:center;gap:12px;margin:23px 0;color:#79858f;font-size:12px}
+.jury-login-divider:before,.jury-login-divider:after{content:'';height:1px;background:#e3e3e1;flex:1}
+.jury-login-form{display:grid;gap:9px;margin-top:23px}
+.jury-login-form label{font-size:13px;font-weight:700;color:#253e50}
+.jury-login-form input{width:100%;padding:13px 14px;border-radius:8px;border:1px solid #cbd4db;background:#fdfdfc;color:#14283a;margin-bottom:11px}
+.jury-login-form input:focus{border-color:#a88b5f}
+.jury-login-submit{background:#10283e;border:0;border-radius:9px;color:white;display:flex;align-items:center;justify-content:center;gap:13px;padding:16px;font-weight:700;cursor:pointer;margin-top:6px}
+.jury-login-submit:hover{background:#1e435d}.jury-login-submit:disabled{opacity:.55;cursor:wait}
+.jury-login-error{background:#fff2f1;color:#a32822!important;padding:12px;border-radius:7px;font-size:13px}
+.jury-provider-note{background:#fff8e9;color:#775a2c!important;border-radius:8px;padding:13px;display:flex;gap:12px;align-items:flex-start}
+.jury-login-footnote{display:block;margin-top:20px;color:#677986;line-height:1.6}
+@media(max-width:800px){.jury-login-layout{grid-template-columns:1fr;min-height:0;gap:25px;padding:35px 20px 65px}.jury-login-intro{padding:0}.jury-login-intro h1{margin:18px 0}.jury-login-features{margin-top:23px}.jury-login-panel{max-width:650px;width:100%;margin:auto}}
+@media(max-width:550px){.hero-actions{gap:4px}.jury-hero-link{margin-top:5px}.jury-login-intro h1{font-size:46px}.jury-login-intro>p{font-size:15px}.jury-login-panel{padding:24px}.demo-header .demo-status{display:none}}
