@@ -39,7 +39,6 @@ export default function TeamNavigator({teams,members,initialScores}:{teams:Team[
  <div className="demo-score">
  <div className="demo-score-heading"><h2>Jurybewertung · 1–10 Punkte</h2><span>AUTOMATISCHE SPEICHERUNG</span></div>
  <p style={{fontSize:13,color:'#667480'}}>Grau: offen · Gelb: speichert · Grün: gespeichert · Rot: Fehler</p>
- <h3 style={{marginTop:22}}>1 · Fachbereiche und Präsentation</h3><p style={{fontSize:13}}>Während des Pitches</p>
  {criteria.map((c,i)=>{
   const phaseHeader=i===0?<div style={{marginTop:22}}><h3>1 · Fachbereiche und Präsentation</h3><p>Während des Pitches</p></div>:i===6?<div style={{marginTop:24,borderTop:'2px solid #d9d4c9',paddingTop:14}}><h3>2 · Juryfragen</h3><p>Während der Fragerunde</p></div>:null;
   const id=team.id+':'+c.key;
