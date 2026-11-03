@@ -5,3 +5,43 @@
 
 /* Jury portal: non-persistent design demonstration */
 .demo{min-height:100vh;background:#f5f3ee}.demo-header{height:76px;background:#0b2033;color:white;display:flex;justify-content:space-between;align-items:center;padding:0 5%;gap:15px}.demo-header a{display:flex;align-items:center;gap:8px;font-size:12px}.demo-header strong{font-size:14px;letter-spacing:.12em}.demo-header strong span{font-weight:400;color:#c9a66b}.demo-status{display:flex;align-items:center;gap:7px;color:#c9a66b;font-size:12px}.demo-banner{background:#eee5d5;color:#68553d;padding:12px 5%;font-size:12px;line-height:1.6}.demo-shell{display:grid;grid-template-columns:250px minmax(0,1fr);min-height:calc(100vh - 110px)}.demo-sidebar{background:#10283e;padding:30px 15px;color:white}.demo-overline{font-size:10px;letter-spacing:.16em;font-weight:700;color:#a88b5f}.demo-sidebar .demo-overline{display:block;margin:0 15px 25px}.demo-sidebar button{width:100%;border:0;background:transparent;color:#c8d3dd;padding:14px 13px;display:flex;align-items:center;gap:12px;text-align:left;font-size:13px;cursor:pointer}.demo-sidebar button span{font-size:10px;color:#c9a66b}.demo-sidebar button.selected{background:#244159;color:white;border-left:2px solid #c9a66b}.demo-main{padding:50px 6%;max-width:1250px;width:100%;margin:auto}.demo-heading{display:flex;justify-content:space-between;align-items:center;gap:20px}.demo-heading h1{font-size:clamp(36px,4vw,62px);margin:14px 0 8px;white-space:normal}.demo-heading p{color:#667480;font-size:14px}.demo-pagination{display:flex;gap:8px}.demo-pagination button{background:white;border:1px solid #d9d5ce;padding:11px;display:grid;place-items:center}.demo-pagination button:disabled{opacity:.35;cursor:not-allowed}.demo-resources{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:32px 0}.demo-resources>div{background:white;border:1px solid #e4e0d9;padding:23px;display:flex;flex-direction:column;gap:9px}.demo-resources svg{color:#b49361}.demo-resources strong{font-size:14px}.demo-resources small{color:#74808b}.demo-score,.demo-notes{background:white;border:1px solid #e4e0d9;padding:32px;margin-top:16px}.demo-score h2,.demo-notes h2{font:400 30px 'Playfair Display',serif}.demo-score-heading{display:flex;justify-content:space-between;gap:10px;align-items:center}.demo-score-heading span{font-size:10px;letter-spacing:.1em;color:#a3875d}.demo-score>p,.demo-notes p{color:#657480;font-size:13px;line-height:1.7}.demo-criterion{display:flex;align-items:center;justify-content:space-between;gap:20px;padding:25px 0;border-bottom:1px solid #e7e4df}.demo-criterion strong,.demo-criterion small{display:block}.demo-criterion strong{font-size:15px;margin-bottom:7px}.demo-criterion small{color:#657480;line-height:1.5}.demo-points{display:flex;gap:6px;flex-shrink:0}.demo-points button{height:42px;width:42px;background:#f5f3ee;border:1px solid #ddd7cb;color:#183047;cursor:pointer}.demo-points button.active{background:#10283e;color:white;border-color:#10283e}.demo-explain{font-size:11px!important}.demo-notes h2{display:flex;gap:12px;align-items:center}.demo-notes textarea{width:100%;resize:vertical;padding:16px;border:1px solid #d8d4cd;background:#faf9f7;color:#14283a}.demo-notes>small{display:flex;align-items:center;gap:7px;color:#75818a;margin-top:12px}@media(max-width:850px){.demo-shell{grid-template-columns:1fr}.demo-sidebar{display:flex;overflow-x:auto;gap:5px;padding:12px}.demo-sidebar .demo-overline{display:none}.demo-sidebar button{min-width:max-content;width:auto}.demo-main{padding:35px 5%}.demo-header strong{font-size:11px}.demo-status{font-size:10px}}@media(max-width:600px){.demo-resources{grid-template-columns:1fr}.demo-resources>div{padding:15px}.demo-score,.demo-notes{padding:20px}.demo-criterion{display:block}.demo-points{margin-top:16px}.demo-points button{flex:1}.demo-heading{align-items:start}.demo-header{padding:0 4%}.demo-header strong span{display:none}}
+
+
+/* Jury design system — consistent typography, spacing, controls and accessibility */
+.demo {
+  --jury-font: 'DM Sans', Arial, sans-serif;
+  --jury-text: #14283a;
+  --jury-muted: #586a78;
+  --jury-line: #e2ded6;
+  --jury-radius: 12px;
+  font-family: var(--jury-font);
+  font-size: 14px;
+  line-height: 1.55;
+  color: var(--jury-text);
+}
+.demo :where(button,input,select,textarea){font-family:var(--jury-font);font-size:14px;line-height:1.45}
+.demo :where(button,a,input,textarea,select):focus-visible{outline:3px solid #b68b46;outline-offset:3px}
+.demo :where(button){transition:background-color .18s ease,border-color .18s ease,box-shadow .18s ease,transform .18s ease}
+.demo :where(button:not(:disabled)){cursor:pointer}
+.demo :where(button:disabled){cursor:not-allowed}
+.demo :where(p,li){line-height:1.65}
+.demo :where(small){font-size:12px;line-height:1.5}
+.demo :where(h1,h2,h3){letter-spacing:-.025em}
+.demo .demo-heading h1{font-family:'Playfair Display',Georgia,serif;font-size:clamp(34px,3.6vw,54px);line-height:1.15}
+.demo .demo-score h2,.demo .demo-notes h2{font-family:'Playfair Display',Georgia,serif;font-size:clamp(25px,2.4vw,30px);line-height:1.25}
+.demo .demo-overline{font-size:11px;line-height:1.5}
+.demo .demo-sidebar button{font-size:14px;line-height:1.4;min-height:46px;border-radius:7px}
+.demo .demo-sidebar button:hover:not(.selected){background:#1b3952;color:#fff}
+.demo .demo-resources>div,.demo .demo-score,.demo .demo-notes{border-radius:var(--jury-radius);box-shadow:0 3px 14px rgba(12,32,51,.035)}
+.demo .demo-resources strong,.demo .demo-criterion strong{font-size:15px;line-height:1.4}
+.demo .demo-resources small,.demo .demo-criterion small{font-size:12px;color:var(--jury-muted)}
+.demo .demo-heading p,.demo .demo-score>p,.demo .demo-notes p{font-size:14px;color:var(--jury-muted)}
+.demo .demo-pagination button{min-height:44px;min-width:44px;border-radius:8px}
+.demo .demo-pagination button:hover:not(:disabled){border-color:#b49361;background:#faf6ef}
+.demo .demo-points button{border-radius:8px;font-size:14px;min-height:44px;min-width:44px}
+.demo .demo-notes textarea{border-radius:8px;min-height:110px}
+.demo .demo-main{min-width:0}
+.demo :where(img){max-width:100%;height:auto}
+@media(max-width:850px){.demo .demo-sidebar button{min-height:44px}}
+@media(max-width:600px){.demo .demo-main{padding:28px 4%}.demo .demo-score,.demo .demo-notes{padding:20px}.demo .demo-heading h1{font-size:36px}}
+@media(prefers-reduced-motion:reduce){.demo :where(button){transition:none!important}}
