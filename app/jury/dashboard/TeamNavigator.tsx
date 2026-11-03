@@ -136,6 +136,11 @@ export default function TeamNavigator({teams,members,initialScores,isAdmin}:{tea
  <button type="button" role="tab" aria-selected={mainTab==='pitch'} onClick={()=>setMainTab('pitch')} style={{padding:'12px 20px',borderRadius:8,background:mainTab==='pitch'?'#173d53':'#eef1f2',color:mainTab==='pitch'?'white':'#173d53',fontWeight:700}}>Pitch &amp; Juryfragen</button>
  </div>
  {mainTab==='business'&&<div className="demo-score" style={{marginTop:12}}>
+ <h3 style={{marginTop:24}}>Produkt- und Werbematerial</h3>
+ <p>Originalbilder des Teams. Zum Vergrößern ein Bild anklicken.</p>
+ <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(210px,1fr))',gap:14}}>
+ {(materials[team.id]||[]).filter(m=>m.media_type.startsWith('image/')&&/visualis|produkt|werbung|marketing/i.test(m.title+' '+m.original_filename)).map(m=><button key={m.id} type="button" onClick={()=>setEnlargedImage(m)} style={{padding:0,textAlign:'left',border:'1px solid #d8d4cd',borderRadius:8,overflow:'hidden',background:'white',cursor:'zoom-in'}}><img src={'/api/jury/materials/'+m.id} alt={m.title} loading="lazy" style={{width:'100%',height:220,objectFit:'contain',background:'#f5f3ee'}}/><span style={{display:'block',padding:10,fontWeight:600}}>{m.title} · Vergrößern</span></button>)}
+ </div>
  <h2>Unternehmensübersicht</h2>
  <p>{team.description||'Eine geprüfte Zusammenfassung aus dem eingereichten Businessplan wird ergänzt.'}</p>
  <h3 style={{marginTop:20}}>Expertenbereiche</h3>
@@ -154,11 +159,6 @@ export default function TeamNavigator({teams,members,initialScores,isAdmin}:{tea
  </div></div>
  <h3 style={{marginTop:24}}>Vollständiger Businessplan</h3>
  {(materials[team.id]||[]).filter(m=>m.media_type==='application/pdf').length?<ul>{(materials[team.id]||[]).filter(m=>m.media_type==='application/pdf').map(m=><li key={m.id}><a href={'/api/jury/materials/'+m.id} target="_blank" rel="noopener noreferrer">{m.title} · Original-PDF öffnen</a></li>)}</ul>:<p>Der vollständige Businessplan wurde noch nicht hinterlegt.</p>}
- <h3 style={{marginTop:24}}>Produkt- und Werbematerial</h3>
- <p>Originalbilder des Teams. Zum Vergrößern ein Bild anklicken.</p>
- <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(210px,1fr))',gap:14}}>
- {(materials[team.id]||[]).filter(m=>m.media_type.startsWith('image/')&&/visualis|produkt|werbung|marketing/i.test(m.title+' '+m.original_filename)).map(m=><button key={m.id} type="button" onClick={()=>setEnlargedImage(m)} style={{padding:0,textAlign:'left',border:'1px solid #d8d4cd',borderRadius:8,overflow:'hidden',background:'white',cursor:'zoom-in'}}><img src={'/api/jury/materials/'+m.id} alt={m.title} loading="lazy" style={{width:'100%',height:220,objectFit:'contain',background:'#f5f3ee'}}/><span style={{display:'block',padding:10,fontWeight:600}}>{m.title} · Vergrößern</span></button>)}
- </div>
  <h3 style={{marginTop:24}}>Weitere Anlagen</h3>
  <div style={{display:'flex',flexWrap:'wrap',gap:8,margin:'14px 0'}}>{attachmentSections.filter(x=>!(isFour&&x.id==='E')).map(x=><button key={x.id} type="button" aria-pressed={attachmentTab===x.id} onClick={()=>setAttachmentTab(x.id)} style={{padding:'9px 12px',borderRadius:7,background:attachmentTab===x.id?'#173d53':'#eef1f2',color:attachmentTab===x.id?'white':'#173d53'}}>{isFour&&x.id==='D'?'D/E · Umsetzung & Organisation':x.label}</button>)}</div>
  {(()=>{const items=(materials[team.id]||[]).filter(m=>m.media_type!=='application/pdf'&&!/visualis|produkt|werbung|marketing/i.test(m.title+' '+m.original_filename)&&(attachmentTab==='all'||attachmentCategory(m)===attachmentTab||(isFour&&attachmentTab==='D'&&attachmentCategory(m)==='E')));
