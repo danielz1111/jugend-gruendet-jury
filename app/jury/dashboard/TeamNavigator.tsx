@@ -25,7 +25,7 @@ const expertEvidence:Record<string,Partial<Record<'A'|'B'|'C'|'D'|'E',[string|nu
 const gradeGuide='1–2: kaum erfüllt · 3–4: eher schwach · 5–6: teilweise erfüllt · 7–8: gut erfüllt · 9–10: hervorragend erfüllt';
 type Material={id:string;title:string;original_filename:string;media_type:string;created_at:string};
 type Progress={submitted_count:number;total_jurors:number;others_average:number|null;own_submitted:boolean};
-export default function TeamNavigator({teams,members,initialScores,isAdmin,initialSection='overview'}:{teams:Team[];members:Member[];initialScores:Score[];isAdmin:boolean;initialSection?:'overview'|'business'|'pitch'}){
+export default function TeamNavigator({teams,members,initialScores,isAdmin,initialSection='overview',adminMode=false}:{teams:Team[];members:Member[];initialScores:Score[];isAdmin:boolean;initialSection?:'overview'|'business'|'pitch';adminMode?:boolean}){
  const [selected,setSelected]=useState(0);
  const [enlargedImage,setEnlargedImage]=useState<Material|null>(null);
  const [mainTab,setMainTab]=useState<'overview'|'business'|'pitch'>(initialSection);
@@ -200,8 +200,8 @@ export default function TeamNavigator({teams,members,initialScores,isAdmin,initi
  <div className="demo-heading" style={{alignItems:'center'}}>
  <div><span className="demo-overline">JUGEND GRÜNDET · UNTERNEHMERTEAM {String(team.position).padStart(2,'0')} / {String(teams.length).padStart(2,'0')}</span><h1 style={{fontSize:'clamp(2.3rem,5vw,3.7rem)',letterSpacing:'-.045em',margin:'10px 0'}}>{team.name}</h1><p style={{fontSize:'1.1rem',fontStyle:profile?.slogan?'italic':'normal'}}>{profile?.slogan||'Slogan: '+missing}</p></div>
  <div className="demo-pagination"><button disabled={selected===0} onClick={()=>{setSelected(v=>v-1);setExpertTab('A');setAttachmentTab('all')}} aria-label="Vorheriges Team"><ArrowLeft size={18}/></button><button disabled={selected===teams.length-1} onClick={()=>{setSelected(v=>v+1);setExpertTab('A');setAttachmentTab('all')}} aria-label="Nächstes Team"><ArrowRight size={18}/></button></div></div>
- {mainTab!=='overview'&&<button type="button" onClick={()=>setMainTab('overview')} style={{margin:'12px 0 6px',padding:'9px 0',background:'transparent',color:'#173d53',display:'flex',alignItems:'center',gap:8,fontWeight:700}}><ArrowLeft size={16}/> Zur Unternehmensübersicht</button>}
- {mainTab==='overview'&&<div key={team.id} className="jury-reveal" style={{display:'grid',gap:22,marginTop:20}}>
+ {!adminMode&&mainTab!=='overview'&&<button type="button" onClick={()=>setMainTab('overview')} style={{margin:'12px 0 6px',padding:'9px 0',background:'transparent',color:'#173d53',display:'flex',alignItems:'center',gap:8,fontWeight:700}}><ArrowLeft size={16}/> Zur Unternehmensübersicht</button>}
+ {!adminMode&&mainTab==='overview'&&<div key={team.id} className="jury-reveal" style={{display:'grid',gap:22,marginTop:20}}>
  <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(245px,1fr))',gap:20,alignItems:'center',padding:'clamp(18px,3vw,34px)',borderRadius:18,background:'linear-gradient(125deg,#102f43,#214c61)',color:'#fff'}}>
  <div><span style={{fontSize:11,letterSpacing:2,textTransform:'uppercase',opacity:.75}}>Die Geschäftsidee</span><h2 style={{fontSize:'clamp(1.4rem,3vw,2.15rem)',lineHeight:1.22,margin:'14px 0',color:'#fff'}}>{profile?.idea||missing}</h2><p style={{opacity:.82,lineHeight:1.6,fontSize:13}}>Grundlage: eingereichter Businessplan · keine ergänzten Angaben</p></div>
  <div style={{minHeight:210,display:'grid',placeItems:'center',border:'1px solid #ffffff40',borderRadius:14,overflow:'hidden',background:'#ffffff12'}}>
@@ -219,18 +219,13 @@ export default function TeamNavigator({teams,members,initialScores,isAdmin,initi
  <button type="button" className="jury-card" onClick={()=>setMainTab('business')} style={{padding:25,textAlign:'left',border:'1px solid #d7dee2',borderRadius:14,background:'#fff',cursor:'pointer',display:'grid',gap:13,color:'#173d53'}}><FileText size={30}/><strong style={{fontSize:21}}>Businessplan</strong><span style={{lineHeight:1.55,color:'#60707c'}}>Expertenbereiche, fachliche Einordnung, Stärken, offene Fragen und Originalunterlagen.</span><span style={{fontWeight:700}}>Businessplan öffnen →</span></button>
  <button type="button" className="jury-card" onClick={()=>setMainTab('pitch')} style={{padding:25,textAlign:'left',border:'1px solid #d7dee2',borderRadius:14,background:'#fff',cursor:'pointer',display:'grid',gap:13,color:'#173d53'}}><Presentation size={30}/><strong style={{fontSize:21}}>Pitch &amp; Juryfragen</strong><span style={{lineHeight:1.55,color:'#60707c'}}>Präsentation und Antworten bewerten sowie persönliche Jury-Notizen festhalten.</span><span style={{fontWeight:700}}>Zur Jurybewertung →</span></button>
  </div></div></div>}
- {mainTab==='business'&&<div className="demo-score" style={{marginTop:12}}>
- <h3 style={{marginTop:24}}>Produkt- und Werbematerial</h3>
- <p>Originalbilder des Teams. Zum Vergrößern ein Bild anklicken.</p>
- <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(210px,1fr))',gap:14}}>
- {(materials[team.id]||[]).filter(m=>m.media_type.startsWith('image/')&&/visualis|produkt|werbung|marketing/i.test(m.title+' '+m.original_filename)).map(m=><button key={m.id} type="button" onClick={()=>setEnlargedImage(m)} style={{padding:0,textAlign:'left',border:'1px solid #d8d4cd',borderRadius:8,overflow:'hidden',background:'white',cursor:'zoom-in'}}><img src={'/api/jury/materials/'+m.id} alt={m.title} loading="lazy" style={{width:'100%',height:220,objectFit:'contain',background:'#f5f3ee'}}/><span style={{display:'block',padding:10,fontWeight:600}}>{m.title} · Vergrößern</span></button>)}
- </div>
+ {!adminMode&&mainTab==='business'&&<div className="demo-score" style={{marginTop:12}}>
  <h2>Geschäftsidee</h2>
  <p>{profile?.idea||missing}</p>
- <h3 style={{marginTop:20}}>Expertenbereiche</h3>
+ <h3 style={{marginTop:28}}>Expertenbereiche A–E</h3>
  <p>Die fachliche Einordnung erfolgt ausschließlich anhand eingereichter Angaben. Fehlende Inhalte bleiben ausdrücklich unbewertet.</p>
- <div style={{display:'flex',flexWrap:'wrap',gap:8,margin:'14px 0'}}>{expertSections.filter(x=>!(isFour&&x.id==='E')).map(x=><button key={x.id} type="button" aria-pressed={expertTab===x.id} onClick={()=>setExpertTab(x.id)} style={{padding:'10px 12px',borderRadius:7,background:expertTab===x.id?'#173d53':'#eef1f2',color:expertTab===x.id?'white':'#173d53'}}>{isFour&&x.id==='D'?'D/E · Umsetzung & Organisation':x.label}</button>)}</div>
- <div style={{display:'grid',gridTemplateColumns:'minmax(0,1fr) minmax(0,1fr)',gap:12,marginTop:16}}>
+ <div style={{display:'grid',gridTemplateColumns:'1fr',gap:7,margin:'16px 0',maxWidth:440}}>{expertSections.filter(x=>!(isFour&&x.id==='E')).map(x=><button key={x.id} type="button" aria-pressed={expertTab===x.id} onClick={()=>setExpertTab(x.id)} style={{padding:'10px 12px',textAlign:'left',borderRadius:7,background:expertTab===x.id?'#173d53':'#eef1f2',color:expertTab===x.id?'white':'#173d53'}}>{isFour&&x.id==='D'?'D/E · Umsetzung & Organisation':x.label}</button>)}</div>
+ <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(min(100%,300px),1fr))',gap:14,marginTop:16}}>
  <div style={{border:'1px solid #d8d4cd',borderRadius:9,padding:15,background:'#fff'}}>
  <h3>{isFour&&expertTab==='D'?'D/E · Umsetzung und Organisation':expertSections.find(x=>x.id===expertTab)?.label}</h3>
  <p>{isSlimpower?review[0]:(evidence?.[0]||missing)}</p>
@@ -243,19 +238,24 @@ export default function TeamNavigator({teams,members,initialScores,isAdmin,initi
  </div></div>
  <h3 style={{marginTop:24}}>Vollständiger Businessplan</h3>
  {(materials[team.id]||[]).filter(m=>m.media_type==='application/pdf').length?<ul>{(materials[team.id]||[]).filter(m=>m.media_type==='application/pdf').map(m=><li key={m.id}><a href={'/api/jury/materials/'+m.id} target="_blank" rel="noopener noreferrer">{m.title} · Original-PDF öffnen</a></li>)}</ul>:<p>Der vollständige Businessplan ist im geschützten Portal noch nicht hinterlegt.</p>}
+ <h3 style={{marginTop:30}}>Produkt- und Werbematerial · Bildanlagen</h3>
+ <p>Originalbilder des Teams. Zum Vergrößern ein Bild anklicken.</p>
+ <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(210px,1fr))',gap:14}}>
+ {(materials[team.id]||[]).filter(m=>m.media_type.startsWith('image/')&&/visualis|produkt|werbung|marketing/i.test(m.title+' '+m.original_filename)).map(m=><button key={m.id} type="button" onClick={()=>setEnlargedImage(m)} style={{padding:0,textAlign:'left',border:'1px solid #d8d4cd',borderRadius:8,overflow:'hidden',background:'white',cursor:'zoom-in'}}><img src={'/api/jury/materials/'+m.id} alt={m.title} loading="lazy" style={{width:'100%',height:220,objectFit:'contain',background:'#f5f3ee'}}/><span style={{display:'block',padding:10,fontWeight:600}}>{m.title} · Vergrößern</span></button>)}
+ </div>
  <h3 style={{marginTop:24}}>Weitere Anlagen</h3>
  <div style={{display:'flex',flexWrap:'wrap',gap:8,margin:'14px 0'}}>{attachmentSections.filter(x=>!(isFour&&x.id==='E')).map(x=><button key={x.id} type="button" aria-pressed={attachmentTab===x.id} onClick={()=>setAttachmentTab(x.id)} style={{padding:'9px 12px',borderRadius:7,background:attachmentTab===x.id?'#173d53':'#eef1f2',color:attachmentTab===x.id?'white':'#173d53'}}>{isFour&&x.id==='D'?'D/E · Umsetzung & Organisation':x.label}</button>)}</div>
  {(()=>{const items=(materials[team.id]||[]).filter(m=>m.media_type!=='application/pdf'&&!/visualis|produkt|werbung|marketing/i.test(m.title+' '+m.original_filename)&&(attachmentTab==='all'||attachmentCategory(m)===attachmentTab||(isFour&&attachmentTab==='D'&&attachmentCategory(m)==='E')));
- return items.length?<div style={{display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(190px,1fr))',gap:14}}>{items.map(m=><a key={m.id} href={'/api/jury/materials/'+m.id} target="_blank" rel="noopener noreferrer" style={{display:'block',border:'1px solid #d8d4cd',borderRadius:8,overflow:'hidden',color:'inherit',textDecoration:'none'}}>{m.media_type.startsWith('image/')&&<img src={'/api/jury/materials/'+m.id} alt={m.title} loading="lazy" style={{width:'100%',height:170,objectFit:'contain',background:'#f5f3ee'}}/>}<span style={{display:'block',padding:10,fontWeight:600,fontSize:13}}>{m.title}</span></a>)}</div>:<p>{materials[team.id]===undefined?'Anlagen werden geladen …':'In dieser Kategorie sind noch keine Anlagen hinterlegt.'}</p>})()}
+ return items.length?<div style={{display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(190px,1fr))',gap:14}}>{items.map(m=><a key={m.id} href={'/api/jury/materials/'+m.id} target="_blank" rel="noopener noreferrer" style={{display:'block',border:'1px solid #d8d4cd',borderRadius:8,overflow:'hidden',color:'inherit',textDecoration:'none'}}>{m.media_type.startsWith('image/')&&<img src={'/api/jury/materials/'+m.id} alt={m.title} loading="lazy" style={{width:'100%',height:170,objectFit:'contain',background:'#f5f3ee'}}/>}<span style={{display:'block',padding:10,fontWeight:600,fontSize:13}}>{m.title} · Vergrößern</span></button>)}</div>:<p>{materials[team.id]===undefined?'Anlagen werden geladen …':'In dieser Kategorie sind noch keine Anlagen hinterlegt.'}</p>})()}
  </div>}
- {isAdmin&&mainTab==='overview'&&<div className="demo-score" style={{marginTop:22}}>
+ {isAdmin&&adminMode&&mainTab==='overview'&&<div className="demo-score" style={{marginTop:22}}>
  <h2>Administration · Alle Teamunterlagen importieren</h2>
  <p>Mehrere ZIP-Dateien gleichzeitig auswählen. Die Zuordnung erfolgt ausschließlich bei eindeutigem Teamnamen im Dateinamen; nicht zuordenbare Dateien werden übersprungen. Bereits vorhandene Dateien werden nicht doppelt importiert.</p>
  <input type="file" accept=".zip,application/zip" multiple disabled={uploading} aria-label="Mehrere Team-ZIP-Dateien auswählen" onChange={event=>{void uploadAllZips(event.currentTarget.files);event.currentTarget.value='';}}/>
  {uploading&&<p role="status">ZIP-Dateien werden nacheinander importiert …</p>}
  {zipMessage&&<p role="status" style={{whiteSpace:'pre-wrap',overflowWrap:'anywhere'}}>{zipMessage}</p>}
  </div>}
- {isAdmin&&mainTab==='business'&&<div className="demo-score" style={{marginTop:18}}>
+ {isAdmin&&adminMode&&mainTab==='business'&&<div className="demo-score" style={{marginTop:18}}>
  <h2>Administration · Teamunterlagen importieren</h2>
  <p>Eine ZIP-Datei mit Businessplan-PDF, Produktbildern, Werbung und weiteren Anlagen auswählen. Die Dateien werden automatisch dem aktuell ausgewählten Team zugeordnet. Bereits vorhandene Dateinamen werden übersprungen.</p>
  <form onSubmit={event=>{event.preventDefault();void uploadZip(team.id,event.currentTarget)}} style={{display:'grid',gap:12}}>
@@ -264,28 +264,28 @@ export default function TeamNavigator({teams,members,initialScores,isAdmin,initi
  </form>
  {zipMessage&&<p role="status">{zipMessage}</p>}
  </div>}
- {mainTab==='pitch'&&<>
- <div className="demo-score" style={{marginTop:24}}><div className="demo-score-heading"><h2>Teammitglieder und Expertenbereiche</h2><span>NUR FÜR DIE JURY</span></div><div style={{background:'#f5f3ee',border:'1px dashed #d8d4cd',padding:'38px 16px',textAlign:'center',margin:'18px 0 22px'}}><Users size={28} style={{margin:'0 auto 8px',color:'#a88b5f'}}/><p style={{fontSize:13,margin:0}}>Gemeinsames Teamfoto wird nach Einwilligungsprüfung hochgeladen.</p></div>{teamMembers.length?<div style={{display:'grid',gap:10}}>{teamMembers.map(m=><div key={m.id} style={{display:'flex',justifyContent:'space-between',gap:16,padding:'13px 0',borderBottom:'1px solid #e7e4df'}}><strong>{m.display_name}</strong><span style={{fontSize:13,color:'#667480',textAlign:'right'}}>{m.expert_role||'Expertenbereich noch nicht eingetragen'}</span></div>)}</div>:<p>Für dieses Team wurden noch keine Mitglieder hinterlegt. Die bestätigten Zuordnungen werden geschützt ergänzt.</p>}</div>
- <div className="demo-resources"><div><Users size={20}/><strong>Teammitglieder</strong><small><LockKeyhole size={12} style={{display:'inline'}}/> {teamMembers.length} Mitglieder hinterlegt</small></div><div><FileText size={20}/><strong>Businessplan</strong><small>{materials[team.id]?.filter(m=>m.media_type==='application/pdf').length?materials[team.id].filter(m=>m.media_type==='application/pdf').length+" PDF-Datei(en) hinterlegt":"Noch keine PDF hinterlegt"}</small></div><div><Presentation size={20}/><strong>Präsentation</strong><small>Wird zum Wettbewerb ergänzt</small></div></div>
+ {isAdmin&&adminMode&&mainTab==='pitch'&&<div className="demo-score"><h2>Administration · Einzeldatei hochladen</h2>{isAdmin&&adminMode&&<form onSubmit={event=>{event.preventDefault();void uploadMaterial(team.id,event.currentTarget)}} style={{marginTop:18,padding:16,background:'#f7f8f9',borderRadius:8}}>
+ <strong>Businessplan oder Bildanlage hochladen (Administration)</strong>
+ <div style={{display:'grid',gap:10,marginTop:12}}>
+ <input name="title" type="text" required maxLength={120} defaultValue="Businessplan" aria-label="Dokumenttitel" style={{padding:10}}/>
+ <input name="file" type="file" required accept=".pdf,.jpg,.jpeg,.png,application/pdf,image/jpeg,image/png" aria-label="Businessplan als PDF auswählen"/>
+ <button type="submit" disabled={uploading} style={{padding:'10px 16px',background:'#173d53',color:'white',borderRadius:6}}>{uploading?'Lädt hoch …':'Datei sicher hochladen'}</button>
+ </div></form>}</div>}
+{!adminMode&&mainTab==='pitch'&&<>
+ <div className="demo-score" style={{marginTop:24}}><div className="demo-score-heading"><h2>Das Unternehmerteam</h2><span>NUR FÜR DIE JURY</span></div><div style={{background:'#f5f3ee',border:'1px dashed #d8d4cd',padding:'38px 16px',textAlign:'center',margin:'18px 0 22px'}}><Users size={28} style={{margin:'0 auto 8px',color:'#a88b5f'}}/><p style={{fontSize:13,margin:0}}>Gemeinsames Teamfoto wird nach Einwilligungsprüfung hochgeladen.</p></div>:<p>Für dieses Team wurden noch keine Mitglieder hinterlegt. Die bestätigten Zuordnungen werden geschützt ergänzt.</p>}</div>
  <div className="demo-score" style={{marginTop:20}}>
  <h2>Vertrauliche Businesspläne</h2>
  <p>Die PDF-Dateien sind nur für angemeldete Jurymitglieder zugänglich.</p>
  {materialsError[team.id]&&<p role="alert" style={{color:'#b42318'}}>{materialsError[team.id]}</p>}
  {materials[team.id]===undefined?<p>Unterlagen werden geladen …</p>:materials[team.id].length===0?<p>Für dieses Team sind noch keine Unterlagen hinterlegt.</p>:<>
  <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(190px,1fr))',gap:14,margin:'18px 0'}}>
- {materials[team.id].filter(m=>m.media_type.startsWith('image/')).map(m=><a key={m.id} href={'/api/jury/materials/'+m.id} target="_blank" rel="noopener noreferrer" style={{display:'block',border:'1px solid #d8d4cd',borderRadius:8,overflow:'hidden',textDecoration:'none',color:'inherit'}}>
+ {materials[team.id].filter(m=>m.media_type.startsWith('image/')).map(m=><button key={m.id} type="button" onClick={()=>setEnlargedImage(m)} style={{display:'block',border:'1px solid #d8d4cd',borderRadius:8,overflow:'hidden',textDecoration:'none',color:'inherit'}}>
  <img src={'/api/jury/materials/'+m.id} alt={m.title} loading="lazy" style={{width:'100%',height:170,objectFit:'contain',background:'#f5f3ee'}}/>
  <span style={{display:'block',padding:10,fontSize:13,fontWeight:600}}>{m.title}</span></a>)}
  </div>
  <ul>{materials[team.id].filter(m=>m.media_type==='application/pdf').map(m=><li key={m.id} style={{margin:'10px 0'}}><a href={'/api/jury/materials/'+m.id} target="_blank" rel="noopener noreferrer">{m.title} · PDF öffnen</a></li>)}</ul>
  </>}
- {isAdmin&&<form onSubmit={event=>{event.preventDefault();void uploadMaterial(team.id,event.currentTarget)}} style={{marginTop:18,padding:16,background:'#f7f8f9',borderRadius:8}}>
- <strong>Businessplan oder Bildanlage hochladen (Administration)</strong>
- <div style={{display:'grid',gap:10,marginTop:12}}>
- <input name="title" type="text" required maxLength={120} defaultValue="Businessplan" aria-label="Dokumenttitel" style={{padding:10}}/>
- <input name="file" type="file" required accept=".pdf,.jpg,.jpeg,.png,application/pdf,image/jpeg,image/png" aria-label="Businessplan als PDF auswählen"/>
- <button type="submit" disabled={uploading} style={{padding:'10px 16px',background:'#173d53',color:'white',borderRadius:6}}>{uploading?'Lädt hoch …':'Datei sicher hochladen'}</button>
- </div></form>}
+ 
  </div>
  <div className="demo-score">
  <div className="demo-score-heading"><h2>Jurybewertung · 1–10 Punkte</h2><span>AUTOMATISCHE SPEICHERUNG</span></div>
@@ -348,7 +348,7 @@ export default function TeamNavigator({teams,members,initialScores,isAdmin,initi
  {[{id:null as string|null,display_name:'Notizen zum gesamten Team'},...teamMembers.map(m=>({id:m.id as string|null,display_name:m.display_name}))].map(person=>{
  const key=noteKey(team.id,person.id);
  return <div key={key} style={{marginTop:18}}>
- <label htmlFor={'note-'+key} style={{display:'block',fontWeight:700,marginBottom:8}}>{person.display_name}</label>
+ <label htmlFor={'note-'+key} style={{display:'flex',alignItems:'center',gap:10,fontWeight:700,marginBottom:8}}>{person.id&&<span className="jury-member-avatar" aria-hidden="true"><Users size={16}/></span>}{person.display_name}</label>
  <textarea id={'note-'+key} value={notes[key]||''} maxLength={10000} rows={3} onChange={event=>setNotes(old=>({...old,[key]:event.target.value}))} placeholder="Private Beobachtungen festhalten …" style={{width:'100%',padding:12,border:'1px solid #cdd5d9',borderRadius:8,resize:'vertical',font:'inherit'}}/>
  <div style={{display:'flex',alignItems:'center',gap:12,marginTop:6}}>
  <button type="button" disabled={notesSaving[key]} onClick={()=>void saveNote(team.id,person.id)} style={{background:'#173d53',color:'white',padding:'8px 14px',borderRadius:6,cursor:'pointer'}}>{notesSaving[key]?'Speichert …':'Notiz speichern'}</button>
