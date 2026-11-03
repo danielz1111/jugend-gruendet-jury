@@ -1,31 +1,297 @@
 'use client';
-import {useEffect,useState} from 'react';
-import {ArrowUpRight,CalendarDays,MapPin,LockKeyhole,Menu,X} from 'lucide-react';
-const slides=[{label:'LANDHEIM AMMERSEE · SEIT 1905',title:'Ideen entwickeln.\nZukunft gestalten.',photo:'https://www.landheim-ammersee.de/sites/default/files/media/images/landheim-ammersee-og-image-ueber-das-landheim-luftbild.jpg'},{label:'JUGEND GRÜNDET 2026/27',title:'Neun Teams.\nNeun Ideen für morgen.',photo:'https://www.landheim-ammersee.de/sites/default/files/styles/image_4_3__560_420/public/media/images/landheim-ammersee-ueber-das-landheim-buchenhaueser-sp-jaist-2068.jpg?h=a2bbf642&itok=6GbefgxL'},{label:'UNSER PITCH-TAG',title:'Aus Fragen werden\nPerspektiven.',photo:'https://www.landheim-ammersee.de/sites/default/files/media/images/landheim-ammersee-og-image-ueber-das-landheim-luftbild.jpg'}];
-const placeholderTeams=Array.from({length:9},(_,i)=>'Team '+String(i+1).padStart(2,'0'));
-export default function HomeClient({publishedTeams=[]}:{publishedTeams:Array<{id:string;name:string;position:number}>}){const teams=publishedTeams.length?publishedTeams.map(t=>t.name):placeholderTeams;const [active,setActive]=useState(0),[menu,setMenu]=useState(false);const [juryEmail,setJuryEmail]=useState(''),[juryPassword,setJuryPassword]=useState(''),[juryBusy,setJuryBusy]=useState(false),[juryError,setJuryError]=useState('');useEffect(()=>{const t=setInterval(()=>setActive(x=>(x+1)%slides.length),6500);return()=>clearInterval(t)},[]);async function submitJuryLogin(event:React.FormEvent<HTMLFormElement>){
- event.preventDefault();
- if(juryBusy)return;
- setJuryBusy(true);setJuryError('');
- try{
-  const response=await fetch('/api/jury/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:juryEmail,password:juryPassword}),cache:'no-store'});
-  const result=await response.json() as {error?:string;redirect?:string};
-  if(!response.ok)throw new Error(result.error||'Anmeldung fehlgeschlagen.');
-  setJuryPassword('');
-  window.location.assign('/jury/dashboard');
- }catch(error){
-  setJuryError(error instanceof Error?error.message:'Anmeldung fehlgeschlagen.');
-  setJuryBusy(false);
- }
-}return <main>
-<header className="nav"><a href="#" className="brand" aria-label="Jugend gründet am Landheim Ammersee – Startseite"><span className="monogram">L</span><span><small>LANDHEIM AMMERSEE · SCHONDORF</small><strong>JUGEND GRÜNDET</strong></span></a><nav className={menu?'open':''}><a href="#wettbewerb">Die Idee</a><a href="#landheim">Das Landheim</a><a href="#teams">Teams</a><a href="#veranstaltung">Pitch-Tag</a><a className="nav-cta" href="#jury">Juryportal <ArrowUpRight size={16}/></a></nav><button className="mobile-menu" aria-label="Menü" aria-expanded={menu} onClick={()=>setMenu(!menu)}>{menu?<X/>:<Menu/>}</button></header>
-<section className="hero">{slides.map((s,i)=><div key={i} className={'hero-photo '+(active===i?'show':'')} style={{backgroundImage:`linear-gradient(90deg,rgba(8,24,40,.95),rgba(8,24,40,.36)),url("${s.photo}")`}}/>)}<div className="hero-content"><span className="eyebrow">{slides[active].label}</span><h1>{slides[active].title}</h1><p>Unternehmerisches Denken erleben: Neun Schülerteams, eigene Geschäftsideen und eine Jury, die Perspektiven eröffnet.</p><div className="site-hero-actions"><a className="gold-button" href="#wettbewerb">Unser Projekt kennenlernen <ArrowUpRight size={18}/></a><a className="site-text-link" href="#jury">Zum Juryportal <ArrowUpRight size={16}/></a></div></div><div className="hero-foot"><span>15. JANUAR 2027 · LANDHEIM AMMERSEE · <a href="https://www.landheim-ammersee.de/de/ueber-das-landheim" target="_blank" rel="noopener noreferrer">BILDQUELLE: LANDHEIM AMMERSEE</a></span><div className="dots">{slides.map((_,i)=><button key={i} aria-label={'Bild '+(i+1)+' anzeigen'} aria-pressed={active===i} className={active===i?'current':''} onClick={()=>setActive(i)}/>)}</div></div></section>
-<div className="highlights" aria-label="Unser Projekt in Zahlen"><div><strong>09</strong><span>UNTERNEHMERTEAMS</span></div><div><strong>15.01.</strong><span>UNSER PITCH-TAG 2027</span></div><div><strong>01</strong><span>GEMEINSAME IDEE: SELBST GESTALTEN</span></div></div>
-<section className="section intro site-intro" id="wettbewerb"><div className="section-number">01 / UNSER BILDUNGSPROJEKT</div><div><span className="eyebrow site-eyebrow">MUT ZUM UNTERNEHMEN</span><h2>Nicht nur über Wirtschaft sprechen.<br/><em>Wirtschaft selbst denken.</em></h2><p>Was wäre, wenn aus einer Beobachtung eine Geschäftsidee wird? Wenn Schülerinnen und Schüler ein echtes Problem entdecken, Lösungen entwickeln, Entscheidungen treffen und ihre Idee vor erfahrenen Persönlichkeiten vorstellen?</p><p>Genau hier setzt unser Projekt <strong>Jugend gründet</strong> in den 9. Klassen an. Im Mittelpunkt stehen unternehmerisches Denken, Eigenverantwortung, Teamarbeit und die Fähigkeit, Entscheidungen überzeugend zu begründen.</p><a href="https://www.jugend-gruendet.de/wettbewerb/" target="_blank" rel="noopener noreferrer" className="site-inline-link">Den bundesweiten Wettbewerb kennenlernen <ArrowUpRight size={18}/></a></div></section>
-<section className="site-learning" aria-label="Lernweg von der Idee zur Präsentation"><div className="site-learning-head"><span className="section-number">SO WIRD AUS EINER IDEE EIN KONZEPT</span><h2>Entdecken. Durchdenken. Überzeugen.</h2></div><div className="site-learning-grid"><article><span>01</span><h3>Ein Problem verstehen</h3><p>Welches Bedürfnis gibt es wirklich? Wer könnte von einer neuen Lösung profitieren?</p></article><article><span>02</span><h3>Ein Unternehmen planen</h3><p>Die Teams beschäftigen sich mit Zielgruppen, Marketing, Finanzierung und Umsetzung.</p></article><article><span>03</span><h3>Die Idee vertreten</h3><p>Im Pitch lernen die Jugendlichen, überzeugend zu präsentieren und auf kritische Fragen einzugehen.</p></article></div></section>
-<section className="section site-landheim" id="landheim"><div className="site-landheim-media" role="img" aria-label="Campusansicht des Landheims Ammersee"><span>LANDHEIM AMMERSEE · SCHONDORF</span></div><div className="site-landheim-copy"><span className="section-number">02 / UNSER LERNORT</span><h2>Ein besonderer Ort.<br/><em>Raum für eigene Ideen.</em></h2><p>Seit 1905 setzt das Landheim Ammersee auf Eigenverantwortung und praktische Erfahrungen. „Macht’s selber“ – dieser Gedanke passt zu einem Wettbewerb, bei dem junge Menschen eigene Lösungen entwerfen.</p><p>Unterricht, Gemeinschaft und selbstständiges Arbeiten verbinden sich hier mit der Möglichkeit, Verantwortung zu übernehmen und Neues auszuprobieren.</p><a className="site-inline-link" href="https://www.landheim-ammersee.de/de/ueber-das-landheim" target="_blank" rel="noopener noreferrer">Mehr über das Landheim Ammersee <ArrowUpRight size={18}/></a><small>Campusbild: Landheim Ammersee · Bildnutzung vor öffentlicher Freigabe abstimmen.</small></div></section>
-<section className="section event" id="veranstaltung"><div className="section-number">03 / UNSER PITCH-TAG</div><div><span className="eyebrow">IDEEN AUF DER BÜHNE</span><h2>Neun Ideen.<br/><em>Eine Bühne.</em></h2><p className="site-event-lead">Beim schulischen Pitch-Tag präsentieren die Teams ihre Vorhaben vor einer externen Jury. Im Mittelpunkt stehen die Idee, eine überzeugende Präsentation und der Dialog mit erfahrenen Fachleuten.</p><div className="facts"><div><CalendarDays/><span><small>DATUM & UHRZEIT</small><strong>Freitag, 15. Januar 2027</strong><p>13:15 – 17:30 Uhr</p></span></div><div><MapPin/><span><small>VERANSTALTUNGSORT</small><strong>Vortragssaal</strong><p>Landheim Ammersee</p></span></div></div></div></section>
-<section className="section team-section" id="teams"><div className="section-number">04 / DIE UNTERNEHMERTEAMS</div><h2>Die nächste Generation.<br/><em>Mit eigenen Ideen.</em></h2><p className="sub">Die neun Unternehmen entstehen im Unterricht. Sobald ihre Vorstellung öffentlich freigegeben ist, werden hier Namen, Kurzporträts und gegebenenfalls Bilder ergänzt. Im geschützten Juryportal stehen die ausführlichen Teamprofile bereits zur Verfügung.</p><div className="team-grid site-team-grid">{teams.map((t,i)=><article key={t} className="team-card site-team-card"><span className="number">{String(i+1).padStart(2,'0')}</span><div className="site-team-card-art" aria-hidden="true"><span>{String(i+1).padStart(2,'0')}</span></div><div><small>GRÜNDUNGSIDEE {String(i+1).padStart(2,'0')}</small><h3>{t}</h3><p>{publishedTeams.length?'Ein junges Unternehmen stellt sich vor.':'Vorstellung folgt nach Freigabe.'}</p></div></article>)}</div></section>
-<section className="statement"><span>LANDHEIM AMMERSEE · JUGEND GRÜNDET</span><h2>Aus Ideen werden Möglichkeiten.</h2><p>Unternehmerisches Denken beginnt mit dem Mut, etwas Neues zu wagen.</p></section><section className="section jury" id="jury"><div className="section-number">05 / EXKLUSIVER JURYZUGANG</div><div className="jury-grid"><div><LockKeyhole color="#c9a66b" size={28}/><h2>Herzlich willkommen<br/><em>im Juryportal.</em></h2><p>Für unsere Jurymitglieder haben wir einen persönlichen Bereich geschaffen: mit einer Einführung in das Bildungsprojekt, kurzen Unternehmensprofilen und einer klaren Bewertung für den Pitch-Tag.</p><p>Mit Ihrer Erfahrung geben Sie den Jugendlichen eine wertvolle Perspektive auf ihre Ideen.</p></div><div className="login"><span className="eyebrow">JURY PORTAL</span><h3>Willkommen zurück.</h3><p>Melden Sie sich mit Ihrem persönlichen Jury-Zugang an.</p><form onSubmit={submitJuryLogin} style={{display:'grid',gap:12}}><label>E-MAIL-ADRESSE<input type="email" autoComplete="username" required value={juryEmail} onChange={event=>setJuryEmail(event.currentTarget.value)} placeholder="name@beispiel.de"/></label><label>PASSWORT<input type="password" autoComplete="current-password" required value={juryPassword} onChange={event=>setJuryPassword(event.currentTarget.value)} placeholder="Ihr Passwort"/></label>{juryError&&<p role="alert" style={{color:'#b42318',fontWeight:600,fontSize:13}}>{juryError}</p>}<button type="submit" disabled={juryBusy} aria-busy={juryBusy}>{juryBusy?'Anmeldung wird geprüft …':'Jurybereich öffnen'} <ArrowUpRight size={17}/></button></form><small>Nur für freigeschaltete Jurymitglieder. Keine öffentliche Registrierung.</small></div></div></section>
-<footer><strong>LANDHEIM AMMERSEE × JUGEND GRÜNDET</strong><span>Schulprojekt der 9. Klassen · 2026/27</span><span><a href="https://www.landheim-ammersee.de" target="_blank" rel="noopener noreferrer">Zum Landheim Ammersee</a> · <a href="https://www.jugend-gruendet.de/wettbewerb/" target="_blank" rel="noopener noreferrer">Zum Wettbewerb</a></span><span>Vorschau · Bildrechte, Impressum und Datenschutz vor öffentlicher Veröffentlichung abstimmen.</span></footer>
-</main>}
+
+import { useState } from 'react';
+import {
+  ArrowRight, ArrowUpRight, CalendarDays, ChevronDown, Compass,
+  ExternalLink, Lightbulb, LockKeyhole, MapPin, Menu, Presentation,
+  UsersRound, X
+} from 'lucide-react';
+
+type PublishedTeam = { id: string; name: string; position: number };
+type LandingTeam = { id: string; name: string; position: number; published: boolean };
+
+const phases = [
+  {
+    number: '01',
+    icon: Lightbulb,
+    eyebrow: 'DIE IDEE',
+    title: 'Ein Problem erkennen.',
+    description: 'Am Anfang steht die Frage: Was könnte besser sein? Aus Beobachtungen entstehen Ideen mit echtem Nutzen.'
+  },
+  {
+    number: '02',
+    icon: Compass,
+    eyebrow: 'DAS KONZEPT',
+    title: 'Eine Lösung gestalten.',
+    description: 'Die Teams entwickeln Geschäftsmodelle, untersuchen Zielgruppen und treffen unternehmerische Entscheidungen.'
+  },
+  {
+    number: '03',
+    icon: Presentation,
+    eyebrow: 'DER PITCH',
+    title: 'Menschen überzeugen.',
+    description: 'Vor einer externen Jury vertreten die Jugendlichen ihre Ideen und stellen sich kritischen Fragen.'
+  }
+];
+
+export default function HomeClient({ publishedTeams = [] }: { publishedTeams: PublishedTeam[] }) {
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [loginBusy, setLoginBusy] = useState(false);
+  const [loginError, setLoginError] = useState('');
+
+  const teams: LandingTeam[] = publishedTeams.length
+    ? [...publishedTeams].sort((a, b) => a.position - b.position).map(team => ({ ...team, published: true }))
+    : Array.from({ length: 9 }, (_, index) => ({
+        id: 'placeholder-' + index,
+        name: 'Unternehmerteam ' + String(index + 1).padStart(2, '0'),
+        position: index + 1,
+        published: false
+      }));
+
+  function closeMenu() { setMenuOpen(false); }
+
+  async function submitJuryLogin(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    if (loginBusy) return;
+    setLoginBusy(true);
+    setLoginError('');
+    try {
+      const response = await fetch('/api/jury/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password }),
+        cache: 'no-store'
+      });
+      const result = await response.json() as { error?: string };
+      if (!response.ok) throw new Error(result.error || 'Die Anmeldung ist fehlgeschlagen.');
+      setPassword('');
+      window.location.assign('/jury/dashboard');
+    } catch (error) {
+      setLoginError(error instanceof Error ? error.message : 'Die Anmeldung ist fehlgeschlagen.');
+      setLoginBusy(false);
+    }
+  }
+
+  return (
+    <main className="lm-page" id="top">
+      <div className="lm-utility">
+        <div className="lm-container lm-utility-inner">
+          <span>LANDHEIM AMMERSEE <span className="lm-utility-dot">·</span> INTERNATSSCHULEN SEIT 1905</span>
+          <span>GRÜNDERWETTBEWERB <span className="lm-utility-dot">·</span> SCHULJAHR 2026/27</span>
+        </div>
+      </div>
+
+      <header className="lm-header">
+        <div className="lm-container lm-header-inner">
+          <a className="lm-wordmark" href="#top" onClick={closeMenu} aria-label="Jugend gründet am Landheim Ammersee, zur Startseite">
+            <span className="lm-emblem" aria-hidden="true"><span>L</span><i/></span>
+            <span className="lm-wordmark-type"><strong>LANDHEIM AMMERSEE</strong><small>JUGEND GRÜNDET · 2026/27</small></span>
+          </a>
+          <nav className={menuOpen ? 'lm-nav lm-nav-open' : 'lm-nav'} aria-label="Hauptnavigation">
+            <a href="#idee" onClick={closeMenu}>Die Idee</a>
+            <a href="#weg" onClick={closeMenu}>Unser Weg</a>
+            <a href="#teams" onClick={closeMenu}>Die Teams</a>
+            <a href="#pitch" onClick={closeMenu}>Pitch-Tag</a>
+            <a href="#jury" className="lm-nav-jury" onClick={closeMenu}>Jury-Anmeldung <ArrowUpRight size={16} aria-hidden="true"/></a>
+          </nav>
+          <button className="lm-menu-button" aria-label={menuOpen ? 'Menü schließen' : 'Menü öffnen'} aria-expanded={menuOpen} aria-controls="lm-mobile-navigation" onClick={() => setMenuOpen(!menuOpen)}>
+            {menuOpen ? <X size={25}/> : <Menu size={25}/>}
+          </button>
+        </div>
+      </header>
+
+      <section className="lm-hero" aria-labelledby="lm-hero-title">
+        <div className="lm-hero-photo" role="img" aria-label="Luftaufnahme des Landheims Ammersee mit dem See im Hintergrund"/>
+        <div className="lm-hero-shade" aria-hidden="true"/>
+        <div className="lm-hero-rule" aria-hidden="true"/>
+        <div className="lm-container lm-hero-inner">
+          <div className="lm-hero-copy">
+            <div className="lm-kicker lm-kicker-light"><span className="lm-kicker-line"/> JUGEND GRÜNDET AM LANDHEIM AMMERSEE</div>
+            <h1 id="lm-hero-title">Die Zukunft<br/>beginnt <em>mit uns.</em></h1>
+            <p className="lm-hero-lead">Neun Unternehmerteams. Neun eigene Ideen. Und die Chance, zu zeigen, was in jungen Menschen steckt.</p>
+            <div className="lm-hero-actions">
+              <a className="lm-primary-cta" href="#idee">Das Projekt entdecken <ArrowUpRight size={19}/></a>
+              <a className="lm-quiet-cta" href="#jury">Zum Juryportal <ArrowRight size={18}/></a>
+            </div>
+          </div>
+          <div className="lm-hero-seal" aria-label="Neun Teams beim Pitch-Tag">
+            <span className="lm-hero-seal-overline">DIE NÄCHSTE GENERATION</span>
+            <strong>09</strong>
+            <span className="lm-hero-seal-caption">TEAMS.<br/>UNZÄHLIGE MÖGLICHKEITEN.</span>
+            <span className="lm-seal-divider"/>
+            <span className="lm-seal-date">15. JANUAR 2027</span>
+          </div>
+        </div>
+        <div className="lm-hero-bottom">
+          <div className="lm-container lm-hero-bottom-inner">
+            <span>01 / 05 <span className="lm-hero-bottom-divider"/> DER ANFANG VON ETWAS GROSSEM</span>
+            <a href="#idee">WEITER ENTDECKEN <ChevronDown size={16}/></a>
+            <span className="lm-photo-credit">Campusaufnahme: Landheim Ammersee</span>
+          </div>
+        </div>
+      </section>
+
+      <div className="lm-ribbon" aria-label="Projektüberblick">
+        <div className="lm-container lm-ribbon-grid">
+          <div><strong>09</strong><span>JUNGE GRÜNDUNGSTEAMS</span></div>
+          <div><strong>01</strong><span>GEMEINSAMER PITCH-TAG</span></div>
+          <div><strong>2027</strong><span>IDEEN FÜR DIE ZUKUNFT</span></div>
+          <a href="#pitch">15. JANUAR · SAVE THE DATE <ArrowUpRight size={18}/></a>
+        </div>
+      </div>
+
+      <section id="idee" className="lm-intro lm-section" aria-labelledby="lm-intro-title">
+        <div className="lm-container lm-intro-layout">
+          <div>
+            <div className="lm-section-index"><span>01</span><span>UNSER ANSPRUCH</span></div>
+            <h2 id="lm-intro-title">„Macht’s<br/><em>selber.“</em></h2>
+            <div className="lm-handwritten">Ein Gedanke, der Zukunft macht.</div>
+          </div>
+          <div className="lm-intro-body">
+            <div className="lm-accent-bar"/>
+            <p className="lm-intro-lead">Im Landheim ist Eigenverantwortung nicht nur ein Wort. Sie wird gelebt.</p>
+            <p>Beim Wettbewerb <strong>Jugend gründet</strong> werden Schülerinnen und Schüler der 9. Klassen selbst zu Unternehmerinnen und Unternehmern auf Zeit: Sie entdecken Probleme, entwickeln Ideen und gestalten daraus tragfähige Konzepte.</p>
+            <p>Sie lernen, Entscheidungen zu treffen, Verantwortung zu übernehmen und ihre Überzeugungen vor Menschen mit Erfahrung aus Wirtschaft und Unternehmertum zu vertreten.</p>
+            <a className="lm-text-cta" href="https://www.landheim-ammersee.de/de/ueber-das-landheim" target="_blank" rel="noopener noreferrer">Die Idee des Landheims entdecken <ArrowUpRight size={18}/></a>
+          </div>
+        </div>
+      </section>
+
+      <section className="lm-values" aria-label="Was die Jugendlichen lernen">
+        <div className="lm-container lm-values-grid">
+          <div><span className="lm-value-number">01 /</span><h3>Mut.</h3><p>Den ersten Schritt gehen, auch wenn noch nicht alles feststeht.</p></div>
+          <div><span className="lm-value-number">02 /</span><h3>Verantwortung.</h3><p>Gemeinsam entscheiden, Fehler reflektieren und Lösungen finden.</p></div>
+          <div><span className="lm-value-number">03 /</span><h3>Wirkung.</h3><p>Aus einer Idee etwas machen, das für andere Menschen zählt.</p></div>
+        </div>
+      </section>
+
+      <section className="lm-place" aria-labelledby="lm-place-title">
+        <div className="lm-place-image" role="img" aria-label="Gebäude auf dem Campus des Landheims Ammersee"/>
+        <div className="lm-place-panel">
+          <span className="lm-small-label">LANDHEIM AMMERSEE · SCHONDORF</span>
+          <h2 id="lm-place-title">Ein besonderer Ort.<br/><em>Für große Gedanken.</em></h2>
+          <p>Hier verbinden sich Tradition und Aufbruch. Praktisches Lernen, persönliche Entwicklung und der Mut, Dinge selbst in die Hand zu nehmen, gehören seit Generationen zusammen.</p>
+          <a href="https://www.landheim-ammersee.de/de" target="_blank" rel="noopener noreferrer">Unser Landheim kennenlernen <ArrowUpRight size={18}/></a>
+        </div>
+        <div className="lm-place-folio" aria-hidden="true">LANDHEIM / SEIT 1905</div>
+      </section>
+
+      <section className="lm-process lm-section" id="weg" aria-labelledby="lm-process-title">
+        <div className="lm-container">
+          <div className="lm-section-heading lm-heading-split">
+            <div><div className="lm-section-index"><span>02</span><span>DER WEG ZUM UNTERNEHMEN</span></div><h2 id="lm-process-title">Aus Gedanken<br/>werden <em>Geschäftsideen.</em></h2></div>
+            <p>Unternehmerisches Denken beginnt mit Neugier – und wächst durch Ausprobieren, Planen und Überzeugen.</p>
+          </div>
+          <div className="lm-process-grid">
+            {phases.map((phase) => {
+              const Icon = phase.icon;
+              return <article className="lm-process-card" key={phase.number}>
+                <div className="lm-process-top"><span>{phase.number}</span><Icon size={26} strokeWidth={1.4} aria-hidden="true"/></div>
+                <small>{phase.eyebrow}</small>
+                <h3>{phase.title}</h3>
+                <p>{phase.description}</p>
+                <span className="lm-process-footer"><ArrowRight size={22} aria-hidden="true"/></span>
+              </article>;
+            })}
+          </div>
+          <a className="lm-text-cta" href="https://www.jugend-gruendet.de/wettbewerb/" target="_blank" rel="noopener noreferrer">Über den bundesweiten Wettbewerb <ExternalLink size={17}/></a>
+        </div>
+      </section>
+
+      <section id="pitch" className="lm-event" aria-labelledby="lm-event-title">
+        <div className="lm-container lm-event-inner">
+          <div className="lm-event-left">
+            <div className="lm-section-index lm-index-light"><span>03</span><span>DER HÖHEPUNKT</span></div>
+            <div className="lm-event-date" aria-label="15. Januar 2027"><strong>15</strong><span>JANUAR<br/>2027</span></div>
+            <div className="lm-event-date-line"/>
+            <p>FREITAG <span>·</span> 13:15 – 17:30 UHR</p>
+          </div>
+          <div className="lm-event-right">
+            <div className="lm-kicker lm-kicker-light"><span className="lm-kicker-line"/> DER PITCH-TAG</div>
+            <h2 id="lm-event-title">Die Bühne<br/>gehört <em>den Ideen.</em></h2>
+            <p>Neun Teams stellen ihre Konzepte einer Jury aus erfahrenen Persönlichkeiten vor. Hier zählen klare Gedanken, überzeugende Präsentationen und die Fähigkeit, kritische Fragen souverän zu beantworten.</p>
+            <div className="lm-event-facts">
+              <div><CalendarDays size={23} strokeWidth={1.6}/><span><small>TERMIN</small>Freitag, 15. Januar 2027</span></div>
+              <div><MapPin size={23} strokeWidth={1.6}/><span><small>ORT</small>Vortragssaal · Landheim Ammersee</span></div>
+            </div>
+          </div>
+        </div>
+        <span className="lm-event-watermark" aria-hidden="true">PITCH</span>
+      </section>
+
+      <section className="lm-teams lm-section" id="teams" aria-labelledby="lm-teams-title">
+        <div className="lm-container">
+          <div className="lm-section-heading lm-heading-split">
+            <div><div className="lm-section-index"><span>04</span><span>DIE UNTERNEHMERTEAMS</span></div><h2 id="lm-teams-title">Neun Teams.<br/><em>Neun Perspektiven.</em></h2></div>
+            <p>Jede Idee beginnt mit Menschen, die etwas verändern möchten. Hier erhalten die Teams nach ihrer öffentlichen Freigabe ihren Platz.</p>
+          </div>
+          <div className="lm-team-grid">
+            {teams.map((team, index) => (
+              <article className="lm-team-card" key={team.id}>
+                <span className="lm-team-card-number">{String(index + 1).padStart(2, '0')}</span>
+                <div className="lm-team-card-art" aria-hidden="true"><span>{String(index + 1).padStart(2, '0')}</span></div>
+                <div className="lm-team-card-bottom">
+                  <span>{team.published ? 'UNTERNEHMERTEAM' : 'VORSTELLUNG FOLGT'}</span>
+                  <h3>{team.name}</h3>
+                  <p>{team.published ? 'Ein junges Unternehmen stellt sich vor.' : 'Nach öffentlicher Freigabe erfährst du hier mehr.'}</p>
+                </div>
+              </article>
+            ))}
+          </div>
+          <div className="lm-teams-note"><UsersRound size={22} strokeWidth={1.5}/><span>Unterlagen und persönliche Informationen sind ausschließlich im geschützten Juryportal zugänglich.</span></div>
+        </div>
+      </section>
+
+      <section className="lm-manifesto" aria-label="Motto des Wettbewerbs">
+        <div className="lm-container">
+          <span>LANDHEIM AMMERSEE × JUGEND GRÜNDET</span>
+          <p>Wer etwas verändern will,<br/><em>muss anfangen.</em></p>
+          <div className="lm-manifesto-line"/>
+        </div>
+      </section>
+
+      <section id="jury" className="lm-jury lm-section" aria-labelledby="lm-jury-title">
+        <div className="lm-container lm-jury-layout">
+          <div className="lm-jury-copy">
+            <div className="lm-section-index lm-index-light"><span>05</span><span>GESCHÜTZTER JURYBEREICH</span></div>
+            <div className="lm-jury-symbol"><LockKeyhole size={28} strokeWidth={1.5}/></div>
+            <h2 id="lm-jury-title">Ihre Erfahrung.<br/><em>Ihr Blick.</em><br/>Ihre Bewertung.</h2>
+            <p>Im persönlichen Juryportal finden Sie die Unternehmerteams, ihre Unterlagen und die digitale Bewertung für den Pitch-Tag – klar strukturiert und vertraulich.</p>
+            <div className="lm-jury-perks"><span>01 / Teamprofile</span><span>02 / Businesspläne</span><span>03 / Digitale Bewertung</span></div>
+          </div>
+          <div className="lm-login-panel">
+            <span className="lm-login-overline">LANDHEIM AMMERSEE · JURYPORTAL</span>
+            <h3>Willkommen<br/><em>zurück.</em></h3>
+            <p>Melden Sie sich mit Ihren persönlichen Jury-Zugangsdaten an.</p>
+            <form onSubmit={submitJuryLogin}>
+              <label htmlFor="lm-login-email">E-MAIL-ADRESSE</label>
+              <input id="lm-login-email" type="email" autoComplete="username" required value={email} onChange={event => setEmail(event.currentTarget.value)} placeholder="name@beispiel.de"/>
+              <label htmlFor="lm-login-password">PASSWORT</label>
+              <input id="lm-login-password" type="password" autoComplete="current-password" required value={password} onChange={event => setPassword(event.currentTarget.value)} placeholder="Ihr persönliches Passwort"/>
+              {loginError && <p role="alert" className="lm-login-error">{loginError}</p>}
+              <button type="submit" disabled={loginBusy} aria-busy={loginBusy}>{loginBusy ? 'Anmeldung wird geprüft …' : 'Zum persönlichen Juryportal'} <ArrowUpRight size={19}/></button>
+            </form>
+            <div className="lm-login-footer"><LockKeyhole size={14}/><span>Geschützter Zugang · Nur für freigeschaltete Jurymitglieder</span></div>
+          </div>
+        </div>
+      </section>
+
+      <footer className="lm-footer">
+        <div className="lm-container">
+          <div className="lm-footer-main">
+            <div><span className="lm-footer-brand">LANDHEIM AMMERSEE</span><strong>JUGEND GRÜNDET</strong><p>Junge Menschen gestalten die Zukunft.</p></div>
+            <div><span>WETTBEWERB 2026/27</span><a href="#idee">Das Projekt</a><a href="#teams">Die Teams</a><a href="#pitch">Pitch-Tag</a><a href="#jury">Juryportal</a></div>
+            <div><span>MEHR ENTDECKEN</span><a href="https://www.landheim-ammersee.de/de" target="_blank" rel="noopener noreferrer">Landheim Ammersee <ArrowUpRight size={14}/></a><a href="https://www.jugend-gruendet.de/wettbewerb/" target="_blank" rel="noopener noreferrer">Jugend gründet <ArrowUpRight size={14}/></a></div>
+          </div>
+          <div className="lm-footer-bottom">
+            <span>© 2026/27 · Schulprojekt am Landheim Ammersee</span>
+            <span>Designvorschau · Bildrechte, Impressum und Datenschutz vor öffentlicher Veröffentlichung abstimmen.</span>
+            <a href="#top">NACH OBEN ↑</a>
+          </div>
+        </div>
+      </footer>
+    </main>
+  );
+}
