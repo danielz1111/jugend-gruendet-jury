@@ -627,3 +627,70 @@
 
 /* Responsive remote image optimization via next/image, original URLs preserved. */
 .lm-page .lm-hero-gallery .lm-hero-photo{object-fit:cover;object-position:center}
+
+/* Public 2026/27 company profiles: dynamic approved data, no invented imagery. */
+.lm-page .lm-team-grid{gap:21px;align-items:stretch}
+.lm-page .lm-team-card{
+  min-height:400px;background:#fff;border:1px solid #e0e6df;
+  box-shadow:0 13px 36px rgba(23,54,58,.045);border-radius:2px;
+  transition:transform .2s ease,box-shadow .2s ease,border-color .2s ease
+}
+.lm-page .lm-team-card:hover{transform:translateY(-4px);border-color:#bbcbb8;box-shadow:0 18px 38px rgba(23,54,58,.11)}
+.lm-page .lm-team-card-art{
+  height:173px;display:flex;align-items:center;justify-content:flex-start;
+  overflow:hidden;position:relative;padding:26px 30px;
+  background:linear-gradient(118deg,#bccfd1,#e8eeea)
+}
+.lm-page .lm-team-card:nth-child(3n + 2) .lm-team-card-art{background:linear-gradient(120deg,#c5c9aa,#ebead9)}
+.lm-page .lm-team-card:nth-child(3n + 3) .lm-team-card-art{background:linear-gradient(120deg,#bbc7d0,#e0e9ed)}
+.lm-page .lm-team-card-art:before{
+  content:"";position:absolute;left:auto;right:-34px;top:-165px;
+  width:335px;height:335px;border:1px solid rgba(255,255,255,.66);
+  border-radius:50%;background:rgba(255,255,255,.1);transform:none
+}
+.lm-page .lm-team-card-art:after{
+  content:"";position:absolute;left:auto;right:53px;top:-104px;
+  width:245px;height:245px;border:1px solid rgba(255,255,255,.56);
+  border-radius:50%;background:rgba(255,255,255,.06);transform:none
+}
+.lm-page .lm-team-card-art .lm-team-card-initials{
+  display:block;position:relative;left:auto;right:auto;top:auto;z-index:2;
+  font-family:'Playfair Display',Georgia,serif;font-size:clamp(65px,6.7vw,96px);
+  line-height:1;font-weight:400;letter-spacing:-.065em;color:#304b51;
+  text-transform:uppercase;text-shadow:0 1px 0 rgba(255,255,255,.5)
+}
+.lm-page .lm-team-card:nth-child(3n + 2) .lm-team-card-initials{color:#505d3c}
+.lm-page .lm-team-card:nth-child(3n + 3) .lm-team-card-initials{color:#3e5868}
+.lm-page .lm-team-card-art .lm-team-card-art-folio{
+  position:absolute;right:23px;top:auto;bottom:18px;z-index:3;
+  color:#354c51;font:700 9px 'DM Sans',Arial,sans-serif;
+  letter-spacing:.13em;white-space:nowrap
+}
+.lm-page .lm-team-card-bottom{display:flex;flex-direction:column;flex:1;min-height:224px;padding:25px 29px 23px}
+.lm-page .lm-team-card-eyebrow{color:#667e78;font-size:10px;line-height:1.5;letter-spacing:.16em;font-weight:700}
+.lm-page .lm-team-card-eyebrow span{color:#9fae9a}
+.lm-page .lm-team-card h3{color:#29424a;font-size:clamp(27px,2.6vw,35px);margin:14px 0 12px;overflow-wrap:anywhere}
+.lm-page .lm-team-card p{line-height:1.65;margin:0;color:#667a79;font-size:13px}
+.lm-page .lm-team-card .lm-team-card-pending{color:#87938f;font-style:italic}
+.lm-page .lm-team-card-details{margin-top:17px;border-top:1px solid #e6ebe4;padding-top:12px}
+.lm-page .lm-team-card-details summary{display:flex;align-items:center;justify-content:space-between;cursor:pointer;list-style:none;font-size:12px;font-weight:700;color:#385861;gap:10px}
+.lm-page .lm-team-card-details summary::-webkit-details-marker{display:none}
+.lm-page .lm-team-card-details summary svg{transition:transform .18s ease}
+.lm-page .lm-team-card-details[open] summary svg{transform:rotate(90deg)}
+.lm-page .lm-team-card-details summary:focus-visible{outline:2px solid #93a94a;outline-offset:4px}
+.lm-page .lm-team-card-details>p{padding-top:12px;white-space:pre-line}
+.lm-page .lm-team-card-foot{display:flex;align-items:center;gap:10px;margin-top:auto;padding-top:23px;color:#899a92;font-size:9px;letter-spacing:.12em;font-weight:700}
+.lm-page .lm-team-card-footline{height:2px;width:29px;background:#b6cb77;display:block;flex-shrink:0}
+.lm-page .lm-team-empty{grid-column:1/-1;background:linear-gradient(110deg,#eff3ed,#fafaf6);border:1px solid #e2e9de;padding:clamp(35px,5vw,70px);margin-top:44px}
+.lm-page .lm-team-empty>span{font-size:10px;font-weight:700;letter-spacing:.18em;color:#779080}
+.lm-page .lm-team-empty h3{font-size:clamp(29px,3.7vw,46px);margin:18px 0;color:#324c54}
+.lm-page .lm-team-empty p{max-width:520px;color:#586f74;font-size:14px;line-height:1.8}
+@media(max-width:980px){.lm-page .lm-team-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:620px){
+ .lm-page .lm-team-grid{grid-template-columns:1fr;gap:17px;margin-top:31px}
+ .lm-page .lm-team-card{min-height:0}
+ .lm-page .lm-team-card-art{height:146px}
+ .lm-page .lm-team-card-bottom{min-height:195px;padding:22px 24px}
+ .lm-page .lm-team-card-art .lm-team-card-initials{font-size:73px}
+}
+@media(prefers-reduced-motion:reduce){.lm-page .lm-team-card{transition:none!important}.lm-page .lm-team-card:hover{transform:none}.lm-page .lm-team-card-details summary svg{transition:none!important}}

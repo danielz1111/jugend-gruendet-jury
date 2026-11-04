@@ -8,8 +8,7 @@ import {
   UsersRound, X
 } from 'lucide-react';
 
-type PublishedTeam = { id: string; name: string; position: number };
-type LandingTeam = { id: string; name: string; position: number; published: boolean };
+type PublishedTeam = { id: string; name: string; position: number; tagline?: string | null; description?: string | null };
 
 const heroSlides = [
   {
@@ -80,14 +79,12 @@ export default function HomeClient({ publishedTeams = [] }: { publishedTeams: Pu
     return () => window.clearInterval(timer);
   }, []);
 
-  const teams: LandingTeam[] = publishedTeams.length
-    ? [...publishedTeams].sort((a, b) => a.position - b.position).map(team => ({ ...team, published: true }))
-    : Array.from({ length: 9 }, (_, index) => ({
-        id: 'placeholder-' + index,
-        name: 'Unternehmerteam ' + String(index + 1).padStart(2, '0'),
-        position: index + 1,
-        published: false
-      }));
+  // The public page deliberately receives only approved team information.
+  // A missing Supabase response must never become invented "published" teams.
+  const teams = [...publishedTeams]
+    .filter(team => team.id && team.name?.trim())
+    .sort((a, b) => a.position - b.position)
+    .slice(0, 9);
 
   function closeMenu() { setMenuOpen(false); }
 
@@ -292,22 +289,50 @@ export default function HomeClient({ publishedTeams = [] }: { publishedTeams: Pu
         <div className="lm-container">
           <div className="lm-section-heading lm-heading-split">
             <div><div className="lm-section-index"><span>04</span><span>DIE UNTERNEHMERTEAMS</span></div><h2 id="lm-teams-title">Neun Teams.<br/><em>Neun Perspektiven.</em></h2></div>
-            <p>Jede Idee beginnt mit Menschen, die etwas verändern möchten. Hier erhalten die Teams nach ihrer öffentlichen Freigabe ihren Platz.</p>
+            <p>Jede Idee beginnt mit Menschen, die etwas verändern möchten. Entdecken Sie hier die öffentlich freigegebenen Gründerteams – ihre Kurzprofile wachsen mit dem Projekt.</p>
           </div>
-          <div className="lm-team-grid">
-            {teams.map((team, index) => (
-              <article className="lm-team-card" key={team.id}>
-                <span className="lm-team-card-number">{String(index + 1).padStart(2, '0')}</span>
-                <div className="lm-team-card-art" aria-hidden="true"><span>{String(index + 1).padStart(2, '0')}</span></div>
-                <div className="lm-team-card-bottom">
-                  <span>{team.published ? 'UNTERNEHMERTEAM' : 'VORSTELLUNG FOLGT'}</span>
-                  <h3>{team.name}</h3>
-                  <p>{team.published ? 'Ein junges Unternehmen stellt sich vor.' : 'Nach öffentlicher Freigabe erfährst du hier mehr.'}</p>
-                </div>
-              </article>
-            ))}
-          </div>
-          <div className="lm-teams-note"><UsersRound size={22} strokeWidth={1.5}/><span>Unterlagen und persönliche Informationen sind ausschließlich im geschützten Juryportal zugänglich.</span></div>
+          {teams.length > 0 ? (
+            <div className="lm-team-grid" aria-label="Freigegebene Unternehmerteams">
+              {teams.map(team => {
+                const number = String(team.position).padStart(2, '0');
+                const short = team.tagline?.trim() || '';
+                const description = team.description?.trim() || '';
+                const initials = team.name.split(/[\s-]+/).filter(Boolean).slice(0, 2).map(word => word.charAt(0)).join('').toUpperCase();
+                return (
+                  <article className="lm-team-card" key={team.id} aria-labelledby={'team-' + team.id}>
+                    <div className="lm-team-card-art" aria-hidden="true">
+                      <span className="lm-team-card-initials">{initials || 'JG'}</span>
+                      <span className="lm-team-card-art-folio">GRÜNDERTEAM / {number}</span>
+                    </div>
+                    <div className="lm-team-card-bottom">
+                      <span className="lm-team-card-eyebrow">JUGEND GRÜNDET <span>· TEAM {number}</span></span>
+                      <h3 id={'team-' + team.id}>{team.name}</h3>
+                      <p className={short || description ? 'lm-team-card-teaser' : 'lm-team-card-pending'}>
+                        {short || description || 'Das öffentliche Kurzprofil wird ergänzt.'}
+                      </p>
+                      {short && description && (
+                        <details className="lm-team-card-details">
+                          <summary>Die Geschäftsidee <ArrowRight size={17} aria-hidden="true"/></summary>
+                          <p>{description}</p>
+                        </details>
+                      )}
+                      <div className="lm-team-card-foot">
+                        <span className="lm-team-card-footline" aria-hidden="true"/>
+                        <span>{short || description ? 'PROJEKTPROFIL' : 'KURZPROFIL FOLGT'}</span>
+                      </div>
+                    </div>
+                  </article>
+                );
+              })}
+            </div>
+          ) : (
+            <div className="lm-team-empty" role="status">
+              <span>UNTERNEHMERTEAMS 2026/27</span>
+              <h3>Die Teamvorstellungen folgen.</h3>
+              <p>Sobald öffentlich freigegebene Teamprofile vorliegen, erscheinen sie automatisch an dieser Stelle.</p>
+            </div>
+          )}
+          <div className="lm-teams-note"><UsersRound size={22} strokeWidth={1.5}/><span>Auf dieser Seite erscheinen nur freigegebene Teamangaben. Personenbezogene Informationen, Fotos und Unterlagen bleiben im geschützten Juryportal, sofern sie nicht gesondert für die Öffentlichkeit freigegeben wurden.</span></div>
         </div>
       </section>
 

@@ -2,7 +2,7 @@ import HomeClient from './HomeClient';
 import {getPublicTeams} from '../lib/supabase-public';
 
 export default async function Home() {
-  let publishedTeams: Array<{id:string;name:string;position:number}> = [];
+  let publishedTeams: Awaited<ReturnType<typeof getPublicTeams>> = [];
   try {
     publishedTeams = await getPublicTeams();
   } catch (error) {
