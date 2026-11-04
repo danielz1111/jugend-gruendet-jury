@@ -233,7 +233,7 @@ export default function HomeClient({ publishedTeams = [] }: { publishedTeams: Pu
       </section>
 
       <section className="lm-place" aria-labelledby="lm-place-title">
-        <div className="lm-place-image" role="img" aria-label="Gebäude auf dem Campus des Landheims Ammersee"/>
+        <div className="lm-place-image" role="img" aria-label="Luftaufnahme des Landheim-Campus mit Blick auf den Ammersee"/>
         <div className="lm-place-panel">
           <span className="lm-small-label">LANDHEIM AMMERSEE · SCHONDORF</span>
           <h2 id="lm-place-title">Ein besonderer Ort.<br/><em>Für große Gedanken.</em></h2>

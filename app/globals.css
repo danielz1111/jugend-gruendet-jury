@@ -241,7 +241,7 @@
 .lm-values h3{font-size:clamp(35px,3.5vw,51px);margin:13px 0 8px;color:#264537}
 .lm-values p{font-size:13px;max-width:290px;color:#66776c;margin:0;line-height:1.7}
 .lm-place{position:relative;min-height:675px;background:#233e34;display:flex;align-items:center;justify-content:flex-end}
-.lm-place-image{position:absolute;inset:0;background-image:linear-gradient(90deg,#10251c20,#10251c99),url('https://www.landheim-ammersee.de/sites/default/files/styles/image_4_3__560_420/public/media/images/landheim-ammersee-ueber-das-landheim-buchenhaueser-sp-jaist-2068.jpg?h=a2bbf642&itok=6GbefgxL');background-position:center 54%;background-size:cover}
+.lm-place-image{position:absolute;inset:0;background-image:linear-gradient(90deg,#10251c20,#10251c99),url('https://www.landheim-ammersee.de/sites/default/files/styles/image_16_6__1920_720/public/media/images/imgi_1_Landheim-Ammersee-grosser-naturnaher-Campus-direkt-am-See-scaled.jpg?h=d1cb525d&itok=rJDNVaZV');background-position:center 48%;background-size:cover}
 .lm-place-panel{position:relative;z-index:1;width:min(47%,620px);margin:70px max(6vw,calc((100vw - 1340px)/2)) 70px 0;padding:57px clamp(36px,4.2vw,73px);background:#f8f6ed;box-shadow:0 28px 90px #0c201d45}
 .lm-place-panel:before{position:absolute;content:'';left:0;top:0;bottom:0;width:5px;background:#b7c5a9}
 .lm-small-label{font-size:10px;font-weight:700;letter-spacing:.2em;color:#899682}
