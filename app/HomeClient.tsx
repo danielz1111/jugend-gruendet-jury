@@ -1,8 +1,9 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import Image from 'next/image';
 import './TeamReveal.css';
+import './HomepagePolish.css';
 import {
   ArrowRight, ArrowUpRight, CalendarDays, ChevronDown, Clock3, Compass,
   ExternalLink, Lightbulb, LockKeyhole, MapPin, Menu, Presentation,
@@ -62,6 +63,16 @@ export default function HomeClient({ publishedTeams = [] }: { publishedTeams: Pu
   const [loginError, setLoginError] = useState('');
   const [activeSlide, setActiveSlide] = useState(0);
   const [daysUntilPitch, setDaysUntilPitch] = useState<number | null>(null);
+  const sealRef = useRef<HTMLDivElement | null>(null);
+  const [animatedStats, setAnimatedStats] = useState({ students: 0, teams: 0 });
+  // The aggregate comes from the current roster (42 students in 9 teams),
+  // not from published private student identities.
+  const studentCount = 42;
+  const teams = [...publishedTeams]
+    .filter(team => team.id && team.name?.trim())
+    .sort((a, b) => a.position - b.position)
+    .slice(0, 9);
+
 
   useEffect(() => {
     const updateCountdown = () => {
@@ -81,12 +92,46 @@ export default function HomeClient({ publishedTeams = [] }: { publishedTeams: Pu
     return () => window.clearInterval(timer);
   }, []);
 
-  // The public page deliberately receives only approved team information.
-  // A missing Supabase response must never become invented "published" teams.
-  const teams = [...publishedTeams]
-    .filter(team => team.id && team.name?.trim())
-    .sort((a, b) => a.position - b.position)
-    .slice(0, 9);
+  useEffect(() => {
+    const node = sealRef.current;
+    if (!node) return;
+    const duration = 1500;
+    let frame = 0;
+    let inView = false;
+    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const observer = new IntersectionObserver(([entry]) => {
+      if (entry.isIntersecting && !inView) {
+        inView = true;
+        window.cancelAnimationFrame(frame);
+        if (reducedMotion) {
+          setAnimatedStats({ students: studentCount, teams: teams.length });
+          return;
+        }
+        const started = performance.now();
+        setAnimatedStats({ students: 0, teams: 0 });
+        const advance = (now: number) => {
+          if (!inView) return;
+          const progress = Math.min((now - started) / duration, 1);
+          const eased = 1 - Math.pow(1 - progress, 3);
+          setAnimatedStats({
+            students: Math.round(studentCount * eased),
+            teams: Math.round(teams.length * eased)
+          });
+          if (progress < 1) frame = window.requestAnimationFrame(advance);
+        };
+        frame = window.requestAnimationFrame(advance);
+      } else if (!entry.isIntersecting && inView) {
+        inView = false;
+        window.cancelAnimationFrame(frame);
+        setAnimatedStats({ students: 0, teams: 0 });
+      }
+    }, { threshold: 0.35 });
+    observer.observe(node);
+    return () => { inView = false; observer.disconnect(); window.cancelAnimationFrame(frame); };
+  }, [teams.length]);
+
+  // The public page receives approved teams only; the displayed
+  // aggregate does not reveal individual student information.
 
   function closeMenu() { setMenuOpen(false); }
 
@@ -124,8 +169,16 @@ export default function HomeClient({ publishedTeams = [] }: { publishedTeams: Pu
       <header className="lm-header">
         <div className="lm-container lm-header-inner">
           <a className="lm-wordmark" href="#top" onClick={closeMenu} aria-label="Jugend gründet am Landheim Ammersee, zur Startseite">
-            <span className="lm-emblem" aria-hidden="true"><span>L</span><i/></span>
-            <span className="lm-wordmark-type"><strong>LANDHEIM AMMERSEE</strong><small>JUGEND GRÜNDET · 2026/27</small></span>
+            <span className="lm-official-mark"><Image
+              src="https://www.landheim-ammersee.de/themes/master_theme/logo.svg"
+              width={222}
+              height={67}
+              unoptimized
+              alt="Landheim Ammersee"
+              className="lm-official-logo"
+              priority
+            /></span>
+            <span className="lm-wordmark-type lm-competition-wordmark"><strong>JUGEND GRÜNDET</strong><small>SCHULJAHR 2026/27</small></span>
           </a>
           <nav id="lm-mobile-navigation" className={menuOpen ? 'lm-nav lm-nav-open' : 'lm-nav'} aria-label="Hauptnavigation">
             <a href="#idee" onClick={closeMenu}>Die Idee</a>
@@ -168,13 +221,19 @@ export default function HomeClient({ publishedTeams = [] }: { publishedTeams: Pu
               <a className="lm-quiet-cta" href="#jury">Zum Juryportal <ArrowRight size={18}/></a>
             </div>
           </div>
-          <div className="lm-hero-seal" aria-label="Neun Teams beim Pitch-Tag">
+          <div ref={sealRef} className="lm-hero-seal lm-hero-seal-stats" aria-label={studentCount+' Schülerinnen und Schüler in '+teams.length+' Teams. Pitch am 15. Januar 2027.'}>
             <span className="lm-hero-seal-overline">LANDHEIM ENTREPRENEURS</span>
-            <strong>09</strong>
-            <span className="lm-hero-seal-caption">TEAMS.<br/>UNZÄHLIGE MÖGLICHKEITEN.</span>
+            <div className="lm-seal-stat-block" aria-hidden="true">
+              <strong className="lm-seal-stat-number">{animatedStats.students}</strong>
+              <span className="lm-seal-stat-label">SCHÜLERINNEN<br/>UND SCHÜLER</span>
+            </div>
+            <div className="lm-seal-stat-block lm-seal-stat-second" aria-hidden="true">
+              <strong className="lm-seal-stat-number">{String(animatedStats.teams).padStart(2, '0')}</strong>
+              <span className="lm-seal-stat-label">GRÜNDERTEAMS</span>
+            </div>
             <span className="lm-seal-divider"/>
             <span className="lm-seal-date">15. JANUAR 2027</span>
-            {daysUntilPitch !== null && daysUntilPitch > 0 && <span className="lm-seal-countdown">Noch {daysUntilPitch} Tage</span>}
+            {daysUntilPitch !== null && daysUntilPitch > 0 && <span className="lm-seal-countdown">NOCH <strong>{daysUntilPitch}</strong> TAGE</span>}
           </div>
         </div>
         <div className="lm-hero-bottom">

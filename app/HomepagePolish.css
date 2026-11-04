@@ -1,0 +1,103 @@
+/* The official school emblem, animated public aggregates and readable hero type.
+   Scoped to the public home page: the jury portal remains unchanged. */
+.lm-page .lm-official-mark{
+  display:flex;align-items:center;justify-content:center;
+  width:211px;height:72px;flex-shrink:0;
+  padding:8px 12px;background:#627174;border:1px solid #b8c9b540;
+}
+.lm-page .lm-official-logo{display:block;width:100%;height:100%;object-fit:contain}
+.lm-page .lm-wordmark{gap:14px}
+.lm-page .lm-competition-wordmark{min-width:116px}
+.lm-page .lm-competition-wordmark strong{font-size:14px;letter-spacing:.09em;color:#284943}
+.lm-page .lm-competition-wordmark small{font-size:11px;letter-spacing:.065em}
+.lm-page .lm-nav>a{font-size:13.5px;letter-spacing:.005em}
+.lm-page .lm-nav>a.lm-nav-jury{padding:17px 20px}
+.lm-page .lm-hero-inner{grid-template-columns:minmax(0,1fr) minmax(239px,263px);gap:clamp(28px,4vw,64px)}
+.lm-page .lm-kicker{font-size:12px}
+.lm-page .lm-hero-lead{font-size:clamp(18px,1.8vw,23px)}
+.lm-page .lm-primary-cta{font-size:16px;padding:21px 28px;gap:32px;min-height:61px}
+.lm-page .lm-quiet-cta{font-size:16px;min-height:51px}
+.lm-page .lm-hero-bottom-inner>a{font-size:11px;letter-spacing:.1em}
+.lm-page .lm-hero-seal-stats{padding:24px 24px 25px;gap:0;max-width:100%}
+.lm-page .lm-hero-seal-stats .lm-hero-seal-overline{font-size:11px;line-height:1.6;letter-spacing:.13em}
+.lm-page .lm-seal-stat-block{display:flex;flex-direction:column;gap:3px;padding:13px 0 11px;border-bottom:1px solid #f5f6e02f}
+.lm-page .lm-seal-stat-block.lm-seal-stat-second{padding-top:11px;padding-bottom:10px;border-bottom:0}
+.lm-page .lm-seal-stat-block .lm-seal-stat-number{
+  display:block;font:500 clamp(67px,7vw,91px)/.96 'Playfair Display',Georgia,serif;
+  letter-spacing:-.075em;color:#f8f9ed;margin:0;min-height:72px;
+  font-variant-numeric:tabular-nums;
+}
+.lm-page .lm-seal-stat-label{display:block;font-size:11px;line-height:1.5;letter-spacing:.13em;font-weight:700;color:#dde7e0}
+.lm-page .lm-hero-seal-stats .lm-seal-divider{margin:12px 0 14px;background:#e5ede14f}
+.lm-page .lm-hero-seal-stats .lm-seal-date{font-size:15px;letter-spacing:.045em;font-weight:800}
+.lm-page .lm-hero-seal-stats .lm-seal-countdown{
+  display:flex;align-items:baseline;flex-wrap:wrap;gap:7px;
+  padding-top:10px;font-size:13px;letter-spacing:.035em;line-height:1.25;color:#dce98c;font-weight:800;
+}
+.lm-page .lm-hero-seal-stats .lm-seal-countdown strong{
+  font:600 32px/1 'Playfair Display',Georgia,serif;
+  letter-spacing:-.035em;color:#dce98c;margin:0;
+  font-variant-numeric:tabular-nums;
+}
+.lm-page .lm-event-countdown{font-size:14px;padding:17px 20px;gap:14px;letter-spacing:.075em}
+.lm-page .lm-event-countdown strong{font-size:34px;margin:0 4px}
+.lm-page .lm-event-left>p{font-size:13px}
+@media(max-width:1220px){
+ .lm-page .lm-official-mark{width:181px;height:65px;padding:7px 11px}
+ .lm-page .lm-wordmark{gap:10px}
+ .lm-page .lm-competition-wordmark strong{font-size:12px}
+ .lm-page .lm-competition-wordmark small{font-size:10px}
+ .lm-page .lm-nav>a{font-size:12.5px}
+ .lm-page .lm-hero-seal-stats .lm-hero-seal-overline{font-size:10px}
+}
+@media(max-width:980px){
+ .lm-page .lm-official-mark{width:194px;height:64px}
+ .lm-page .lm-competition-wordmark strong{font-size:14px}
+ .lm-page .lm-hero-seal-stats{position:absolute;right:28px;bottom:93px;width:185px;padding:15px}
+ .lm-page .lm-seal-stat-block .lm-seal-stat-number{font-size:55px;min-height:54px}
+ .lm-page .lm-seal-stat-block{padding:8px 0}
+ .lm-page .lm-seal-stat-label{font-size:9px}
+ .lm-page .lm-hero-seal-stats .lm-seal-date{font-size:11px}
+ .lm-page .lm-hero-seal-stats .lm-seal-countdown{font-size:10px;gap:5px}
+ .lm-page .lm-hero-seal-stats .lm-seal-countdown strong{font-size:25px}
+}
+@media(max-width:760px){
+ .lm-page .lm-hero,.lm-page .lm-hero-inner{min-height:875px}
+ .lm-page .lm-hero-inner{display:flex;flex-direction:column;align-items:flex-start;justify-content:center;gap:25px;padding-top:56px;padding-bottom:97px}
+ .lm-page .lm-hero-copy{padding:0;max-width:100%}
+ .lm-page .lm-hero-seal-stats{
+   display:flex;position:relative;right:auto;bottom:auto;align-self:stretch;
+   width:100%;max-width:560px;margin-top:5px;padding:14px 18px;
+   display:grid;grid-template-columns:1fr 1fr;column-gap:16px;
+ }
+ .lm-page .lm-hero-seal-stats .lm-hero-seal-overline{grid-column:1/-1;margin-bottom:5px}
+ .lm-page .lm-seal-stat-block,.lm-page .lm-seal-stat-block.lm-seal-stat-second{border-bottom:1px solid #f5f6e02f;padding:7px 0}
+ .lm-page .lm-seal-stat-block .lm-seal-stat-number{font-size:52px;min-height:auto}
+ .lm-page .lm-seal-stat-label{font-size:9px}
+ .lm-page .lm-hero-seal-stats .lm-seal-divider{display:none}
+ .lm-page .lm-hero-seal-stats .lm-seal-date{grid-column:1;font-size:12px;align-self:center;margin-top:10px}
+ .lm-page .lm-hero-seal-stats .lm-seal-countdown{grid-column:2;margin-top:1px;font-size:10px;align-self:center}
+ .lm-page .lm-hero-seal-stats .lm-seal-countdown strong{font-size:24px}
+ .lm-page .lm-primary-cta{font-size:16px}
+ .lm-page .lm-quiet-cta{font-size:15px}
+}
+@media(max-width:520px){
+ .lm-page .lm-header-inner{gap:10px}
+ .lm-page .lm-wordmark{gap:8px}
+ .lm-page .lm-official-mark{width:139px;height:52px;padding:7px 8px}
+ .lm-page .lm-competition-wordmark{min-width:0}
+ .lm-page .lm-competition-wordmark strong{font-size:10px;line-height:1.35;white-space:normal}
+ .lm-page .lm-competition-wordmark small{font-size:8.5px;line-height:1.4;letter-spacing:.03em}
+ .lm-page .lm-menu-button{padding:9px}
+ .lm-page .lm-hero,.lm-page .lm-hero-inner{min-height:950px}
+ .lm-page .lm-hero-inner{padding-top:45px;padding-bottom:90px;gap:20px}
+ .lm-page .lm-kicker{font-size:10.5px}
+ .lm-page .lm-primary-cta{font-size:15px;padding:17px 18px}
+ .lm-page .lm-hero-seal-stats{padding:12px 14px;column-gap:12px}
+ .lm-page .lm-seal-stat-block .lm-seal-stat-number{font-size:47px}
+ .lm-page .lm-seal-stat-label{font-size:8.5px}
+ .lm-page .lm-hero-bottom-inner>a{font-size:9px}
+}
+@media(prefers-reduced-motion:reduce){
+ .lm-page .lm-primary-cta,.lm-page .lm-quiet-cta{transition:none}
+}
