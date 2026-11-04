@@ -3,6 +3,7 @@ import {useEffect,useState} from 'react';
 import Link from 'next/link';
 import {ArrowLeft,ArrowRight,Building2,CalendarDays,CheckCircle2,FileText,LockKeyhole,Mail,ShieldCheck,Users} from 'lucide-react';
 import './ParentPortal.css';
+import './ParentResponsive.css';
 
 type RequestRow={id:string;team_id:string;status:'pending'|'approved'|'rejected';created_at:string};
 type Company={id:string;name:string;tagline:string|null;description:string|null;position:number;

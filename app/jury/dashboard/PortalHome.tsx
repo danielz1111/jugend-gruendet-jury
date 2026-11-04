@@ -12,6 +12,7 @@ import LiveEventPanel from './LiveEventPanel';
 import PublicTeamEditor from './PublicTeamEditor';
 import ParentAccessAdmin from './ParentAccessAdmin';
 import './JuryStructure.css';
+import './JuryResponsive.css';
 
 type Team = {
   id:string;name:string;position:number;tagline:string|null;

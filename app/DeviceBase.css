@@ -1,0 +1,19 @@
+/* Cross-browser foundations; Apple Safari/iOS focus and viewport sizing. */
+html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
+input,textarea,select{max-width:100%}
+@media(max-width:900px){
+  .demo input[type="email"],.demo input[type="password"],
+  .demo input[type="text"],.demo textarea,.demo select{
+    font-size:16px;
+  }
+  .demo input[type="email"],.demo input[type="password"],
+  .demo input[type="text"]{min-height:48px}
+  .demo button[type="submit"]{min-height:48px}
+  .demo-header{height:auto;min-height:68px;flex-wrap:wrap;padding-block:11px}
+}
+@media(max-width:530px){
+  .demo-header{gap:8px}
+  .demo-header strong{line-height:1.5}
+  .demo-header a{min-height:44px}
+  .demo-status{font-size:11px}
+}

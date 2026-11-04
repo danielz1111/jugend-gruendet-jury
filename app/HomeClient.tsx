@@ -6,6 +6,7 @@ import './TeamReveal.css';
 import './HomepagePolish.css';
 import './HeaderIdentity.css';
 import './HomepageFinalTouches.css';
+import './HomeResponsive.css';
 import JuryShowcase from './JuryShowcase';
 import JourneyTimeline from './JourneyTimeline';
 import {

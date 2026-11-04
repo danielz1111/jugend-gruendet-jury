@@ -1,0 +1,202 @@
+/* Responsive presentation for iPhone, Android, iPad, Mac and PC.
+   Imported after the existing Landheim homepage styling. */
+.lm-page{max-width:100%;overflow-x:clip}
+.lm-page .lm-menu-button{min-width:48px;min-height:48px}
+.lm-page :is(.lm-primary-cta,.lm-quiet-cta,.lm-text-cta,.lm-parent-access-actions>a){min-height:44px}
+.lm-page .lm-login-panel :is(input[type="email"],input[type="password"],input[type="text"]){min-height:49px;font-size:16px}
+.lm-page .lm-login-panel .lm-login-password-toggle{min-width:44px;min-height:44px}
+.lm-page .lm-hero-photo{object-fit:cover}
+.lm-page .lm-team-card{min-width:0}
+.lm-page .lm-team-card h3,.lm-page .lm-team-card-reveal strong{overflow-wrap:anywhere}
+.lm-page .lm-team-card-description-accessible{overflow-wrap:anywhere}
+@media(min-width:1101px){
+  .lm-page .lm-hero-inner{align-items:center}
+  .lm-page .lm-hero-copy{min-width:0}
+  .lm-page .lm-hero-seal-editorial{align-self:center}
+}
+@media(min-width:761px) and (max-width:1100px){
+  /* Tablets: no floating statistics over the hero heading. */
+  .lm-page .lm-hero,.lm-page .lm-hero-inner{min-height:0}
+  .lm-page .lm-hero-inner{
+    display:grid;grid-template-columns:minmax(0,1fr);
+    align-content:center;align-items:start;
+    gap:34px;padding-top:clamp(62px,8vw,100px);padding-bottom:125px;
+  }
+  .lm-page .lm-hero-copy{padding-right:0;max-width:820px}
+  .lm-page .lm-hero h1{font-size:clamp(58px,8vw,91px)}
+  .lm-page .lm-hero-seal-stats.lm-hero-seal-editorial{
+    display:grid;position:relative;right:auto;bottom:auto;
+    align-self:start;width:min(100%,800px);max-width:100%;
+    grid-template-columns:repeat(3,minmax(0,1fr));
+    column-gap:22px;row-gap:4px;padding:23px 27px;
+  }
+  .lm-page .lm-hero-seal-editorial .lm-seal-brand-heading{
+    grid-column:1/-1;margin:0 0 2px;
+  }
+  .lm-page .lm-hero-seal-editorial .lm-seal-stat-block,
+  .lm-page .lm-hero-seal-editorial .lm-seal-stat-block.lm-seal-stat-second{
+    display:flex;flex-direction:column;align-items:flex-start;justify-content:center;
+    min-height:102px;gap:8px;padding:10px 0 17px;position:relative;
+  }
+  .lm-page .lm-hero-seal-editorial .lm-seal-stat-number{font-size:clamp(50px,7vw,73px)}
+  .lm-page .lm-hero-seal-editorial .lm-seal-stat-label{font-size:11px}
+  .lm-page .lm-hero-seal-editorial .lm-seal-divider{display:none}
+  .lm-page .lm-hero-seal-editorial .lm-seal-pitch-label{grid-column:1/-1;margin:10px 0 0}
+  .lm-page .lm-hero-seal-editorial .lm-seal-date{
+    grid-column:1/3;align-self:center;font-size:19px;
+  }
+  .lm-page .lm-hero-seal-editorial .lm-seal-countdown{
+    grid-column:3;justify-content:flex-start;padding:0;
+    font-size:12px;
+  }
+  .lm-page .lm-hero-seal-editorial .lm-seal-countdown strong{font-size:32px}
+  .lm-page .lm-team-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .lm-page .lm-jury-layout{grid-template-columns:minmax(0,1fr) minmax(280px,.85fr);gap:5%}
+  .lm-page .lm-login-panel{min-width:0}
+  .lm-page .lm-login-panel h3{font-size:clamp(37px,4.6vw,51px)}
+}
+@media(max-width:760px){
+  .lm-page .lm-container{width:calc(100% - 40px)}
+  .lm-page .lm-header-inner{min-width:0}
+  .lm-page .lm-wordmark{min-width:0;flex:1}
+  .lm-page .lm-competition-wordmark{min-width:0}
+  .lm-page .lm-nav{
+    max-height:calc(100dvh - 84px);overflow-y:auto;
+    -webkit-overflow-scrolling:touch;
+    padding-bottom:calc(18px + env(safe-area-inset-bottom,0px));
+  }
+  .lm-page .lm-nav>a{display:flex;align-items:center;min-height:49px;font-size:15px}
+  .lm-page .lm-hero,.lm-page .lm-hero-inner{min-height:0}
+  .lm-page .lm-hero-inner{
+    display:flex;flex-direction:column;align-items:stretch;justify-content:flex-start;
+    gap:29px;padding-top:clamp(42px,7vw,67px);
+    padding-bottom:112px;
+  }
+  .lm-page .lm-hero-copy{max-width:100%;padding:0}
+  .lm-page .lm-hero h1{
+    font-size:clamp(48px,10.1vw,72px);
+    line-height:1.08;margin:23px 0 20px;
+    overflow-wrap:normal;
+  }
+  .lm-page .lm-hero-lead{font-size:17px;line-height:1.65!important;max-width:590px}
+  .lm-page .lm-hero-actions{gap:14px;margin-top:24px}
+  .lm-page .lm-hero-seal-stats.lm-hero-seal-editorial{
+    display:grid;position:relative;right:auto;bottom:auto;
+    width:100%;max-width:680px;align-self:center;margin:0;
+    grid-template-columns:repeat(3,minmax(0,1fr));
+    gap:5px 12px;padding:19px;
+  }
+  .lm-page .lm-hero-seal-editorial .lm-seal-brand-heading{
+    grid-column:1/-1;margin:0 0 4px;
+  }
+  .lm-page .lm-hero-seal-editorial .lm-seal-stat-block,
+  .lm-page .lm-hero-seal-editorial .lm-seal-stat-block.lm-seal-stat-second{
+    display:flex;flex-direction:column;align-items:flex-start;
+    justify-content:center;min-width:0;min-height:108px;
+    gap:7px;padding:10px 0 18px;
+  }
+  .lm-page .lm-hero-seal-editorial .lm-seal-stat-number{
+    font-size:clamp(42px,8.7vw,62px);min-height:0;line-height:1;
+  }
+  .lm-page .lm-hero-seal-editorial .lm-seal-stat-label{
+    font-size:clamp(9px,1.9vw,11px);letter-spacing:.035em;
+  }
+  .lm-page .lm-hero-seal-editorial .lm-seal-divider{display:none}
+  .lm-page .lm-hero-seal-editorial .lm-seal-pitch-label{
+    grid-column:1/-1;margin:11px 0 2px;
+  }
+  .lm-page .lm-hero-seal-editorial .lm-seal-date{
+    grid-column:1/3;align-self:center;margin:0;
+    font-size:clamp(14px,2.7vw,17px);
+  }
+  .lm-page .lm-hero-seal-editorial .lm-seal-countdown{
+    grid-column:3;align-self:center;padding:0;margin:0;
+    font-size:11px;letter-spacing:0;gap:4px;
+  }
+  .lm-page .lm-hero-seal-editorial .lm-seal-countdown strong{font-size:27px}
+  .lm-page .lm-hero-bottom-inner{min-width:0;gap:12px}
+  .lm-page .lm-hero-bottom-inner>a{min-height:44px}
+  .lm-page .lm-ribbon-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
+  .lm-page .lm-ribbon-grid>div{min-width:0}
+  .lm-page .lm-ribbon-grid strong{font-size:clamp(28px,6vw,42px)}
+  .lm-page .lm-ribbon-grid div span{font-size:10px;letter-spacing:.03em}
+  .lm-page .lm-intro h2{font-size:clamp(60px,13vw,92px)}
+  .lm-page .lm-section-heading h2{font-size:clamp(39px,7vw,59px)}
+  .lm-page .lm-event-right h2{font-size:clamp(42px,7vw,64px)}
+  .lm-page .lm-jury-copy h2{font-size:clamp(43px,8vw,61px)}
+  .lm-page .lm-login-panel h3{font-size:clamp(37px,7vw,54px)}
+  .lm-page .lm-team-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .lm-page .lm-team-card{min-height:0}
+  .lm-page .lm-team-card-art{height:115px}
+  .lm-page .lm-team-card-bottom{padding:20px}
+  .lm-page .lm-team-card h3{font-size:clamp(23px,3.8vw,32px)}
+  .lm-page .lm-team-card-description-accessible{font-size:14px;line-height:1.65}
+  .lm-page .lm-hero-seal .lm-seal-progress{max-width:100%}
+  .jury-showcase-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .jury-showcase-inner{padding-left:5%;padding-right:5%}
+}
+@media(max-width:520px){
+  .lm-page .lm-container{width:calc(100% - 32px)}
+  .lm-page .lm-header-inner{gap:7px}
+  .lm-page .lm-official-mark{width:clamp(90px,30vw,132px);height:52px}
+  .lm-page .lm-competition-wordmark{padding-left:8px}
+  .lm-page .lm-competition-wordmark strong{font-size:clamp(10.5px,3vw,14px);line-height:1.3}
+  .lm-page .lm-competition-wordmark small{font-size:9px;white-space:normal}
+  .lm-page .lm-hero-inner{padding-top:38px;padding-bottom:101px;gap:23px}
+  .lm-page .lm-hero h1{font-size:clamp(45px,11.2vw,59px)}
+  .lm-page .lm-hero-lead{font-size:16px}
+  .lm-page .lm-hero-actions{flex-direction:column;align-items:stretch;gap:8px}
+  .lm-page .lm-primary-cta{width:100%;min-height:52px;font-size:16px}
+  .lm-page .lm-quiet-cta{align-self:flex-start;font-size:15px}
+  .lm-page .lm-hero-seal-stats.lm-hero-seal-editorial{padding:16px 14px;gap:4px 9px}
+  .lm-page .lm-hero-seal-editorial .lm-seal-brand-heading span:last-child{font-size:21px}
+  .lm-page .lm-hero-seal-editorial .lm-seal-stat-block,
+  .lm-page .lm-hero-seal-editorial .lm-seal-stat-block.lm-seal-stat-second{
+    min-height:99px;padding:8px 0 14px;gap:5px;
+  }
+  .lm-page .lm-hero-seal-editorial .lm-seal-stat-number{font-size:clamp(37px,10vw,51px)}
+  .lm-page .lm-hero-seal-editorial .lm-seal-stat-label{font-size:9px;line-height:1.4}
+  .lm-page .lm-hero-seal-editorial .lm-seal-date{font-size:14px}
+  .lm-page .lm-hero-seal-editorial .lm-seal-countdown strong{font-size:27px}
+  .lm-page .lm-hero-bottom-inner>span:first-child{display:none}
+  .lm-page .lm-hero-bottom-inner>a{font-size:11px;letter-spacing:.04em}
+  .lm-page .lm-ribbon-grid div span{font-size:9px}
+  .lm-page .lm-section{padding:66px 0 73px}
+  .lm-page .lm-process-card{min-height:0}
+  .lm-page .lm-team-grid{grid-template-columns:1fr}
+  .lm-page .lm-team-card-art{height:128px}
+  .lm-page .lm-team-card h3{font-size:29px}
+  .lm-page .lm-team-card-bottom{padding:21px}
+  .lm-page .lm-team-card .lm-team-card-slogan{font-size:15px}
+  .lm-page .lm-team-card-description-accessible{font-size:14px}
+  .lm-page .lm-place-panel{width:calc(100% - 32px);margin:0 16px 20px;padding:24px}
+  .lm-page .lm-place-panel h2{font-size:clamp(32px,9vw,43px)}
+  .lm-page .lm-intro h2{font-size:clamp(56px,17vw,78px)}
+  .lm-page .lm-event-date strong{font-size:clamp(95px,24vw,134px)}
+  .lm-page .lm-event-date span{font-size:17px}
+  .lm-page .lm-event-facts>div{font-size:14px}
+  .lm-page .lm-login-panel{padding:23px 19px}
+  .lm-page .lm-login-panel h3{font-size:43px}
+  .lm-page .lm-login-panel label{font-size:12px;letter-spacing:.05em}
+  .lm-page .lm-login-panel form button{font-size:15px;min-height:52px}
+  .lm-page .lm-parent-access-cta p{font-size:14px}
+  .lm-page .lm-parent-access-actions>a{min-height:48px;font-size:13px}
+  .lm-page .lm-footer-main{gap:22px}
+  .jury-showcase-grid{grid-template-columns:1fr}
+  .jury-showcase-inner{padding-left:20px;padding-right:20px}
+}
+@media(max-width:380px){
+  .lm-page .lm-official-mark{width:98px;height:47px}
+  .lm-page .lm-competition-wordmark strong{font-size:10.5px}
+  .lm-page .lm-competition-wordmark small{font-size:8px}
+  .lm-page .lm-hero h1{font-size:clamp(41px,11vw,48px)}
+  .lm-page .lm-hero-seal-editorial .lm-seal-stat-label{font-size:8.5px}
+  .lm-page .lm-hero-seal-editorial .lm-seal-countdown{font-size:10px}
+}
+@media(hover:none),(pointer:coarse){
+  .lm-page .lm-team-card:hover,.lm-page .lm-process-card:hover{transform:none}
+  .jury-showcase-person:hover{transform:none}
+}
+@media(prefers-reduced-motion:reduce){
+  .lm-page .lm-hero-seal-editorial .lm-seal-progress>span{transition:none}
+}

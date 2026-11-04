@@ -375,6 +375,7 @@ export default function TeamNavigator({teams,members,initialScores,isAdmin,initi
      onChange={event=>{const value=Number(event.currentTarget.value);setPending(old=>({...old,[id]:value}));setStatus(old=>({...old,[id]:'open'}))}}
      onPointerUp={event=>{const value=Number(event.currentTarget.value);if(value!==saved)void save(team.id,c.key,value)}}
      onKeyUp={event=>{if(['ArrowLeft','ArrowRight','Home','End','PageUp','PageDown'].includes(event.key)){const value=Number(event.currentTarget.value);if(value!==saved)void save(team.id,c.key,value)}}}
+      onBlur={event=>{const value=Number(event.currentTarget.value);if(value!==saved&&status[id]!=='saving')void save(team.id,c.key,value)}}
     />
     <strong style={{minWidth:44,textAlign:'right'}}>{current===undefined?'–':current+'/10'}</strong>
    </div>
@@ -433,10 +434,11 @@ export default function TeamNavigator({teams,members,initialScores,isAdmin,initi
  
  </div>
  </>}
- {enlargedImage&&<div role="presentation" onClick={()=>setEnlargedImage(null)} style={{position:'fixed',inset:0,zIndex:1000,background:'rgba(8,19,28,.88)',display:'flex',alignItems:'center',justifyContent:'center',padding:24}}>
- <div role="dialog" aria-modal="true" aria-label={enlargedImage.title} onClick={e=>e.stopPropagation()} style={{maxWidth:'min(1200px,96vw)',width:'100%',maxHeight:'94vh',display:'flex',flexDirection:'column',gap:10}}>
+ {enlargedImage&&<div role="presentation" className="jury-document-overlay" onClick={()=>setEnlargedImage(null)} style={{position:'fixed',inset:0,zIndex:1000,background:'rgba(8,19,28,.88)',display:'flex',alignItems:'center',justifyContent:'center',padding:24}}>
+ <div role="dialog" className="jury-document-dialog" aria-modal="true" aria-label={enlargedImage.title} onClick={e=>e.stopPropagation()} style={{maxWidth:'min(1200px,96vw)',width:'100%',maxHeight:'94vh',display:'flex',flexDirection:'column',gap:10}}>
  <button type="button" autoFocus onClick={()=>setEnlargedImage(null)} style={{alignSelf:'flex-end',padding:'8px 14px',background:'white',borderRadius:6}}>Schließen ×</button>
- {enlargedImage.media_type==='application/pdf'?<iframe className="jury-document-frame" src={'/api/jury/materials/'+enlargedImage.id} title={enlargedImage.title}/>:<img src={'/api/jury/materials/'+enlargedImage.id} alt={enlargedImage.title} style={{maxWidth:'100%',maxHeight:'75vh',objectFit:'contain',background:'white',borderRadius:8}}/>}
+ {enlargedImage.media_type==='application/pdf'&&<a className="jury-document-external" href={'/api/jury/materials/'+enlargedImage.id} target="_blank" rel="noopener noreferrer">PDF separat öffnen (Safari / iPad)</a>}
+  {enlargedImage.media_type==='application/pdf'?<iframe className="jury-document-frame" src={'/api/jury/materials/'+enlargedImage.id} title={enlargedImage.title}/>:<img src={'/api/jury/materials/'+enlargedImage.id} alt={enlargedImage.title} style={{maxWidth:'100%',maxHeight:'75vh',objectFit:'contain',background:'white',borderRadius:8}}/>}
  <p style={{color:'white',margin:0}}>{enlargedImage.title}</p>
  </div></div>}
  </section></div>;

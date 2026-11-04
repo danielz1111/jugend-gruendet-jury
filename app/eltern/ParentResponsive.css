@@ -1,0 +1,32 @@
+/* Touch-friendly parent registration and approved company profiles. */
+.parent-portal{max-width:100%;overflow-x:clip}
+.parent-portal .parent-header-actions button{min-height:44px}
+.parent-portal input[type="email"],.parent-portal input[type="password"],
+.parent-portal input[type="text"],.parent-portal select,.parent-portal textarea{
+  min-height:48px;font-size:16px;
+}
+.parent-portal button[type="submit"]{min-height:48px}
+@media(min-width:681px) and (max-width:1024px){
+  .parent-portal .parent-header-inner{gap:16px}
+  .parent-portal .parent-main{width:calc(100% - 42px)}
+  .parent-portal .parent-info-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media(max-width:680px){
+  .parent-portal .parent-header-inner{width:calc(100% - 28px);min-height:76px;gap:12px}
+  .parent-portal .parent-brand{min-width:0;gap:10px}
+  .parent-portal .parent-brand>span:last-child{min-width:0;padding-left:10px}
+  .parent-portal .parent-brand strong{font-size:clamp(17px,5vw,23px)}
+  .parent-portal .parent-brand small{font-size:11px}
+  .parent-portal .parent-header-actions{min-width:0}
+  .parent-portal .parent-header-actions button{padding:10px}
+  .parent-portal .parent-main{width:calc(100% - 28px);padding-top:24px}
+  .parent-portal .parent-intro>div:first-child{padding:25px 20px}
+  .parent-portal .parent-intro h1{font-size:clamp(36px,9vw,52px)}
+  .parent-portal .parent-intro p{font-size:15px}
+  .parent-portal .parent-info-grid{grid-template-columns:1fr}
+  .parent-portal .parent-auth-layout{grid-template-columns:1fr;padding:22px 18px;gap:23px}
+}
+@media(max-width:390px){
+  .parent-portal .parent-header-actions>span{display:none}
+  .parent-portal .parent-emblem{width:42px;height:42px;flex:none}
+}
