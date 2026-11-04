@@ -371,3 +371,217 @@
 .jury-company-members article>div{display:grid;gap:4px}
 .jury-company-members strong{font-size:14px;color:#263f45;line-height:1.4}
 .jury-company-members small{font-size:11px;color:#637a7c}
+
+
+/* Jury masthead v5: public-homepage-inspired shrink-on-scroll, brand colors,
+   and a permanently visible team context with three global work shortcuts. */
+.jury-v3{
+  --jury-ink:#223a42;
+  --jury-petrol:#223a42;
+  --jury-lime:#bdd837;
+  --jury-paper:#f6f8f5;
+}
+.jury-v3-header{
+  background:rgba(255,255,253,.975);
+  box-shadow:0 6px 28px #1a383316;
+  transition:background .28s ease,box-shadow .28s ease;
+}
+.jury-v3-header-inner{
+  transition:min-height .28s ease;
+}
+.jury-v3-identity{
+  transition:gap .28s ease;
+}
+.jury-v3-logo-wrap{
+  transition:width .28s ease,height .28s ease,opacity .2s ease;
+}
+.jury-v3-brand{
+  border-left-color:var(--jury-lime);
+  transition:padding .28s ease;
+}
+.jury-v3-brand strong{
+  color:#2c4a4a;
+  transition:font-size .28s ease;
+}
+.jury-v3-brand>span{color:#3b5953}
+.jury-v3-brand small{color:#647d70}
+.jury-v3-header--compact{
+  background:rgba(255,255,255,.985);
+  box-shadow:0 7px 26px #1a383326;
+}
+.jury-v3-header--compact .jury-v3-header-inner{min-height:62px}
+.jury-v3-header--compact .jury-v3-logo-wrap{
+  width:0;height:0;opacity:0;overflow:hidden;pointer-events:none;
+}
+.jury-v3-header--compact .jury-v3-identity{gap:0}
+.jury-v3-header--compact .jury-v3-brand{
+  padding-left:13px;border-left-width:3px;
+}
+.jury-v3-header--compact .jury-v3-brand strong{font-size:16px}
+.jury-v3-header--compact .jury-v3-brand>span{font-size:10px}
+.jury-v3-header--compact .jury-v3-brand small{display:none}
+.jury-v3-header--compact .jury-v3-nav-link{
+  padding-top:14px;padding-bottom:12px;font-size:11px;
+}
+.jury-v3-header--compact .jury-v3-logout button{padding:9px 12px}
+
+/* Dark petrol team strip: selected company stays evident on every page.
+   Same Landheim lime, slate typography and logo filter as the homepage. */
+.jury-v3-contextbar{
+  color:#f0f6ed;
+  background:linear-gradient(115deg,#223a42 0%,#1b333c 100%);
+  border-top:1px solid #dae9d917;
+  border-bottom:3px solid #bdd837;
+}
+.jury-v3-contextbar-inner{
+  width:min(calc(100% - 64px),1450px);
+  min-height:70px;margin:auto;
+  display:grid;
+  grid-template-columns:minmax(230px,340px) minmax(0,1fr);
+  align-items:center;
+  column-gap:clamp(14px,2.5vw,38px);
+  padding:8px 0;
+  transition:min-height .25s ease;
+}
+.jury-v3-context-team{
+  display:flex;flex-direction:column;justify-content:center;gap:4px;
+  min-width:0;
+}
+.jury-v3-context-kicker{
+  font-size:9px;font-weight:850;letter-spacing:.145em;
+  color:#c1d58b;line-height:1.25;
+}
+.jury-v3-context-selector{
+  display:flex;align-items:center;gap:10px;
+  min-width:0;border-bottom:1px solid #8eae91a3;
+}
+.jury-v3-context-selector svg{
+  color:#d8e99c;flex:none;
+}
+.jury-v3-context-selector select{
+  width:100%;min-width:0;max-width:100%;
+  background:transparent;border:0;
+  color:#f7fbf2;cursor:pointer;
+  font:700 clamp(14px,1.35vw,18px)/1.45 'DM Sans',Arial,sans-serif;
+  padding:4px 10px 6px 0;
+  color-scheme:dark;
+  text-overflow:ellipsis;
+}
+.jury-v3-context-selector select:disabled{opacity:.6;cursor:not-allowed}
+.jury-v3-context-selector option{background:#223a42;color:#fff}
+.jury-v3-context-tabs{
+  display:flex;justify-content:flex-end;align-items:center;
+  gap:clamp(6px,.9vw,13px);min-width:0;
+}
+.jury-v3-context-tabs button{
+  display:inline-flex;gap:9px;align-items:center;justify-content:center;
+  min-height:44px;
+  border:1px solid #708d7ea6;
+  background:transparent;
+  color:#e2eae2;
+  padding:11px clamp(11px,1.15vw,18px);
+  font-size:12px;font-weight:780;
+  white-space:nowrap;
+  cursor:pointer;
+  transition:background .19s ease,border-color .19s ease,color .19s ease;
+}
+.jury-v3-context-tabs button:hover{
+  background:#405e57;border-color:#b8d13a;color:#fff;
+}
+.jury-v3-context-tabs button.active{
+  background:#bdd837;
+  border-color:#bdd837;
+  color:#203943;
+  box-shadow:0 3px 12px #132e3366;
+}
+.jury-v3-context-tabs button.active svg{color:#203943}
+.jury-v3-header--compact .jury-v3-contextbar-inner{min-height:55px;padding:6px 0}
+.jury-v3-header--compact .jury-v3-context-tabs button{min-height:39px;padding-top:8px;padding-bottom:8px}
+.jury-v3-header--compact .jury-v3-context-kicker{font-size:8px}
+.jury-v3-header--compact .jury-v3-context-selector select{font-size:14px}
+
+.jury-v3-overview-rail,
+.jury-v3-company-rail{
+  top:calc(var(--jury-header-height,148px) + 12px);
+}
+.jury-v3 #jury-arrival,
+.jury-v3 #jury-program,
+.jury-v3 #jury-live,
+.jury-v3 #jury-background,
+.jury-v3 #jury-evaluation-help,
+.jury-v3 #jury-company-profile,
+.jury-v3 #jury-company-materials{
+  scroll-margin-top:calc(var(--jury-header-height,148px) + 18px);
+}
+
+/* Keep the formerly navy jury workspace within the public Landheim palette. */
+.jury-v3 .jury-team-picker{
+  background:linear-gradient(125deg,#1f3941,#274949);
+}
+.jury-v3 .jury-team-tile.active{
+  background:#bdd83724;
+  border-color:#bdd837;
+}
+.jury-v3 .jury-wide-shell .demo-main{
+  background:#fafbf8;
+}
+.jury-v3 .jury-profile-switch{
+  background:#e8f0da!important;
+  border-color:#bdd837!important;
+  color:#2b5147!important;
+}
+.jury-v3 .jury-company-team-list h2{color:#27454b}
+.jury-v3 .jury-company-rail{border-top:3px solid var(--jury-lime)}
+.jury-v3 .jury-v3-heading h2{color:#2c4a4a}
+.jury-v3 .jury-v3-overline{color:#7f993e}
+.jury-v3 .jury-v3-welcome-copy>.jury-v3-overline{color:#d8e99c}
+
+@media(max-width:1250px){
+  .jury-v3-header--compact .jury-v3-header-inner{
+    grid-template-areas:"brand logout" "nav nav";
+    min-height:auto;
+  }
+  .jury-v3-header--compact .jury-v3-identity{padding-top:7px;padding-bottom:5px}
+  .jury-v3-header--compact .jury-v3-nav-link{padding-top:9px;padding-bottom:10px}
+  .jury-v3-contextbar-inner{
+    width:calc(100% - 48px);
+    grid-template-columns:minmax(190px,.8fr) minmax(0,1.55fr);
+    gap:15px;
+  }
+  .jury-v3-context-tabs button{
+    padding:11px 10px;font-size:11px;gap:6px;
+  }
+}
+@media(max-width:900px){
+  .jury-v3-contextbar-inner{grid-template-columns:1fr;gap:7px;padding:9px 0}
+  .jury-v3-context-team{max-width:100%}
+  .jury-v3-context-tabs{
+    justify-content:flex-start;overflow-x:auto;
+    scrollbar-width:thin;gap:7px;
+    padding:3px 0;
+  }
+  .jury-v3-context-tabs button{flex:none}
+  .jury-v3-header--compact .jury-v3-contextbar-inner{padding:8px 0}
+  .jury-v3-header--compact .jury-v3-context-tabs button{padding:9px 10px}
+}
+@media(max-width:600px){
+  .jury-v3-header-inner{width:calc(100% - 24px)}
+  .jury-v3-header--compact .jury-v3-header-inner{row-gap:0}
+  .jury-v3-header--compact .jury-v3-logo-wrap{width:0;height:0}
+  .jury-v3-header--compact .jury-v3-brand strong{font-size:14px}
+  .jury-v3-header--compact .jury-v3-brand>span{font-size:9px}
+  .jury-v3-header--compact .jury-v3-identity{min-height:42px}
+  .jury-v3-contextbar-inner{width:calc(100% - 25px)}
+  .jury-v3-context-selector select{font-size:13px}
+  .jury-v3-context-tabs button{min-height:36px;font-size:11px}
+  .jury-v3-context-tabs button svg{width:14px;height:14px}
+}
+@media(prefers-reduced-motion:reduce){
+  .jury-v3-header,
+  .jury-v3-header-inner,
+  .jury-v3-logo-wrap,
+  .jury-v3-contextbar-inner,
+  .jury-v3-context-tabs button{
+    transition:none;
+  }
+}

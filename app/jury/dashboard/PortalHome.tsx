@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState, type CSSProperties } from 'react';
 import Image from 'next/image';
 import {
   ArrowRight, BookOpen, Building2, CalendarDays, CheckCircle2,
@@ -33,13 +33,73 @@ export default function PortalHome({
   displayName:string;teams:Team[];members:Member[];scores:Score[];isAdmin:boolean
 }){
   const [area,setArea]=useState<Area>('overview');
-  const [activeTeamId,setActiveTeamId]=useState<string|null>(null);
+  const [activeTeamId,setActiveTeamId]=useState<string|null>(teams[0]?.id||null);
+  const [headerCompact,setHeaderCompact]=useState(false);
+  const [headerHeight,setHeaderHeight]=useState(148);
+  const [detailTarget,setDetailTarget]=useState<'profile'|'materials'|null>(null);
+  const [companySection,setCompanySection]=useState<'profile'|'materials'>('profile');
+  const headerRef=useRef<HTMLElement|null>(null);
+  const selectedTeam=teams.find(team=>team.id===activeTeamId)||teams[0]||null;
   const salutation=displayName.trim().replace(/[.!]+$/,'');
   const greeting=/^(Herr|Frau)\b/i.test(salutation)
     ?salutation:/^D\.\s*Zech$/i.test(salutation)?'Herr Zech':salutation;
   const welcome=/^Frau\b/i.test(greeting)
     ?'liebe '+greeting:/^Herr\b/i.test(greeting)?'lieber '+greeting:greeting;
-  const submittedCount=scores.filter(score=>Boolean(score.submitted_at)).length;
+  // Match the public homepage's compact masthead on scrolling.
+  useEffect(()=>{
+    const onScroll=()=>setHeaderCompact(window.scrollY>140);
+    onScroll();
+    window.addEventListener('scroll',onScroll,{passive:true});
+    return ()=>window.removeEventListener('scroll',onScroll);
+  },[]);
+
+  // Keep the left-hand section navigation below both sticky header rows.
+  useEffect(()=>{
+    const header=headerRef.current;
+    if(!header)return;
+    const measure=()=>setHeaderHeight(Math.ceil(header.getBoundingClientRect().height));
+    measure();
+    if(typeof ResizeObserver==='undefined'){
+      window.addEventListener('resize',measure);
+      return ()=>window.removeEventListener('resize',measure);
+    }
+    const observer=new ResizeObserver(measure);
+    observer.observe(header);
+    return ()=>observer.disconnect();
+  },[]);
+
+  useEffect(()=>{
+    if(area!=='companies'||!detailTarget)return;
+    const timer=window.setTimeout(()=>{
+      const sectionId=detailTarget==='materials'?'jury-company-materials':'jury-company-profile';
+      document.getElementById(sectionId)?.scrollIntoView({behavior:'smooth',block:'start'});
+      setDetailTarget(null);
+    },130);
+    return ()=>window.clearTimeout(timer);
+  },[area,detailTarget]);
+  // Keep the pinned section tabs in sync when someone scrolls by hand.
+  useEffect(()=>{
+    if(area!=='companies')return;
+    let pending=0;
+    const readPosition=()=>{
+      if(pending)window.cancelAnimationFrame(pending);
+      pending=window.requestAnimationFrame(()=>{
+        const materials=document.getElementById('jury-company-materials');
+        if(materials){
+          const threshold=headerRef.current?.getBoundingClientRect().height||headerHeight;
+          setCompanySection(materials.getBoundingClientRect().top<=threshold+95?'materials':'profile');
+        }
+        pending=0;
+      });
+    };
+    readPosition();
+    window.addEventListener('scroll',readPosition,{passive:true});
+    return ()=>{
+      window.removeEventListener('scroll',readPosition);
+      if(pending)window.cancelAnimationFrame(pending);
+    };
+  },[area,headerHeight]);
+
   // Renew the optional remembered jury session while the page is in use.
   useEffect(()=>{
     const renew=()=>{if(!document.hidden)void fetch('/api/jury/refresh',{method:'POST',cache:'no-store'}).catch(()=>undefined)};
@@ -47,8 +107,14 @@ export default function PortalHome({
     return ()=>window.clearInterval(interval);
   },[]);
   const navigate=(next:Area)=>{
+    if(next==='companies')setCompanySection('profile');
     setArea(next);
     window.scrollTo({top:0,behavior:'smooth'});
+  };
+  const showCompanySection=(section:'profile'|'materials')=>{
+    setCompanySection(section);
+    setArea('companies');
+    setDetailTarget(section);
   };
   const openLiveTeam=(teamId:string)=>{
     setActiveTeamId(teamId);
@@ -56,8 +122,8 @@ export default function PortalHome({
   };
 
   return (
-    <div className="jury-v3" id="jury-top">
-      <header className="jury-v3-header">
+    <div className="jury-v3" id="jury-top" style={{'--jury-header-height':headerHeight+'px'} as CSSProperties}>
+      <header ref={headerRef} className={headerCompact?'jury-v3-header jury-v3-header--compact':'jury-v3-header'}>
         <div className="jury-v3-header-inner">
           <a href="/" className="jury-v3-identity" aria-label="Zur Jugend-gründet-Startseite">
             <span className="jury-v3-logo-wrap">
@@ -94,6 +160,42 @@ export default function PortalHome({
             </button>
           </form>
         </div>
+        {area!=='admin'&&<div className="jury-v3-contextbar" aria-label="Team und Arbeitsbereiche">
+          <div className="jury-v3-contextbar-inner">
+            <div className="jury-v3-context-team">
+              <span className="jury-v3-context-kicker">AUSGEWÄHLTES UNTERNEHMEN</span>
+              <div className="jury-v3-context-selector">
+                <Building2 size={16} aria-hidden="true"/>
+                <select aria-label="Ausgewähltes Unternehmen wechseln"
+                  value={selectedTeam?.id||''}
+                  disabled={teams.length===0}
+                  onChange={event=>setActiveTeamId(event.currentTarget.value)}>
+                  {teams.length===0&&<option value="">Kein Unternehmen vorhanden</option>}
+                  {teams.map(team=><option value={team.id} key={team.id}>{team.name}</option>)}
+                </select>
+              </div>
+            </div>
+            <nav className="jury-v3-context-tabs" aria-label="Schnellnavigation des ausgewählten Unternehmens">
+              <button type="button"
+                className={area==='rating'?'active':''} aria-pressed={area==='rating'}
+                onClick={()=>navigate('rating')}>
+                <ClipboardCheck size={17} aria-hidden="true"/> Jurybewertung
+              </button>
+              <button type="button"
+                className={area==='companies'&&companySection==='profile'?'active':''}
+                aria-pressed={area==='companies'&&companySection==='profile'}
+                onClick={()=>showCompanySection('profile')}>
+                <Users size={17} aria-hidden="true"/> Unternehmensprofil
+              </button>
+              <button type="button"
+                className={area==='companies'&&companySection==='materials'?'active':''}
+                aria-pressed={area==='companies'&&companySection==='materials'}
+                onClick={()=>showCompanySection('materials')}>
+                <FileText size={17} aria-hidden="true"/> Unterlagen
+              </button>
+            </nav>
+          </div>
+        </div>}
       </header>
 
       <div className="jury-v3-content">
@@ -124,18 +226,6 @@ export default function PortalHome({
                 auf die Juryfragen. Ihre Punkte und persönlichen Notizen sind vertraulich.
                 Die Businesspläne dienen zur Vorbereitung – nicht als eigene Vorabbewertung.</p>
             </div>
-            <div className="jury-v3-score-status">
-              <div>
-                <span>MEIN BEWERTUNGSFORTSCHRITT</span>
-                <strong>{submittedCount} von {teams.length} Teams abgeschlossen</strong>
-                <small>{Math.max(0,teams.length-submittedCount)} Bewertungen noch offen</small>
-              </div>
-              <div className="jury-v3-score-meter" role="progressbar"
-                aria-label="Abgegebene Bewertungen" aria-valuemin={0}
-                aria-valuemax={teams.length} aria-valuenow={submittedCount}>
-                <span style={{width:(teams.length?submittedCount*100/teams.length:0)+'%'}}/>
-              </div>
-            </div>
           </>}
           {area==='companies'&&<>
             <div className="jury-v3-heading">
@@ -162,6 +252,8 @@ export default function PortalHome({
               isAdmin={isAdmin}
               initialSection={area==='companies'?'company':'pitch'}
               onGoToRating={()=>navigate('rating')}
+              onGoToCompany={()=>showCompanySection('profile')}
+              onTeamSelected={setActiveTeamId}
               activeTeamId={activeTeamId}
             />
           </div>
