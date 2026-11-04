@@ -52,6 +52,7 @@ export async function extractPublicFields(pdfBytes:Uint8Array):Promise<ProfileSu
   }catch{
     return null;
   }finally{
-    if(doc)await doc.destroy().catch(()=>{});
+    const cleanup=doc as unknown as {destroy?:()=>Promise<void>}|undefined;
+    if(cleanup?.destroy)await cleanup.destroy().catch(()=>{});
   }
 }
