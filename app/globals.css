@@ -597,3 +597,30 @@
  .lm-page .lm-hero-photo,.lm-page .lm-hero-copy{animation:none!important}
  .lm-page .lm-process-card:before{transition:none!important}
 }
+
+
+/* Three official campus scenes: restrained crossfade, no content movement. */
+.lm-page .lm-hero-gallery{position:absolute;inset:0;z-index:-3;overflow:hidden;background:#293f45}
+.lm-page .lm-hero-gallery .lm-hero-photo{
+  z-index:auto;opacity:0;transform:scale(1.025);
+  transition:opacity 1450ms ease-in-out,transform 8500ms ease-out;
+  animation:none;
+}
+.lm-page .lm-hero-gallery .lm-hero-slide-active{opacity:1;transform:scale(1)}
+.lm-page .lm-hero-controls{display:flex;align-items:center;gap:9px}
+.lm-page .lm-hero-dot{width:34px;height:30px;border:0;background:transparent;display:flex;align-items:center;justify-content:center;padding:0;cursor:pointer}
+.lm-page .lm-hero-dot:before{content:'';height:3px;width:25px;background:#ffffff7c;transition:width .25s,background .25s}
+.lm-page .lm-hero-dot:hover:before{background:#ffffffdf}
+.lm-page .lm-hero-dot-active:before{width:34px;background:#d1e75d}
+.lm-page .lm-hero-dot:focus-visible{outline:2px solid #e0ed81;outline-offset:2px}
+@media(max-width:700px){
+  .lm-page .lm-hero-bottom-inner{gap:10px}
+  .lm-page .lm-hero-controls{gap:3px}
+  .lm-page .lm-hero-dot{width:26px}
+  .lm-page .lm-hero-dot:before{width:17px}
+  .lm-page .lm-hero-dot-active:before{width:23px}
+}
+@media(prefers-reduced-motion:reduce){
+  .lm-page .lm-hero-gallery .lm-hero-photo{transform:none!important;transition:none!important;animation:none!important}
+  .lm-page .lm-hero-dot:before{transition:none!important}
+}

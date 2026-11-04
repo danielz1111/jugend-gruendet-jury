@@ -10,6 +10,24 @@ import {
 type PublishedTeam = { id: string; name: string; position: number };
 type LandingTeam = { id: string; name: string; position: number; published: boolean };
 
+const heroSlides = [
+  {
+    image: 'https://www.landheim-ammersee.de/sites/default/files/media/images/Landheim-Ammersee-Landheim%20Campus%20-%20Scho%CC%88ner%20gehts%20nicht%20-Luftaufnahme%20-%20Timm%20Schro%CC%88der%20-%20Landheim%20Ammersee%20Campus%202.jpg',
+    label: 'Landheim-Campus aus der Luft',
+    position: 'center 46%'
+  },
+  {
+    image: 'https://www.landheim-ammersee.de/sites/default/files/media/images/Landheim%20im%20Fr%C3%BChling.jpg',
+    label: 'Haupthaus im Frühling',
+    position: 'center 52%'
+  },
+  {
+    image: 'https://www.landheim-ammersee.de/sites/default/files/media/images/Landheim-Ammersee-Landheim%20Campus%20-%20Scho%CC%88ner%20gehts%20nicht%20-Steganlage%20%20-%20Landheim%20Amersee%20Christina%20Ingerfurth%20.jpg',
+    label: 'Landheim-Steg am Ammersee',
+    position: 'center 55%'
+  }
+] as const;
+
 const phases = [
   {
     number: '01',
@@ -40,6 +58,7 @@ export default function HomeClient({ publishedTeams = [] }: { publishedTeams: Pu
   const [password, setPassword] = useState('');
   const [loginBusy, setLoginBusy] = useState(false);
   const [loginError, setLoginError] = useState('');
+  const [activeSlide, setActiveSlide] = useState(0);
   const [daysUntilPitch, setDaysUntilPitch] = useState<number | null>(null);
 
   useEffect(() => {
@@ -49,6 +68,14 @@ export default function HomeClient({ publishedTeams = [] }: { publishedTeams: Pu
     };
     updateCountdown();
     const timer = window.setInterval(updateCountdown, 60 * 60 * 1000);
+    return () => window.clearInterval(timer);
+  }, []);
+
+  useEffect(() => {
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    const timer = window.setInterval(() => {
+      if (!document.hidden) setActiveSlide(current => (current + 1) % heroSlides.length);
+    }, 8000);
     return () => window.clearInterval(timer);
   }, []);
 
@@ -114,7 +141,15 @@ export default function HomeClient({ publishedTeams = [] }: { publishedTeams: Pu
       </header>
 
       <section className="lm-hero" aria-labelledby="lm-hero-title">
-        <div className="lm-hero-photo" role="img" aria-label="Luftaufnahme des Landheims Ammersee mit dem See im Hintergrund"/>
+        <div className="lm-hero-gallery" aria-hidden="true">
+          {heroSlides.map((slide, index) => (
+            <div
+              key={slide.label}
+              className={'lm-hero-photo lm-hero-slide' + (index === activeSlide ? ' lm-hero-slide-active' : '')}
+              style={{ backgroundImage: 'url("' + slide.image + '")', backgroundPosition: slide.position }}
+            />
+          ))}
+        </div>
         <div className="lm-hero-shade" aria-hidden="true"/>
         <div className="lm-hero-rule" aria-hidden="true"/>
         <div className="lm-container lm-hero-inner">
@@ -140,7 +175,19 @@ export default function HomeClient({ publishedTeams = [] }: { publishedTeams: Pu
           <div className="lm-container lm-hero-bottom-inner">
             <span>01 / 05 <span className="lm-hero-bottom-divider"/> DER ANFANG VON ETWAS GROSSEM</span>
             <a href="#idee">WEITER ENTDECKEN <ChevronDown size={16}/></a>
-            <span className="lm-photo-credit">Campusaufnahme: Landheim Ammersee</span>
+            <div className="lm-hero-controls" role="group" aria-label="Landheim-Bilder auswählen">
+              {heroSlides.map((slide, index) => (
+                <button
+                  key={slide.label}
+                  type="button"
+                  className={'lm-hero-dot' + (index === activeSlide ? ' lm-hero-dot-active' : '')}
+                  aria-label={'Bild ' + (index + 1) + ': ' + slide.label}
+                  aria-pressed={index === activeSlide}
+                  onClick={() => setActiveSlide(index)}
+                />
+              ))}
+            </div>
+            <span className="lm-photo-credit">Fotos: Landheim Ammersee</span>
           </div>
         </div>
       </section>

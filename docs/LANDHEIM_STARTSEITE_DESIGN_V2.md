@@ -21,3 +21,15 @@ Keine individuellen Schülerbewertungen.
 ## Abschlussprüfung vor Veröffentlichung
 Original-Logodatei, lokale Bilder, Responsivität, Lesbarkeit, Build und
 Jury-Anmeldung prüfen; dann Änderungen in einem einzigen Branch-Update bündeln.
+
+
+## Bildwechsel in der Startseite (als Paket vorbereitet)
+- Drei authentische, öffentlich sichtbare Landheim-Motive aus der offiziellen Fotosektion:
+  Landheim-Campus aus der Luft, Haupthaus im Frühling, Landheim-Steg am Ammersee.
+- Automatischer Wechsel alle 8 Sekunden; sanfte Überblendung von ca. 1,45 Sekunden.
+- Überschrift, Handlungsbuttons und Jury-Zugang bewegen sich nicht.
+- Drei Tastatur- und Touch-bedienbare Bildindikatoren mit verständlicher Beschriftung.
+- Bei reduzierter Bewegung kein automatischer Wechsel, aber manuelle Bildwahl möglich.
+- Fotografische Rechte wurden vom Projektverantwortlichen nach eigener Aussage freigegeben.
+- Bilddateien sind aktuell externe, offizielle URL-Quellen; vor finaler Freigabe bei
+  Bedarf als optimierte lokale Dateien übernehmen, um Abhängigkeiten zu reduzieren.
