@@ -54,9 +54,10 @@ export default function TeamNavigator({teams,members,initialScores,isAdmin,initi
   try{
    const data=new FormData(form);data.set('team_id',teamId);
    const response=await fetch('/api/jury/materials/zip',{method:'POST',body:data});
-   const result=await response.json() as {error?:string;imported?:number;skipped?:number;errors?:string[]};
+   const result=await response.json() as {error?:string;imported?:number;replaced?:number;skipped?:number;errors?:string[];suggested_profile?:{team_id:string;source_filename:string|null;tagline:string|null;description:string|null}|null};
    if(!response.ok)throw new Error(result.error||'ZIP-Import fehlgeschlagen');
-   setZipMessage((result.imported||0)+' Dateien importiert, '+(result.skipped||0)+' bereits vorhanden.'+(result.errors?.length?' Fehler: '+result.errors.join('; '):''));
+   if(result.suggested_profile)window.dispatchEvent(new CustomEvent('jury:profile-suggestion',{detail:result.suggested_profile}));
+   setZipMessage((result.imported||0)+' neue Dateien, '+(result.replaced||0)+' vorhandene Versionen ersetzt.'+(result.suggested_profile?' Neue Profilangaben wurden erkannt: oben in der Teamverwaltung prüfen.':'')+(result.errors?.length?' Fehler: '+result.errors.join('; '):''));
    if(!result.errors?.length)form.reset();
    await loadMaterials(teamId);
   }catch(e){setZipMessage(e instanceof Error?e.message:'ZIP-Import fehlgeschlagen');}
@@ -79,9 +80,10 @@ export default function TeamNavigator({teams,members,initialScores,isAdmin,initi
     const data=new FormData();data.set('team_id',match.id);data.set('file',file);
     try{
      const response=await fetch('/api/jury/materials/zip',{method:'POST',body:data});
-     const result=await response.json() as {error?:string;imported?:number;skipped?:number;errors?:string[]};
+     const result=await response.json() as {error?:string;imported?:number;replaced?:number;skipped?:number;errors?:string[];suggested_profile?:{team_id:string;source_filename:string|null;tagline:string|null;description:string|null}|null};
      if(!response.ok)throw new Error(result.error||'Import fehlgeschlagen');
-     reports.push(match.name+': '+(result.imported||0)+' neu, '+(result.skipped||0)+' bereits vorhanden'+(result.errors?.length?', Fehler: '+result.errors.join('; '):''));
+     if(result.suggested_profile)window.dispatchEvent(new CustomEvent('jury:profile-suggestion',{detail:result.suggested_profile}));
+     reports.push(match.name+': '+(result.imported||0)+' neu, '+(result.replaced||0)+' aktualisiert'+(result.suggested_profile?', Profiltext-Vorschlag erkannt':'')+(result.errors?.length?', Fehler: '+result.errors.join('; '):''));
      await loadMaterials(match.id);
     }catch(e){reports.push(match.name+': FEHLER – '+(e instanceof Error?e.message:'Import fehlgeschlagen'));}
     setZipMessage(reports.join(' | '));
@@ -252,14 +254,14 @@ export default function TeamNavigator({teams,members,initialScores,isAdmin,initi
  </div>}
  {isAdmin&&adminMode&&mainTab==='overview'&&<div className="demo-score" style={{marginTop:22}}>
  <h2>Administration · Alle Teamunterlagen importieren</h2>
- <p>Mehrere ZIP-Dateien gleichzeitig auswählen. Die Zuordnung erfolgt ausschließlich bei eindeutigem Teamnamen im Dateinamen; nicht zuordenbare Dateien werden übersprungen. Bereits vorhandene Dateien werden nicht doppelt importiert.</p>
+ <p>Mehrere ZIP-Dateien gleichzeitig auswählen. Die Zuordnung erfolgt ausschließlich bei eindeutigem Teamnamen im Dateinamen; nicht zuordenbare Dateien werden übersprungen. Dateien mit gleichem Namen werden durch die neuere Version ersetzt. Slogan und Geschäftsidee können aus dem neuen Businessplan als Vorschlag erkannt werden.</p>
  <input type="file" accept=".zip,application/zip" multiple disabled={uploading} aria-label="Mehrere Team-ZIP-Dateien auswählen" onChange={event=>{void uploadAllZips(event.currentTarget.files);event.currentTarget.value='';}}/>
  {uploading&&<p role="status">ZIP-Dateien werden nacheinander importiert …</p>}
  {zipMessage&&<p role="status" style={{whiteSpace:'pre-wrap',overflowWrap:'anywhere'}}>{zipMessage}</p>}
  </div>}
  {isAdmin&&adminMode&&mainTab==='business'&&<div className="demo-score" style={{marginTop:18}}>
  <h2>Administration · Teamunterlagen importieren</h2>
- <p>Eine ZIP-Datei mit Businessplan-PDF, Produktbildern, Werbung und weiteren Anlagen auswählen. Die Dateien werden automatisch dem aktuell ausgewählten Team zugeordnet. Bereits vorhandene Dateinamen werden übersprungen.</p>
+ <p>Eine ZIP-Datei mit Businessplan-PDF, Produktbildern, Werbung und weiteren Anlagen auswählen. Die Dateien werden automatisch dem aktuell ausgewählten Team zugeordnet. Bereits vorhandene Dateien mit gleichem Namen werden ersetzt. Erkannte Änderungen an Slogan und Geschäftsidee erscheinen zur Freigabe in der Teamverwaltung.</p>
  <form onSubmit={event=>{event.preventDefault();void uploadZip(team.id,event.currentTarget)}} style={{display:'grid',gap:12}}>
  <input type="file" name="file" accept=".zip,application/zip,application/x-zip-compressed" required aria-label="ZIP-Datei auswählen"/>
  <button type="submit" disabled={uploading} style={{padding:'12px 16px',background:'#173d53',color:'white',borderRadius:8}}>{uploading?'ZIP wird importiert …':'ZIP für '+team.name+' importieren'}</button>

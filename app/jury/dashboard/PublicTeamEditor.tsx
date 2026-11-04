@@ -1,6 +1,6 @@
 'use client';
 
-import {useState} from 'react';
+import {useEffect,useState} from 'react';
 import {ArrowRight,CheckCircle2,Eye,EyeOff,Save,ShieldCheck} from 'lucide-react';
 
 type Team = {
@@ -13,6 +13,7 @@ type Team = {
 };
 
 type Draft = {name:string;tagline:string;description:string;is_public:boolean};
+type Suggestion={team_id:string;tagline:string|null;description:string|null;source_filename:string|null};
 function draftFrom(team:Team):Draft {
   return {
     name:team.name,
@@ -31,6 +32,16 @@ export default function PublicTeamEditor({teams}:{teams:Team[]}) {
   const [error,setError]=useState('');
   const [notice,setNotice]=useState('');
   const [preview,setPreview]=useState(true);
+  const [suggestions,setSuggestions]=useState<Record<string,Suggestion>>({});
+  useEffect(()=>{
+    const handler=(event:Event)=>{
+      const value=(event as CustomEvent<Suggestion>).detail;
+      if(value&&typeof value.team_id==='string')setSuggestions(old=>({...old,[value.team_id]:value}));
+    };
+    window.addEventListener('jury:profile-suggestion',handler);
+    return ()=>window.removeEventListener('jury:profile-suggestion',handler);
+  },[]);
+
   const dirty=!!current&&(draft.name!==current.name||draft.tagline!==(current.tagline||'')||draft.description!==(current.description||'')||draft.is_public!==current.is_public);
 
   function choose(team:Team) {
@@ -80,6 +91,20 @@ export default function PublicTeamEditor({teams}:{teams:Team[]}) {
     </div>
     <form className="jury-profile-form" onSubmit={save}>
       <div className="jury-profile-form-title"><div><span className="demo-overline">UNTERNEHMERTEAM {String(current.position).padStart(2,'0')}</span><h2>Öffentliches Profil</h2></div><button type="button" onClick={()=>setPreview(value=>!value)} className="jury-profile-preview-toggle">{preview?'Vorschau ausblenden':'Vorschau einblenden'} <Eye size={16}/></button></div>
+      {suggestions[current.id]&&<div role="status" style={{border:'1px solid #a8c09d',background:'#f0f6ed',padding:18,marginBottom:24}}>
+        <strong>Neue Profilangaben aus der ZIP-Datei erkannt</strong>
+        <p style={{fontSize:12}}>{suggestions[current.id].source_filename}</p>
+        {suggestions[current.id].tagline&&<p><b>Slogan:</b> {suggestions[current.id].tagline}</p>}
+        {suggestions[current.id].description&&<p><b>Geschäftsidee:</b> {suggestions[current.id].description}</p>}
+        <button type="button" style={{padding:'11px 14px',background:'#23463f',color:'white',border:0}} onClick={()=>{
+          if(dirty&&!window.confirm('Ungespeicherte Änderungen überschreiben?'))return;
+          const suggestion=suggestions[current.id];
+          setDraft(old=>({...old,tagline:suggestion.tagline??old.tagline,description:suggestion.description??old.description}));
+          setApproved(false);
+          setNotice('Vorschlag übernommen. Bitte prüfen, Freigabe bestätigen und speichern.');
+          setSuggestions(old=>{const updated={...old};delete updated[current.id];return updated;});
+        }}>Vorschlag ins Formular übernehmen</button>
+      </div>}
       <label htmlFor="jury-profile-name">Name des Unternehmerteams</label>
       <input id="jury-profile-name" value={draft.name} onChange={event=>setDraft(old=>({...old,name:event.target.value}))} maxLength={80} required minLength={2} disabled={busy}/>
       <label htmlFor="jury-profile-tagline">Kurzzeile / Slogan <small>(optional, maximal 160 Zeichen)</small></label>

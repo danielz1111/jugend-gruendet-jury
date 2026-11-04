@@ -1,5 +1,6 @@
 import {NextResponse} from 'next/server';
 import JSZip from 'jszip';
+import {extractPublicFields, type ProfileSuggestion} from '../../../../../lib/businessplan-extract';
 import {getJurySession} from '../../../../../lib/jury-session';
 export const runtime='nodejs';
 export const maxDuration=60;
@@ -54,19 +55,51 @@ export async function POST(req:Request){
   if(!info)return NextResponse.json({error:'Dateiinhalt stimmt nicht mit dem Dateiformat überein: '+entry.name},{status:400});
   extracted.push({name:entry.name,data,...info});
  }
- const existingRes=await fetch(url+'/rest/v1/team_materials?select=original_filename&team_id=eq.'+teamId,{headers,cache:'no-store'});
+ const existingRes=await fetch(url+'/rest/v1/team_materials?select=id,original_filename,object_path&team_id=eq.'+teamId,{headers,cache:'no-store'});
  if(!existingRes.ok)return NextResponse.json({error:'Vorhandene Dateien konnten nicht geprüft werden'},{status:502});
- const existing=new Set((await existingRes.json() as Array<{original_filename:string}>).map(x=>x.original_filename));
- let imported=0,skipped=0;const errors:string[]=[];
+ const existing=new Map((await existingRes.json() as Array<{id:string;original_filename:string;object_path:string}>).map(row=>[row.original_filename,row]));
+ let imported=0,replaced=0,skipped=0;
+ const errors:string[]=[];
+ let suggestion:ProfileSuggestion|null=null;
+ let sourceFilename:string|null=null;
  for(const item of extracted){
-  const originalName=item.name.split('/').pop()||item.name;
-  if(existing.has(originalName)){skipped++;continue;}
+  const filename=item.name.split('/').pop()||item.name;
+  const previous=existing.get(filename);
   const objectPath='businessplans/'+teamId+'/'+crypto.randomUUID()+'.'+item.ext;
-  const upload=await fetch(url+'/storage/v1/object/team-private/'+objectPath,{method:'POST',headers:{...headers,'Content-Type':item.type,'x-upsert':'false'},body:Buffer.from(item.data)});
-  if(!upload.ok){errors.push(originalName+': Speicherung fehlgeschlagen');continue;}
-  const metadata=await fetch(url+'/rest/v1/team_materials',{method:'POST',headers:{...headers,'Content-Type':'application/json',Prefer:'return=minimal'},body:JSON.stringify({team_id:teamId,title:titleFor(originalName),object_path:objectPath,original_filename:originalName,media_type:item.type})});
-  if(!metadata.ok){await fetch(url+'/storage/v1/object/team-private/'+objectPath,{method:'DELETE',headers}).catch(()=>{});errors.push(originalName+': Zuordnung fehlgeschlagen');continue;}
-  imported++;existing.add(originalName);
+  const upload=await fetch(url+'/storage/v1/object/team-private/'+objectPath,{
+   method:'POST',headers:{...headers,'Content-Type':item.type,'x-upsert':'false'},
+   body:Buffer.from(item.data)
+  });
+  if(!upload.ok){errors.push(filename+': Upload fehlgeschlagen');continue;}
+  const record={team_id:teamId,title:titleFor(filename),object_path:objectPath,original_filename:filename,media_type:item.type};
+  const metadata=await fetch(previous?url+'/rest/v1/team_materials?id=eq.'+previous.id:url+'/rest/v1/team_materials',{
+   method:previous?'PATCH':'POST',
+   headers:{...headers,'Content-Type':'application/json',Prefer:'return=representation'},
+   body:JSON.stringify(previous?{title:record.title,object_path:record.object_path,media_type:record.media_type,created_at:new Date().toISOString()}:record)
+  });
+  if(!metadata.ok){
+   await fetch(url+'/storage/v1/object/team-private/'+objectPath,{method:'DELETE',headers}).catch(()=>{});
+   errors.push(filename+': Zuordnung fehlgeschlagen');continue;
+  }
+  const rows=await metadata.json().catch(()=>[]) as Array<{id:string}>;
+  if(rows.length!==1){
+   await fetch(url+'/storage/v1/object/team-private/'+objectPath,{method:'DELETE',headers}).catch(()=>{});
+   errors.push(filename+': Dateieintrag konnte nicht bestätigt werden');continue;
+  }
+  if(previous){
+   replaced++;
+   if(previous.object_path!==objectPath){
+    await fetch(url+'/storage/v1/object/team-private/'+previous.object_path,{method:'DELETE',headers}).catch(()=>{});
+   }
+  }else{imported++;}
+  existing.set(filename,{id:rows[0].id,original_filename:filename,object_path:objectPath});
+  if(item.type==='application/pdf'&&/businessplan/i.test(filename)&&!suggestion){
+   const extractedFields=await extractPublicFields(item.data);
+   if(extractedFields){suggestion=extractedFields;sourceFilename=filename;}
+  }
  }
- return NextResponse.json({team:teamRows[0].name,imported,skipped,errors,complete:errors.length===0});
+ return NextResponse.json({
+  team:teamRows[0].name,imported,replaced,skipped,errors,complete:errors.length===0,
+  suggested_profile:suggestion?{team_id:teamId,source_filename:sourceFilename,...suggestion}:null
+ });
 }

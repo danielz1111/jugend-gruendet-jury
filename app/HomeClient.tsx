@@ -285,6 +285,13 @@ export default function HomeClient({ publishedTeams = [] }: { publishedTeams: Pu
         <span className="lm-event-watermark" aria-hidden="true">PITCH</span>
       </section>
 
+      <style>{`
+        .lm-page .lm-team-card-art .lm-team-card-art-slogan {position:absolute;inset:0;z-index:6;display:flex;align-items:center;justify-content:center;padding:27px;text-align:center;background:#26473f;color:white;font:500 27px/1.24 Georgia,serif;opacity:0;transform:translateY(11px);transition:opacity .35s ease,transform .35s ease}
+        .lm-page .lm-team-card .lm-team-card-slogan {font-weight:700;color:#466d64;margin:0 0 12px}
+        @media (hover:hover) and (pointer:fine) {.lm-page .lm-team-card:hover .lm-team-card-art-slogan {opacity:1;transform:none}.lm-page .lm-team-card .lm-team-card-slogan {display:none}}
+        @media (hover:none), (pointer:coarse) {.lm-page .lm-team-card-art .lm-team-card-art-slogan {display:none}}
+        @media (prefers-reduced-motion:reduce) {.lm-page .lm-team-card-art .lm-team-card-art-slogan {transition:none}}
+      `}</style>
       <section className="lm-teams lm-section" id="teams" aria-labelledby="lm-teams-title">
         <div className="lm-container">
           <div className="lm-section-heading lm-heading-split">
@@ -302,20 +309,14 @@ export default function HomeClient({ publishedTeams = [] }: { publishedTeams: Pu
                   <article className="lm-team-card" key={team.id} aria-labelledby={'team-' + team.id}>
                     <div className="lm-team-card-art" aria-hidden="true">
                       <span className="lm-team-card-initials">{initials || 'JG'}</span>
+                      {short && <span className="lm-team-card-art-slogan" aria-hidden="true">{short}</span>}
                       <span className="lm-team-card-art-folio">GRÜNDERTEAM / {number}</span>
                     </div>
                     <div className="lm-team-card-bottom">
                       <span className="lm-team-card-eyebrow">JUGEND GRÜNDET <span>· TEAM {number}</span></span>
                       <h3 id={'team-' + team.id}>{team.name}</h3>
-                      <p className={short || description ? 'lm-team-card-teaser' : 'lm-team-card-pending'}>
-                        {short || description || 'Das öffentliche Kurzprofil wird ergänzt.'}
-                      </p>
-                      {short && description && (
-                        <details className="lm-team-card-details">
-                          <summary>Die Geschäftsidee <ArrowRight size={17} aria-hidden="true"/></summary>
-                          <p>{description}</p>
-                        </details>
-                      )}
+                      {short && <p className="lm-team-card-slogan">{short}</p>}
+                      <p>{description || 'Das öffentliche Kurzprofil wird ergänzt.'}</p>
                       <div className="lm-team-card-foot">
                         <span className="lm-team-card-footline" aria-hidden="true"/>
                         <span>{short || description ? 'PROJEKTPROFIL' : 'KURZPROFIL FOLGT'}</span>
