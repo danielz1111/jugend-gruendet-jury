@@ -5,7 +5,7 @@ import Image from 'next/image';
 import {
   ArrowRight, ArrowUpRight, CalendarDays, ChevronDown, Clock3, Compass,
   ExternalLink, Lightbulb, LockKeyhole, MapPin, Menu, Presentation,
-  UsersRound, X
+  UsersRound, X, Eye, EyeOff
 } from 'lucide-react';
 
 type PublishedTeam = { id: string; name: string; position: number; tagline?: string | null; description?: string | null };
@@ -56,6 +56,7 @@ export default function HomeClient({ publishedTeams = [] }: { publishedTeams: Pu
   const [menuOpen, setMenuOpen] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const [loginBusy, setLoginBusy] = useState(false);
   const [loginError, setLoginError] = useState('');
   const [activeSlide, setActiveSlide] = useState(0);
@@ -286,6 +287,14 @@ export default function HomeClient({ publishedTeams = [] }: { publishedTeams: Pu
       </section>
 
       <style>{`
+        .lm-page .lm-login-password-field {position:relative}
+        .lm-page .lm-login-password-field input {width:100%;padding-right:54px}
+        .lm-page .lm-login-password-field .lm-login-password-toggle {position:absolute;right:7px;top:50%;transform:translateY(-50%);width:42px;height:42px;display:grid;place-items:center;background:transparent;border:0;color:#48695e;cursor:pointer}
+        .lm-page .lm-login-password-toggle:focus-visible,.lm-page .lm-team-card:focus-visible {outline:3px solid #789672;outline-offset:3px}
+        .lm-page .lm-team-card:focus-visible .lm-team-card-art-slogan {opacity:1;transform:translateY(0)}
+        .lm-page .lm-team-card .lm-team-card-slogan {display:block!important}
+      `}</style>
+      <style>{`
         .lm-page .lm-team-card-art .lm-team-card-art-slogan {position:absolute;inset:0;z-index:6;display:flex;align-items:center;justify-content:center;padding:27px;text-align:center;background:#26473f;color:white;font:500 27px/1.24 Georgia,serif;opacity:0;transform:translateY(11px);transition:opacity .35s ease,transform .35s ease}
         .lm-page .lm-team-card .lm-team-card-slogan {font-weight:700;color:#466d64;margin:0 0 12px}
         @media (hover:hover) and (pointer:fine) {.lm-page .lm-team-card:hover .lm-team-card-art-slogan {opacity:1;transform:none}.lm-page .lm-team-card .lm-team-card-slogan {display:none}}
@@ -306,7 +315,7 @@ export default function HomeClient({ publishedTeams = [] }: { publishedTeams: Pu
                 const description = team.description?.trim() || '';
                 const initials = team.name.split(/[\s-]+/).filter(Boolean).slice(0, 2).map(word => word.charAt(0)).join('').toUpperCase();
                 return (
-                  <article className="lm-team-card" key={team.id} aria-labelledby={'team-' + team.id}>
+                  <article className="lm-team-card" key={team.id} aria-labelledby={'team-' + team.id} tabIndex={short?0:undefined}>
                     <div className="lm-team-card-art" aria-hidden="true">
                       <span className="lm-team-card-initials">{initials || 'JG'}</span>
                       {short && <span className="lm-team-card-art-slogan" aria-hidden="true">{short}</span>}
@@ -316,7 +325,7 @@ export default function HomeClient({ publishedTeams = [] }: { publishedTeams: Pu
                       <span className="lm-team-card-eyebrow">JUGEND GRÜNDET <span>· TEAM {number}</span></span>
                       <h3 id={'team-' + team.id}>{team.name}</h3>
                       {short && <p className="lm-team-card-slogan">{short}</p>}
-                      <p>{description || 'Das öffentliche Kurzprofil wird ergänzt.'}</p>
+                      <p className={description ? 'lm-team-card-teaser' : 'lm-team-card-pending'}>{description || 'Die Geschäftsidee wird nach Freigabe vorgestellt.'}</p>
                       <div className="lm-team-card-foot">
                         <span className="lm-team-card-footline" aria-hidden="true"/>
                         <span>{short || description ? 'PROJEKTPROFIL' : 'KURZPROFIL FOLGT'}</span>
@@ -362,7 +371,7 @@ export default function HomeClient({ publishedTeams = [] }: { publishedTeams: Pu
               <label htmlFor="lm-login-email">E-MAIL-ADRESSE</label>
               <input id="lm-login-email" type="email" autoComplete="username" required value={email} onChange={event => setEmail(event.currentTarget.value)} placeholder="name@beispiel.de"/>
               <label htmlFor="lm-login-password">PASSWORT</label>
-              <input id="lm-login-password" type="password" autoComplete="current-password" required value={password} onChange={event => setPassword(event.currentTarget.value)} placeholder="Ihr persönliches Passwort"/>
+              <div className="lm-login-password-field"><input id="lm-login-password" type={showPassword?'text':'password'} autoComplete="current-password" required value={password} onChange={event=>{setPassword(event.currentTarget.value);setLoginError('')}} placeholder="Ihr persönliches Passwort"/><button className="lm-login-password-toggle" type="button" aria-label={showPassword?'Passwort verbergen':'Passwort anzeigen'} aria-pressed={showPassword} onClick={()=>setShowPassword(v=>!v)}>{showPassword?<EyeOff size={18} aria-hidden="true"/>:<Eye size={18} aria-hidden="true"/>}</button></div>
               {loginError && <p role="alert" className="lm-login-error">{loginError}</p>}
               <button type="submit" disabled={loginBusy} aria-busy={loginBusy}>{loginBusy ? 'Anmeldung wird geprüft …' : 'Zum persönlichen Juryportal'} <ArrowUpRight size={19}/></button>
             </form>

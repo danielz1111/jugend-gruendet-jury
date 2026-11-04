@@ -2,6 +2,7 @@
 
 import {useEffect,useState} from 'react';
 import {ArrowRight,CheckCircle2,Eye,EyeOff,Save,ShieldCheck} from 'lucide-react';
+import {getExistingTeamCopy} from './TeamNavigator';
 
 type Team = {
   id:string;
@@ -77,6 +78,8 @@ export default function PublicTeamEditor({teams}:{teams:Team[]}) {
   if(!current)return <div className="jury-profile-editor"><p>Es sind noch keine Teams zur Bearbeitung vorhanden.</p></div>;
   const initials=draft.name.split(/[\s-]+/).filter(Boolean).slice(0,2).map(w=>w.charAt(0)).join('').toUpperCase()||'JG';
   const pending=!(draft.tagline.trim()||draft.description.trim());
+  const existingCopy=getExistingTeamCopy(current.name);
+  const hasExistingCopy=Boolean(existingCopy&&(existingCopy.tagline!==draft.tagline||existingCopy.description!==draft.description));
   return <div className="jury-profile-editor">
     <div className="jury-profile-sidebar">
       <span className="demo-overline">TEAM AUSWÄHLEN</span>
@@ -105,6 +108,20 @@ export default function PublicTeamEditor({teams}:{teams:Team[]}) {
           setSuggestions(old=>{const updated={...old};delete updated[current.id];return updated;});
         }}>Vorschlag ins Formular übernehmen</button>
       </div>}
+      {hasExistingCopy&&<div className="jury-profile-existing-copy" style={{padding:'16px 20px',background:'#f3f5ef',border:'1px solid #d3ddce',marginBottom:22}}>
+        <strong>Bereits vorhandene Angaben gefunden</strong>
+        <p style={{fontSize:13,margin:'9px 0',lineHeight:1.65}}>Slogan und Geschäftsidee liegen aus der bisherigen Bearbeitung vor. Sie können sie zur Prüfung ins Formular übernehmen – ohne öffentliche Sofortveröffentlichung.</p>
+        <button type="button" disabled={busy} onClick={()=>{
+          if(!existingCopy)return;
+          if(dirty&&!window.confirm('Ungespeicherte Änderungen durch die bisherigen Angaben ersetzen?'))return;
+          setDraft(previous=>({...previous,tagline:existingCopy.tagline,description:existingCopy.description}));
+          setApproved(false);
+          setError('');
+          setNotice('Vorhandene Angaben übernommen. Bitte Text prüfen, öffentliche Freigabe bestätigen und speichern.');
+        }} style={{background:'#284850',color:'white',border:0,padding:'11px 16px',cursor:'pointer'}}>
+          Vorhandene Texte übernehmen <ArrowRight size={15} aria-hidden="true"/>
+        </button>
+      </div>}
       <label htmlFor="jury-profile-name">Name des Unternehmerteams</label>
       <input id="jury-profile-name" value={draft.name} onChange={event=>setDraft(old=>({...old,name:event.target.value}))} maxLength={80} required minLength={2} disabled={busy}/>
       <label htmlFor="jury-profile-tagline">Kurzzeile / Slogan <small>(optional, maximal 160 Zeichen)</small></label>
@@ -116,7 +133,7 @@ export default function PublicTeamEditor({teams}:{teams:Team[]}) {
         <label><input type="checkbox" checked={draft.is_public} disabled={busy} onChange={event=>{setDraft(old=>({...old,is_public:event.target.checked}));setApproved(false)}}/><span><strong>Dieses Team öffentlich anzeigen</strong><small>Nur für freigegebene Teamangaben. Ist die Option ausgeschaltet, erscheint dieses Team nicht auf der öffentlichen Homepage.</small></span></label>
       </div>
       {draft.is_public&&<label className="jury-profile-approval"><input type="checkbox" checked={approved} onChange={event=>setApproved(event.target.checked)} disabled={busy}/><span>Ich bestätige, dass Teamname und Texte für die öffentliche Darstellung freigegeben sind.</span></label>}
-      {preview&&<div className="jury-profile-preview"><span className="demo-overline">VORSCHAU · {draft.is_public?'ÖFFENTLICH FREIGEGEBEN':'NICHT VERÖFFENTLICHT'}</span><div className="jury-profile-preview-card"><div aria-hidden="true">{initials}</div><h3>{draft.name.trim()||'Teamname'}</h3><p>{draft.tagline.trim()||draft.description.trim()||'Das öffentliche Kurzprofil wird ergänzt.'}</p></div><small>Die Vorschau zeigt nur Text. Fotos und Logos werden nach gesonderter Bildfreigabe ergänzt.</small></div>}
+      {preview&&<div className="jury-profile-preview"><span className="demo-overline">VORSCHAU · {draft.is_public?'ÖFFENTLICH FREIGEGEBEN':'NICHT VERÖFFENTLICHT'}</span><div className="jury-profile-preview-card"><div aria-hidden="true">{initials}</div><h3>{draft.name.trim()||'Teamname'}</h3>{draft.tagline.trim()&&<p style={{fontWeight:700,color:'#345c53'}}>{draft.tagline.trim()}</p>}<p>{draft.description.trim()||'Die Geschäftsidee wird nach der Freigabe vorgestellt.'}</p></div><small>Die Vorschau zeigt nur Text. Fotos und Logos werden nach gesonderter Bildfreigabe ergänzt.</small></div>}
       {error&&<p role="alert" className="jury-profile-error">{error}</p>}
       {notice&&<p role="status" className="jury-profile-success"><CheckCircle2 size={17}/>{notice}</p>}
       <div className="jury-profile-actions"><span>{dirty?'Ungespeicherte Änderungen':pending?'Kurzprofil noch nicht ausgefüllt':'Profil auf aktuellem Stand'}</span><button type="submit" disabled={busy||!dirty||!draft.name.trim()||draft.name.trim().length<2||(draft.is_public&&!approved)}><Save size={17}/>{busy?'Wird gespeichert …':'Änderungen speichern'} <ArrowRight size={15}/></button></div>
