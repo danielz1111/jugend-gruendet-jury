@@ -1,8 +1,8 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
-  ArrowRight, ArrowUpRight, CalendarDays, ChevronDown, Compass,
+  ArrowRight, ArrowUpRight, CalendarDays, ChevronDown, Clock3, Compass,
   ExternalLink, Lightbulb, LockKeyhole, MapPin, Menu, Presentation,
   UsersRound, X
 } from 'lucide-react';
@@ -40,6 +40,17 @@ export default function HomeClient({ publishedTeams = [] }: { publishedTeams: Pu
   const [password, setPassword] = useState('');
   const [loginBusy, setLoginBusy] = useState(false);
   const [loginError, setLoginError] = useState('');
+  const [daysUntilPitch, setDaysUntilPitch] = useState<number | null>(null);
+
+  useEffect(() => {
+    const updateCountdown = () => {
+      const milliseconds = new Date('2027-01-15T12:15:00.000Z').getTime() - Date.now();
+      setDaysUntilPitch(milliseconds > 0 ? Math.ceil(milliseconds / 86400000) : 0);
+    };
+    updateCountdown();
+    const timer = window.setInterval(updateCountdown, 60 * 60 * 1000);
+    return () => window.clearInterval(timer);
+  }, []);
 
   const teams: LandingTeam[] = publishedTeams.length
     ? [...publishedTeams].sort((a, b) => a.position - b.position).map(team => ({ ...team, published: true }))
@@ -117,11 +128,12 @@ export default function HomeClient({ publishedTeams = [] }: { publishedTeams: Pu
             </div>
           </div>
           <div className="lm-hero-seal" aria-label="Neun Teams beim Pitch-Tag">
-            <span className="lm-hero-seal-overline">DIE NÄCHSTE GENERATION</span>
+            <span className="lm-hero-seal-overline">LANDHEIM ENTREPRENEURS</span>
             <strong>09</strong>
             <span className="lm-hero-seal-caption">TEAMS.<br/>UNZÄHLIGE MÖGLICHKEITEN.</span>
             <span className="lm-seal-divider"/>
             <span className="lm-seal-date">15. JANUAR 2027</span>
+            {daysUntilPitch !== null && daysUntilPitch > 0 && <span className="lm-seal-countdown">Noch {daysUntilPitch} Tage</span>}
           </div>
         </div>
         <div className="lm-hero-bottom">
@@ -207,6 +219,7 @@ export default function HomeClient({ publishedTeams = [] }: { publishedTeams: Pu
             <div className="lm-event-date" aria-label="15. Januar 2027"><strong>15</strong><span>JANUAR<br/>2027</span></div>
             <div className="lm-event-date-line"/>
             <p>FREITAG <span>·</span> 13:15 – 17:30 UHR</p>
+            {daysUntilPitch !== null && daysUntilPitch > 0 && <div className="lm-event-countdown"><Clock3 size={18} strokeWidth={1.5} aria-hidden="true"/><span>NOCH <strong>{daysUntilPitch}</strong> TAGE BIS ZUM PITCH</span></div>}
           </div>
           <div className="lm-event-right">
             <div className="lm-kicker lm-kicker-light"><span className="lm-kicker-line"/> DER PITCH-TAG</div>
