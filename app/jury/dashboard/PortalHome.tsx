@@ -37,7 +37,6 @@ export default function PortalHome({
   const [headerCompact,setHeaderCompact]=useState(false);
   const [headerHeight,setHeaderHeight]=useState(148);
   const [detailTarget,setDetailTarget]=useState<'profile'|'materials'|null>(null);
-  const [companySection,setCompanySection]=useState<'profile'|'materials'>('profile');
   const headerRef=useRef<HTMLElement|null>(null);
   const selectedTeam=teams.find(team=>team.id===activeTeamId)||teams[0]||null;
   const salutation=displayName.trim().replace(/[.!]+$/,'');
@@ -77,29 +76,6 @@ export default function PortalHome({
     },130);
     return ()=>window.clearTimeout(timer);
   },[area,detailTarget]);
-  // Keep the pinned section tabs in sync when someone scrolls by hand.
-  useEffect(()=>{
-    if(area!=='companies')return;
-    let pending=0;
-    const readPosition=()=>{
-      if(pending)window.cancelAnimationFrame(pending);
-      pending=window.requestAnimationFrame(()=>{
-        const materials=document.getElementById('jury-company-materials');
-        if(materials){
-          const threshold=headerRef.current?.getBoundingClientRect().height||headerHeight;
-          setCompanySection(materials.getBoundingClientRect().top<=threshold+95?'materials':'profile');
-        }
-        pending=0;
-      });
-    };
-    readPosition();
-    window.addEventListener('scroll',readPosition,{passive:true});
-    return ()=>{
-      window.removeEventListener('scroll',readPosition);
-      if(pending)window.cancelAnimationFrame(pending);
-    };
-  },[area,headerHeight]);
-
   // Renew the optional remembered jury session while the page is in use.
   useEffect(()=>{
     const renew=()=>{if(!document.hidden)void fetch('/api/jury/refresh',{method:'POST',cache:'no-store'}).catch(()=>undefined)};
@@ -107,12 +83,10 @@ export default function PortalHome({
     return ()=>window.clearInterval(interval);
   },[]);
   const navigate=(next:Area)=>{
-    if(next==='companies')setCompanySection('profile');
     setArea(next);
     window.scrollTo({top:0,behavior:'smooth'});
   };
   const showCompanySection=(section:'profile'|'materials')=>{
-    setCompanySection(section);
     setArea('companies');
     setDetailTarget(section);
   };
@@ -160,42 +134,6 @@ export default function PortalHome({
             </button>
           </form>
         </div>
-        {area!=='admin'&&<div className="jury-v3-contextbar" aria-label="Team und Arbeitsbereiche">
-          <div className="jury-v3-contextbar-inner">
-            <div className="jury-v3-context-team">
-              <span className="jury-v3-context-kicker">AUSGEWÄHLTES UNTERNEHMEN</span>
-              <div className="jury-v3-context-selector">
-                <Building2 size={16} aria-hidden="true"/>
-                <select aria-label="Ausgewähltes Unternehmen wechseln"
-                  value={selectedTeam?.id||''}
-                  disabled={teams.length===0}
-                  onChange={event=>setActiveTeamId(event.currentTarget.value)}>
-                  {teams.length===0&&<option value="">Kein Unternehmen vorhanden</option>}
-                  {teams.map(team=><option value={team.id} key={team.id}>{team.name}</option>)}
-                </select>
-              </div>
-            </div>
-            <nav className="jury-v3-context-tabs" aria-label="Schnellnavigation des ausgewählten Unternehmens">
-              <button type="button"
-                className={area==='rating'?'active':''} aria-pressed={area==='rating'}
-                onClick={()=>navigate('rating')}>
-                <ClipboardCheck size={17} aria-hidden="true"/> Jurybewertung
-              </button>
-              <button type="button"
-                className={area==='companies'&&companySection==='profile'?'active':''}
-                aria-pressed={area==='companies'&&companySection==='profile'}
-                onClick={()=>showCompanySection('profile')}>
-                <Users size={17} aria-hidden="true"/> Unternehmensprofil
-              </button>
-              <button type="button"
-                className={area==='companies'&&companySection==='materials'?'active':''}
-                aria-pressed={area==='companies'&&companySection==='materials'}
-                onClick={()=>showCompanySection('materials')}>
-                <FileText size={17} aria-hidden="true"/> Unterlagen
-              </button>
-            </nav>
-          </div>
-        </div>}
       </header>
 
       <div className="jury-v3-content">
@@ -239,14 +177,37 @@ export default function PortalHome({
 
           {/* Keep the workspace mounted when changing sections so locally held
               assessment state is not discarded. Switch its active inner tab. */}
-          <div className={area==='companies'?'jury-v3-workspace jury-v3-company-workspace':'jury-v3-workspace'} hidden={area!=='rating'&&area!=='companies'}>
-            {area==='companies'&&<aside className="jury-v3-company-rail" aria-label="Navigation im Unternehmensbereich">
-              <span>UNTERNEHMEN</span>
-              <a href="#jury-company-profile">Unternehmensprofil</a>
-              <a href="#jury-company-materials">Unterlagen</a>
-              <button type="button" onClick={()=>navigate('rating')}>Zur Jurybewertung <ArrowRight size={14}/></button>
-              <a href="#jury-top" className="jury-v3-rail-back">Zurück nach oben ↑</a>
-            </aside>}
+          <div className={area==='companies'
+            ?'jury-v3-workspace jury-v3-company-workspace'
+            :area==='rating'?'jury-v3-workspace jury-v3-rating-workspace':'jury-v3-workspace'}
+            hidden={area!=='rating'&&area!=='companies'}>
+            {(area==='companies'||area==='rating')&&
+              <aside className={area==='rating'?'jury-v3-rating-rail':'jury-v3-company-rail'}
+                aria-label={area==='rating'?'Navigation zur Jurybewertung':'Navigation im Unternehmensbereich'}>
+                <span>{area==='rating'?'IHRE JURYBEWERTUNG':'UNTERNEHMEN & START-UPS'}</span>
+                <label className="jury-v3-rail-team-label" htmlFor="jury-v3-selected-team">
+                  Ausgewähltes Unternehmen
+                </label>
+                <select id="jury-v3-selected-team" className="jury-v3-rail-team-select"
+                  disabled={teams.length===0}
+                  value={selectedTeam?.id||''}
+                  onChange={event=>setActiveTeamId(event.currentTarget.value)}>
+                  {teams.length===0&&<option value="">Keine Unternehmen</option>}
+                  {teams.map(team=><option key={team.id} value={team.id}>{team.name}</option>)}
+                </select>
+                {area==='companies'?<>
+                  <a href="#jury-company-profile">Unternehmensprofil</a>
+                  <a href="#jury-company-materials">Unterlagen</a>
+                  <button type="button" onClick={()=>navigate('rating')}>Zur Jurybewertung <ArrowRight size={14}/></button>
+                </>:<>
+                  <a href="#jury-rating-form">Jurybewertung · 1–10 Punkte</a>
+                  <a href="#jury-rating-questions">Juryfragen</a>
+                  <a href="#jury-rating-notes">Persönliche Notizen</a>
+                  <a href="#jury-rating-release">Bewertung freigeben</a>
+                  <button type="button" onClick={()=>showCompanySection('profile')}>Zum Unternehmensprofil <ArrowRight size={14}/></button>
+                </>}
+                <a href="#jury-top" className="jury-v3-rail-back">Zurück nach oben ↑</a>
+              </aside>}
             <TeamNavigator
               teams={teams} members={members} initialScores={scores}
               isAdmin={isAdmin}

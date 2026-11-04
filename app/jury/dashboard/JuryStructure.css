@@ -585,3 +585,117 @@
     transition:none;
   }
 }
+
+
+/* Jury navigation v6: no extra dark bar beneath the site masthead.
+   Company and rating use matching left sticky navigation instead. */
+.jury-v3-company-workspace,
+.jury-v3-rating-workspace{
+  display:grid;grid-template-columns:210px minmax(0,1fr);
+  align-items:start;gap:clamp(18px,2.5vw,32px);
+}
+.jury-v3-rating-rail{
+  display:flex;flex-direction:column;align-items:stretch;gap:4px;
+  position:sticky;top:calc(var(--jury-header-height,95px) + 12px);
+  background:#fff;border:1px solid #dfe7df;
+  border-top:3px solid var(--jury-lime);
+  box-shadow:0 10px 24px #1935400a;
+  padding:18px 15px;
+  max-height:calc(100vh - var(--jury-header-height,95px) - 20px);
+  overflow-y:auto;
+}
+.jury-v3-company-rail{
+  border-top:3px solid var(--jury-lime);
+  max-height:calc(100vh - var(--jury-header-height,95px) - 20px);
+  overflow-y:auto;
+}
+.jury-v3-rating-rail>span{
+  font-size:10px;color:#6a807a;font-weight:800;letter-spacing:.11em;
+  border-bottom:1px solid #e3e9e2;padding:3px 10px 12px;margin-bottom:5px;
+}
+.jury-v3-rating-rail>a,.jury-v3-rating-rail>button{
+  display:flex;align-items:center;justify-content:space-between;
+  text-decoration:none;text-align:left;color:#344c51;
+  background:transparent;border:0;border-left:3px solid transparent;
+  font-size:13px;line-height:1.45;font-weight:700;padding:12px 10px;
+  cursor:pointer;
+}
+.jury-v3-rating-rail>a:hover,.jury-v3-rating-rail>button:hover{
+  background:#f3f6e9;border-left-color:var(--jury-lime);color:#1d4141;
+}
+.jury-v3-rating-rail .jury-v3-rail-back{
+  color:#63817b;border-top:1px solid #e3e9e2;
+  margin-top:13px;padding-top:16px;font-size:12px;
+}
+.jury-v3-rail-team-label{
+  font-size:10px;font-weight:800;line-height:1.45;
+  color:#667f75;letter-spacing:.02em;
+  padding:9px 10px 0;
+}
+.jury-v3-rail-team-select{
+  display:block;
+  width:calc(100% - 20px);
+  min-width:0;margin:0 10px 16px;
+  padding:10px 8px;
+  background:#f5f8f0;
+  border:1px solid #c8d9c1;
+  border-left:3px solid var(--jury-lime);
+  color:#243f43;
+  font:700 13px/1.4 'DM Sans',Arial,sans-serif;
+  cursor:pointer;
+}
+.jury-v3-rail-team-select:focus-visible{
+  outline:2px solid var(--jury-lime);outline-offset:3px;
+}
+.jury-v3-rating-workspace>.jury-wide-shell{
+  min-width:0;margin-top:0!important;
+}
+.jury-v3-company-workspace>.jury-wide-shell{
+  min-width:0;margin-top:0!important;
+}
+.jury-v3 .jury-rating-focus,
+.jury-v3 #jury-rating-notes,
+.jury-v3 #jury-rating-questions,
+.jury-v3 #jury-rating-release{
+  scroll-margin-top:calc(var(--jury-header-height,95px) + 20px);
+}
+.jury-v3 .jury-v3-heading{
+  margin-bottom:28px;
+}
+@media(max-width:1120px){
+  .jury-v3-rating-workspace{
+    grid-template-columns:175px minmax(0,1fr);gap:17px;
+  }
+  .jury-v3-rating-rail{padding:11px 8px}
+  .jury-v3-rating-rail>a,.jury-v3-rating-rail>button{font-size:12px}
+}
+@media(max-width:850px){
+  .jury-v3-rating-workspace{display:block}
+  .jury-v3-rating-rail{
+    position:sticky;
+    top:calc(var(--jury-header-height,95px) + 5px);
+    z-index:12;
+    display:flex;flex-direction:row;flex-wrap:nowrap;
+    gap:7px;align-items:center;overflow-x:auto;overflow-y:hidden;
+    padding:10px;margin-bottom:16px;
+    max-height:none;scrollbar-width:thin;
+  }
+  .jury-v3-rating-rail>span{display:none}
+  .jury-v3-rating-rail>a,.jury-v3-rating-rail>button{
+    flex:none;border:1px solid #e1e9de;
+    white-space:nowrap;padding:9px;font-size:11px;
+  }
+  .jury-v3-rail-team-label{
+    flex:none;white-space:nowrap;padding:0 3px;font-size:10px;
+  }
+  .jury-v3-rail-team-select{
+    flex:none;width:170px;margin:0;
+  }
+  .jury-v3-company-rail{
+    top:calc(var(--jury-header-height,95px) + 5px);
+    max-height:none;overflow-x:auto;overflow-y:hidden;
+  }
+}
+@media(prefers-reduced-motion:reduce){
+  .jury-v3-rail-team-select{scroll-behavior:auto}
+}

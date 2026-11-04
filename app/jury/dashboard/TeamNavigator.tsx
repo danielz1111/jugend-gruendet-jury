@@ -288,7 +288,7 @@ export default function TeamNavigator({teams,members,initialScores,isAdmin,initi
  <p style={{fontSize:13,color:'#667480'}}>Grau: offen · Gelb: speichert · Grün: gespeichert · Rot: Fehler</p>
  <p style={{fontSize:13,color:'#526575',lineHeight:1.6}}><strong>Bewertungsorientierung:</strong> {gradeGuide}</p>
  {activeCriteria.map((c,i)=>{
-  const phaseHeader=i===0?<div style={{marginTop:22}}><h3>1 · Fachbereiche und Präsentation</h3><p>Während des Pitches</p></div>:i===(isFour?5:6)?<div style={{marginTop:24,borderTop:'2px solid #d9d4c9',paddingTop:14}}><h3>2 · Juryfragen</h3><p>Während der Fragerunde</p></div>:null;
+  const phaseHeader=i===0?<div style={{marginTop:22}}><h3>1 · Fachbereiche und Präsentation</h3><p>Während des Pitches</p></div>:i===(isFour?5:6)?<div id="jury-rating-questions" style={{marginTop:24,borderTop:'2px solid #d9d4c9',paddingTop:14}}><h3>2 · Juryfragen</h3><p>Während der Fragerunde</p></div>:null;
   const id=team.id+':'+c.key;
   const saved=scores[team.id]?.[c.key];
   const current=pending[id]??saved;
@@ -325,7 +325,7 @@ export default function TeamNavigator({teams,members,initialScores,isAdmin,initi
  {progressError[team.id]&&<button type="button" onClick={()=>void refreshProgress(team.id)}>Abgabestand erneut laden</button>}
  </div>
  <div style={{marginTop:20,padding:18,border:'1px solid #d8d4cd',borderRadius:10}}>
- <h3>Bewertung freigeben</h3>
+ <h3 id="jury-rating-release">Bewertung freigeben</h3>
  {isReleased?<p style={{color:'#18794e',fontWeight:700}}>✓ Bewertung verbindlich freigegeben. Die Punkte sind jetzt gesperrt.</p>:<>
  <p>Deine Punkte werden als Entwurf gespeichert. Erst mit der Freigabe zählen sie zum Juryergebnis.</p>
  <button type="button" disabled={releasing||!activeCriteria.every(c=>scores[team.id]?.[c.key]!==undefined)||activeCriteria.some(c=>status[team.id+':'+c.key]==='saving'||status[team.id+':'+c.key]==='error'||pending[team.id+':'+c.key]!==undefined)}
@@ -336,7 +336,7 @@ export default function TeamNavigator({teams,members,initialScores,isAdmin,initi
  </>}
  </div>
  </div>
- <div className="demo-notes">
+ <div className="demo-notes" id="jury-rating-notes">
  <h2>Persönliche Jurynotizen</h2>
  <p>Nur für dich sichtbar. Diese Notizen fließen nicht in die Punktebewertung ein.</p>
  {notesError[team.id]&&<p role="alert" style={{color:'#b42318'}}>{notesError[team.id]} <button type="button" onClick={()=>void loadNotes(team.id)}>Erneut laden</button></p>}
