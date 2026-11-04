@@ -30,12 +30,12 @@ export default function JuryPasswortVergessen(){
   </header>
   <section className="jury-password-card">
    <span className="jury-password-eyebrow"><LockKeyhole size={15}/> GESCHÜTZTER JURYBEREICH</span>
-   <h1>Passwort vergessen?</h1>
-   <p>Geben Sie die E-Mail-Adresse Ihres Jurykontos ein. Sie erhalten gegebenenfalls eine E-Mail mit einem sicheren Link, über den Sie selbst ein neues Passwort festlegen können.</p>
+   <h1>Juryzugang aktivieren.</h1>
+   <p>Erster Zugang oder Passwort vergessen? Geben Sie Ihre bei der Wettbewerbsleitung hinterlegte E-Mail-Adresse ein. Wenn diese für die Jury zugelassen ist, erhalten Sie einen persönlichen Sicherheitslink. Damit legen Sie selbst Ihr Passwort fest.</p>
    {sent?<div className="jury-password-confirm" role="status">
     <CheckCircle2 size={23}/>
     <div><strong>Bitte prüfen Sie Ihr E-Mail-Postfach.</strong>
-     <p>Falls ein Konto mit dieser E-Mail-Adresse besteht, haben wir einen Link zur Passwortvergabe angefordert. Schauen Sie gegebenenfalls auch im Spam-Ordner nach.</p></div>
+     <p>Wenn Ihre E-Mail-Adresse für den Juryzugang freigeschaltet ist, wird ein persönlicher Sicherheitslink verschickt. Prüfen Sie gegebenenfalls auch den Spam-Ordner.</p></div>
    </div>:<form onSubmit={submit}>
     <label htmlFor="jury-password-email">E-Mail-Adresse</label>
     <input id="jury-password-email" type="email" autoComplete="email" required
@@ -44,7 +44,7 @@ export default function JuryPasswortVergessen(){
     <button type="submit" disabled={busy}><Mail size={18}/>{busy?'Anfrage wird gesendet …':'Link zum Passwort-Festlegen anfordern'}</button>
    </form>}
    <Link href="/jury" className="jury-password-back"><ArrowLeft size={17}/> Zur Jury-Anmeldung</Link>
-   <p className="jury-password-hint">Neue Jurymitglieder erhalten ihren erstmaligen Einladungslink direkt von der Wettbewerbsleitung. Eine öffentliche Juryregistrierung ist nicht möglich.</p>
+   <p className="jury-password-hint">Die Wettbewerbsleitung hat die berechtigten E-Mail-Adressen bereits hinterlegt. Ohne diese Freigabe entsteht kein Juryzugang.</p>
   </section>
  </main>;
 }

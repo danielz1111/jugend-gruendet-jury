@@ -1,66 +1,71 @@
-# Jurykonten und persönliche Passwörter – Einrichtung
+# Juryzugang: Ein gemeinsamer Link, individuelle Passwortvergabe
 
-## Grundsatz
+## Ablauf
 
-Jurymitglieder werden **nur auf Einladung durch die Wettbewerbsleitung** zugelassen.
-Ein persönliches Passwort wird ausschließlich vom Jurymitglied selbst festgelegt.
-Es gibt keine öffentliche Juryregistrierung und keine Liste einsehbarer Passwörter.
-Nach einer Einladung oder Passwort-Wiederherstellung öffnet sich die Seite
-`/jury/passwort-neu` über einen befristeten Supabase-E-Mail-Link.
+Die Wettbewerbsleitung schickt **eine eigene persönliche E-Mail** mit dem gemeinsamen
+Link `https://<endgueltige-domain>/jury/passwort-vergessen` an die Jury.
 
-## Einmalige Einrichtung in Supabase
+1. Das Jurymitglied trägt seine bereits hinterlegte E-Mail-Adresse ein.
+2. Supabase sendet ausschließlich an diese Adresse einen zeitlich begrenzten
+   persönlichen Magic-Link bzw. bei bestehenden Konten einen Recovery-Link.
+3. Das Mitglied öffnet den Link, wählt auf `/jury/passwort-neu` ein eigenes
+   Passwort mit mindestens 12 Zeichen und bestätigt es.
+4. Dabei wird der Zugriff für die bereits freigegebene E-Mail-Adresse über
+   eine strenge Supabase-RLS-Policy aktiviert. Der neue Account ist **kein Administrator**.
+5. Die Anmeldung erfolgt über die E-Mail-Adresse und das selbst gesetzte Passwort.
+   Bei vergessenem Passwort wird derselbe gemeinsame Einstieg verwendet.
 
-1. In **Authentication → URL Configuration** die tatsächliche öffentliche Website als
-   **Site URL** eintragen. Weiterleitungsziele `https://<eigene-domain>/jury/passwort-neu`
-   unter **Redirect URLs** erlauben. Für Tests außerdem die *genaue* Preview-Adresse
-   `https://<preview-host>/jury/passwort-neu` erlauben. Nicht pauschal fremde Domains
-   per `*.vercel.app` freischalten.
-2. Unter **Authentication → Email Templates** sowohl **Invite user** als auch
-   **Reset password** kontrollieren. Die Vorlagen sollen `{{ .ConfirmationURL }}`
-   enthalten und zum persönlichen Link führen.
-3. Unter **Authentication → SMTP Settings** prüfen, ob die Plattform Einladungen
-   und Passwortmails an beliebige externe Empfänger versenden kann. Die
-   Supabase-Standard-E-Mail-Zustellung ist für Produktion eingeschränkt; bei Bedarf
-   einen eigenen SMTP-Anbieter einrichten.
-4. Echte E-Mail-Adresse und Mailzustellung mit einem ausdrücklich eingeladenen
-   Testkonto prüfen, bevor eine externe Jury eingeladen wird.
+**Keine E-Mail an die Jury wurde beim Vorbereiten der fünf Freigaben gesendet.**
+Es werden keine vorläufigen Passwörter benötigt. Das eigene Passwort wird
+nicht in der Juryanwendung gespeichert; Supabase Auth verarbeitet es.
 
-## Neues Jurymitglied einladen (derzeit im Supabase-Dashboard)
+## Berechtigung
 
-1. **Authentication → Users → Add user → Send invitation** auswählen.
-   Die E-Mail-Adresse des Jurymitglieds eintragen. Die Einladung verschickt
-   einen Link zum selbstständigen Festlegen eines Passworts.
-2. Die neu erstellte User-ID in **Table Editor → public.jury_members** als
-   `user_id` mit `display_name` und `is_admin = false` eintragen.
-   **Wichtig:** Ohne diesen Eintrag bleibt der Zugang zum geschützten Jurybereich
-   gesperrt. Die Rolle wird nicht durch Registrierungsdaten zugewiesen.
-3. Das Jurymitglied klickt in seiner E-Mail auf den Einladungslink, wählt auf
-   `/jury/passwort-neu` ein Passwort und meldet sich bei der Jury an.
-   Ist in Supabase keine `redirectTo`-Adresse für Einladungen gesetzt, wird
-   zum konfigurierten **Site URL** zurückgeleitet; die Startseite erkennt
-   `#type=invite` und leitet zur Passwortseite weiter.
-4. Passwörter weder abfragen noch in E-Mails verteilen.
+Die Tabelle `public.jury_authorized_emails` enthält ausschließlich von der
+Wettbewerbsleitung vorher genehmigte E-Mail-Adressen. Der Öffentlichkeit ist
+keine Liste zugänglich. Die schmale anonyme RPC
+`public.jury_email_preapproved(p_email)` beantwortet nur die Ja/Nein-Frage;
+sie dient im Server als Schranke gegen beliebige Neu-Anmeldungen.
+Supabase-Rate-Limits reduzieren Versandmissbrauch.
 
-## Passwort vergessen
+Beim tatsächlichen Festlegen des Passworts muss das Auth-Token aus der
+persönlichen E-Mail stammen und eine bestätigte E-Mail-Adresse nachweisen.
+Eine `INSERT`-RLS-Policy erlaubt ausschließlich dem Besitzer dieser E-Mail
+den selbstbezogenen Eintrag in `jury_members`, mit exakt dem vordefinierten
+Anzeigenamen und `is_admin=false`. Die schon vorhandene Admin-Kennung
+bleibt unverändert.
 
-- Auf der Startseite beim Juryformular oder auf `/jury` den Link
-  **„Passwort vergessen oder erstmalig festlegen?“** anklicken.
-- E-Mail-Adresse eintragen → Supabase sendet bei vorhandenem Konto einen
-  Link. Der Dienst bestätigt aus Datenschutzgründen nicht, ob ein Konto besteht.
-- Link öffnen → neues Passwort (mindestens zwölf Zeichen) zweimal eingeben.
-  Danach ist eine erneute Anmeldung nötig.
-- Bei Problemen die erlaubten Redirect-URLs, die E-Mail-Vorlage und SMTP
-  prüfen. Der Test mit künstlichen E-Mail-Domains ist nicht aussagekräftig.
+Eine Antwort des Aktivierungsformulars verrät ausdrücklich nicht, ob eine
+E-Mail-Adresse bereits in der Juryliste steht.
 
-## Vor der Veröffentlichung noch prüfen
+## Einmalige Einrichtung vor dem E-Mail-Versand
 
-- Einladung eines neuen, echten Testkontos und Passwortwahl über den Mail-Link.
-- Anmeldung als freigeschaltetes Jurymitglied funktioniert.
-- Anmeldung mit nicht freigeschalteter Auth-ID wird verweigert.
-- Passwort-Wiederherstellung, Ablauf des Links und falsche Eingaben.
-- Jury-/Elternberechtigungen bleiben getrennt.
+1. In Supabase **Authentication → URL Configuration** die endgültige Site URL
+   auf die öffentliche Website setzen und `https://<endgueltige-domain>/jury/passwort-neu`
+   als Redirect URL eintragen. Für den Test zusätzlich die konkrete Vorschau-URL
+   `https://<vorschau-host>/jury/passwort-neu` erlauben. Keine generische
+   Wildcard für fremde Vercel-Domains verwenden.
+2. Unter **Authentication → Email Templates** die Vorlagen
+   **Magic Link / Confirm signup** sowie **Reset password** prüfen;
+   sie müssen einen funktionierenden Link mit `{{ .ConfirmationURL }}` verschicken.
+3. Unter **Authentication → SMTP Settings** E-Mail-Zustellung an externe Empfänger
+   sicherstellen. Der Supabase-Standardversand ist häufig eingeschränkt.
+4. Vor Versand an echte Jurymitglieder einen ausdrücklich als TEST markierten
+   Benutzer mit erreichbarer, eigener E-Mail hinzufügen und **den kompletten Ablauf**
+   von Antrag bis Juryanmeldung erproben; Test anschließend entfernen.
 
-Derzeit ist kein Supabase-Geheimschlüssel in Vercel hinterlegt. Daher ist
-**die Einladung neuer Jurymitglieder bewusst noch keine Funktion im Juryportal**,
-sondern erfolgt sicher über das Supabase-Dashboard. Eine spätere Admin-Oberfläche
-würde eine serverseitig geschützte Admin-API sowie Rollenprüfung benötigen.
+## Sicherheits- und Funktionstests
+
+- Unbekannte E-Mail führt zu keiner Juryberechtigung.
+- Freigegebene E-Mail bekommt ihren persönlichen Link, bestätigt Identität.
+- Passwort kann erst nach Bestätigung gesetzt werden.
+- Nur eigene Jurybewertungen und Notizen sichtbar.
+- Adminrechte werden niemals bei Selbstaktivierung vergeben.
+- Passwort-Reset eines bestehenden Mitglieds funktioniert.
+- Abgelaufener/ungültiger Link wird zurückgewiesen.
+- Freischaltung Eltern/Jury bleibt strikt getrennt.
+
+**Betriebshinweis:** Die fünf Mitglieder sind zunächst nur **vorberechtigt**,
+keine Auth-Konten. Der Auth-Datensatz entsteht bei der ersten Linkbestätigung.
+Das Verfahren benötigt keinen Supabase Service-Role-Key in Vercel.
+Vor dem Produktivstart ist eine vollständige E-Mail-End-to-End-Prüfung verpflichtend.

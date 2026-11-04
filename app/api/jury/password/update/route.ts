@@ -18,8 +18,37 @@ export async function POST(request:NextRequest){
   const headers={apikey:key,Authorization:'Bearer '+token};
   const userResponse=await fetch(url+'/auth/v1/user',{headers,cache:'no-store'});
   if(!userResponse.ok)return NextResponse.json({error:'Der Link ist abgelaufen oder ungültig. Fordern Sie einen neuen an.'},{status:401});
-  const user=await userResponse.json() as {id?:string};
-  if(!user.id)return NextResponse.json({error:'Ungültiger Zugang.'},{status:401});
+  const user=await userResponse.json() as {id?:string;email?:string;email_confirmed_at?:string|null};
+  if(!user.id||!user.email||!user.email_confirmed_at)
+   return NextResponse.json({error:'Die E-Mail-Adresse ist noch nicht bestätigt.'},{status:401});
+  // Confirm that this personal token belongs to an already admitted juror
+  // or to an owner of an explicitly approved jury email inbox.
+  const normalizedEmail=user.email.toLowerCase();
+  const [memberResponse,allowResponse]=await Promise.all([
+   fetch(url+'/rest/v1/jury_members?select=user_id&user_id=eq.'+encodeURIComponent(user.id),{
+    headers,cache:'no-store'
+   }),
+   fetch(url+'/rest/v1/jury_authorized_emails?select=display_name&enabled=eq.true&email=eq.'+encodeURIComponent(normalizedEmail),{
+    headers,cache:'no-store'
+   })
+  ]);
+  if(!memberResponse.ok||!allowResponse.ok)
+   return NextResponse.json({error:'Juryberechtigung konnte nicht geprüft werden.'},{status:503});
+  const members=await memberResponse.json() as Array<{user_id:string}>;
+  const approved=await allowResponse.json() as Array<{display_name:string}>;
+  if(!members.some(j=>j.user_id===user.id)&&!approved.length)
+   return NextResponse.json({error:'Diese E-Mail-Adresse ist nicht für das Juryportal freigeschaltet.'},{status:403});
+  // Enroll only the current authenticated user's own ID. RLS additionally
+  // verifies the confirmed email, exact display name and is_admin=false.
+  if(!members.some(j=>j.user_id===user.id)){
+   const enrolled=await fetch(url+'/rest/v1/jury_members',{
+    method:'POST',headers:{...headers,'Content-Type':'application/json',Prefer:'return=representation'},
+    body:JSON.stringify({user_id:user.id,display_name:approved[0].display_name,is_admin:false}),
+    cache:'no-store'
+   });
+   if(!enrolled.ok)
+    return NextResponse.json({error:'Ihr Juryzugang konnte noch nicht aktiviert werden.'},{status:503});
+  }
   // The token is the user's personal Supabase session. The password can
   // only be changed for that same account; no admin secret is used.
   const changed=await fetch(url+'/auth/v1/user',{

@@ -20,7 +20,7 @@ export default function JuryPasswortNeu(){
   const errorText=fragment.get('error_description')||new URLSearchParams(window.location.search).get('error_description');
   // Remove the bearer token from the address bar as soon as it is read.
   window.history.replaceState(null,'',window.location.pathname);
-  if(access&&(kind==='recovery'||kind==='invite')){
+  if(access&&(['recovery','invite','magiclink','signup'].includes(kind||''))){
    setToken(access);
   }else{
    setBadLink(errorText||'Dieser Einladungs- oder Wiederherstellungslink ist ungültig oder abgelaufen.');

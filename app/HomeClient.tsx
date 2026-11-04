@@ -86,7 +86,7 @@ export default function HomeClient({ publishedTeams = [] }: { publishedTeams: Pu
     // override was supplied. Carry the one-use fragment to our password page.
     const fragment=new URLSearchParams(window.location.hash.replace(/^#/,''));
     const kind=fragment.get('type');
-    if(fragment.has('access_token')&&(kind==='invite'||kind==='recovery')){
+    if(fragment.has('access_token')&&(['invite','recovery','magiclink','signup'].includes(kind||''))){
       window.location.replace('/jury/passwort-neu'+window.location.hash);
     }
   },[]);
