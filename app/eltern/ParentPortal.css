@@ -1,12 +1,12 @@
 .parent-portal{min-height:100vh;background:#f5f8f4;color:#233d43;font-family:'DM Sans',Arial,sans-serif}
 .parent-portal *{box-sizing:border-box}
 .parent-portal a,.parent-portal button{transition:background-color .18s,border-color .18s}
-.parent-portal :is(a,button,input,select):focus-visible{outline:3px solid #b8d53d;outline-offset:3px}
+.parent-portal :is(a,button,input,select):focus-visible{outline:3px solid #bad639;outline-offset:3px}
 .parent-header{position:sticky;top:0;z-index:50;background:#fffefaef;box-shadow:0 4px 24px #1b363b18;border-bottom:1px solid #e1e7dd;backdrop-filter:blur(14px)}
 .parent-header-inner{width:min(calc(100% - 48px),1350px);margin:auto;display:flex;align-items:center;justify-content:space-between;min-height:92px;gap:24px}
 .parent-brand{display:flex;align-items:center;gap:17px;text-decoration:none;color:#28454a}
-.parent-emblem{display:grid;place-items:center;background:#bfd839;color:#213a43;width:56px;height:56px}
-.parent-brand>span:last-child{display:grid;gap:5px;border-left:2px solid #bed63e;padding-left:14px}
+.parent-emblem{display:grid;place-items:center;background:#bad639;color:#213a43;width:56px;height:56px}
+.parent-brand>span:last-child{display:grid;gap:5px;border-left:2px solid #bad639;padding-left:14px}
 .parent-brand strong{font:500 clamp(20px,2vw,26px)/1.2 'Playfair Display',Georgia,serif}
 .parent-brand small{font-size:11px;color:#628078;font-weight:650}
 .parent-header-actions{display:flex;align-items:center;gap:16px}
@@ -39,7 +39,7 @@
 .parent-auth-form,.parent-request-form{display:grid;gap:17px}
 .parent-auth-tabs{display:grid;grid-template-columns:1fr 1fr;border-bottom:1px solid #e0e8df}
 .parent-auth-tabs button{border:0;border-bottom:3px solid transparent;background:white;color:#56716e;padding:14px;font-weight:800;cursor:pointer}
-.parent-auth-tabs button.active{border-bottom-color:#bdd837;color:#22443e;background:#f5f8ef}
+.parent-auth-tabs button.active{border-bottom-color:#bad639;color:#22443e;background:#f5f8ef}
 .parent-auth-form label,.parent-request-form label{font-size:12px;color:#405e5d;font-weight:750;display:grid;gap:9px}
 .parent-auth-form input,.parent-request-form :is(input,select){width:100%;padding:14px;border:1px solid #d3ded7;background:#fff;font:inherit;color:#223e44}
 .parent-submit{display:flex;align-items:center;justify-content:space-between;gap:14px;background:#25483f;border:0;color:white;padding:15px 20px;font-weight:800;cursor:pointer;font-size:13px}

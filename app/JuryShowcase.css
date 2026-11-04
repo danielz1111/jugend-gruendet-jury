@@ -9,7 +9,7 @@
 .jury-showcase-intro>p{font-size:16px;line-height:1.85;color:#62767a;margin:0 0 8px}
 .jury-showcase-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:19px}
 .jury-showcase-person{background:white;border:1px solid #dce3dd;box-shadow:0 8px 28px #172b2a0a;min-width:0;overflow:hidden;display:flex;flex-direction:column;transition:transform .25s,border-color .25s,box-shadow .25s}
-.jury-showcase-person:hover,.jury-showcase-person.is-selected{transform:translateY(-5px);border-color:#91af3d;box-shadow:0 17px 34px #172b2a21}
+.jury-showcase-person:hover,.jury-showcase-person.is-selected{transform:translateY(-5px);border-color:#bad639;box-shadow:0 17px 34px #172b2a21}
 .jury-showcase-image{position:relative;aspect-ratio:4/3;overflow:hidden;background:linear-gradient(135deg,#667b83,#28424b)}
 .jury-showcase-image:before{content:"";position:absolute;z-index:1;inset:0;pointer-events:none;background:linear-gradient(0deg,#1b313a30,transparent 55%)}
 .jury-showcase-initials{position:absolute;inset:0;display:grid;place-items:center;font:400 clamp(65px,9vw,115px) Georgia,serif;color:#e7eee0;letter-spacing:-.055em;background:radial-gradient(circle at 80% 10%,#ffffff30,transparent 48%),linear-gradient(135deg,#647d86,#31434d)}

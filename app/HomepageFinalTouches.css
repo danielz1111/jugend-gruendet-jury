@@ -4,10 +4,10 @@
 /* Keep the authentic unframed SVG and recolour the logo into the mint palette. */
 .lm-page .lm-official-mark{background:transparent;border:0;padding:0}
 .lm-page .lm-official-logo{
-  filter:brightness(0) saturate(100%) invert(84%) sepia(18%) saturate(587%) hue-rotate(100deg) brightness(93%) contrast(87%);
+  filter:none;
 }
-.lm-page .lm-competition-wordmark{border-left-color:#a8d6c0}
-.lm-page .lm-header-compact .lm-competition-wordmark{border-left-color:#a8d6c0}
+.lm-page .lm-competition-wordmark{border-left-color:#bad639}
+.lm-page .lm-header-compact .lm-competition-wordmark{border-left-color:#bad639}
 
 /* The very top line (Landheim Ammersee / Internatsschulen) is now readable. */
 .lm-page .lm-utility{letter-spacing:.085em}
@@ -140,13 +140,13 @@
    logo / website appearance; elegant charcoal, ivory and a coordinated
    animated progress accent. */
 .lm-page{
-  --lm-original-lime:#bdd837;
+  --lm-original-lime:#bad639;
   --lm-original-lime-light:#d7e994;
   --lm-brand-petrol:#223a42;
 }
 .lm-page .lm-official-logo{
   /* Recolour the official SVG's existing paths, not a substitute emblem. */
-  filter:brightness(0) saturate(100%) invert(83%) sepia(44%) saturate(687%) hue-rotate(25deg) brightness(97%) contrast(87%);
+  filter:none;
 }
 .lm-page .lm-competition-wordmark,
 .lm-page .lm-header-compact .lm-competition-wordmark{
@@ -295,3 +295,7 @@
   .lm-page .lm-hero-seal-editorial .lm-seal-progress>span{transition:none}
   .lm-page .lm-hero-seal-editorial .lm-count-done .lm-seal-progress>span::after{animation:none}
 }
+
+/* The official logo SVG already contains authentic Landheim Grün #BAD639 and Slate #6E7D87. */
+.lm-page .lm-official-logo{filter:none!important}
+.lm-page{--lm-original-slate:#6e7d87}

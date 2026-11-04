@@ -1,7 +1,7 @@
 /* Juryportal – accessible three-part navigation, inspired by the public
    Landheim visual language. Deliberately scoped: public homepage unchanged. */
 .jury-v3{
-  --jury-ink:#243d42;--jury-petrol:#1b343d;--jury-lime:#bdd837;
+  --jury-ink:#243d42;--jury-petrol:#1b343d;--jury-lime:#bad639;
   --jury-paper:#f6f8f5;--jury-line:#dce5de;--jury-muted:#64777c;
   background:var(--jury-paper);color:var(--jury-ink);min-height:100vh;
   font-family:'DM Sans',Arial,sans-serif;
@@ -27,7 +27,7 @@
 .jury-v3-logo-wrap{width:169px;height:67px;flex:none;display:flex;align-items:center}
 .jury-v3-logo{
   display:block;width:100%;height:100%;object-fit:contain;
-  filter:brightness(0) saturate(100%) invert(83%) sepia(44%) saturate(687%) hue-rotate(25deg) brightness(97%) contrast(87%);
+  filter:none;
 }
 .jury-v3-brand{
   display:flex;flex-direction:column;gap:4px;
@@ -101,7 +101,7 @@
   margin-top:23px;font-size:11px;font-weight:700;color:#e5eed9;
 }
 .jury-v3-welcome-foot>span{display:inline-flex;align-items:center;gap:9px}
-.jury-v3-welcome-foot svg{color:#bdd837}
+.jury-v3-welcome-foot svg{color:#bad639}
 .jury-v3-welcome-image{
   position:relative;min-height:300px;
   background:linear-gradient(90deg,#17313950,#172d2f0c),
@@ -148,7 +148,7 @@
 .jury-v3-workspace .jury-team-picker{border-radius:0}
 .jury-v3-workspace .jury-wide-shell{border-radius:0}
 .jury-v3-workspace .jury-team-tile:focus-visible{
-  outline:3px solid #bdd837;outline-offset:2px;
+  outline:3px solid #bad639;outline-offset:2px;
 }
 .jury-v3-event{
   display:grid;grid-template-columns:225px minmax(0,1fr);
@@ -304,7 +304,7 @@
 }
 .jury-v3-overview-rail>a:hover,.jury-v3-company-rail>a:hover,
 .jury-v3-company-rail>button:hover{
-  background:#f3f6e9;border-left-color:#bdd837;color:#1d4141;
+  background:#f3f6e9;border-left-color:#bad639;color:#1d4141;
 }
 .jury-v3-overview-rail .jury-v3-rail-back,
 .jury-v3-company-rail .jury-v3-rail-back{
@@ -327,7 +327,7 @@
 #jury-evaluation-help,#jury-company-profile,#jury-company-materials{
   scroll-margin-top:125px;
 }
-#jury-company-materials{border-top:3px solid #bdd837;margin-top:26px!important}
+#jury-company-materials{border-top:3px solid #bad639;margin-top:26px!important}
 .jury-v3-rail-main .jury-v3-event{margin-top:0}
 .jury-v3-rail-main .jury-v3-info-grid{margin-top:19px}
 .jury-v3-rail-main .jury-v3-essential-bottom{margin-bottom:10px}
@@ -378,7 +378,7 @@
 .jury-v3{
   --jury-ink:#223a42;
   --jury-petrol:#223a42;
-  --jury-lime:#bdd837;
+  --jury-lime:#bad639;
   --jury-paper:#f6f8f5;
 }
 .jury-v3-header{
@@ -431,7 +431,7 @@
   color:#f0f6ed;
   background:linear-gradient(115deg,#223a42 0%,#1b333c 100%);
   border-top:1px solid #dae9d917;
-  border-bottom:3px solid #bdd837;
+  border-bottom:3px solid #bad639;
 }
 .jury-v3-contextbar-inner{
   width:min(calc(100% - 64px),1450px);
@@ -489,8 +489,8 @@
   background:#405e57;border-color:#b8d13a;color:#fff;
 }
 .jury-v3-context-tabs button.active{
-  background:#bdd837;
-  border-color:#bdd837;
+  background:#bad639;
+  border-color:#bad639;
   color:#203943;
   box-shadow:0 3px 12px #132e3366;
 }
@@ -519,15 +519,15 @@
   background:linear-gradient(125deg,#1f3941,#274949);
 }
 .jury-v3 .jury-team-tile.active{
-  background:#bdd83724;
-  border-color:#bdd837;
+  background:#bad63924;
+  border-color:#bad639;
 }
 .jury-v3 .jury-wide-shell .demo-main{
   background:#fafbf8;
 }
 .jury-v3 .jury-profile-switch{
   background:#e8f0da!important;
-  border-color:#bdd837!important;
+  border-color:#bad639!important;
   color:#2b5147!important;
 }
 .jury-v3 .jury-company-team-list h2{color:#27454b}
@@ -699,3 +699,7 @@
 @media(prefers-reduced-motion:reduce){
   .jury-v3-rail-team-select{scroll-behavior:auto}
 }
+
+/* Original Landheim logo has both colors in its SVG – never recolor it. */
+.jury-v3 .jury-v3-logo{filter:none!important}
+.jury-v3{--jury-slate-original:#6e7d87;--jury-lime:#bad639}
