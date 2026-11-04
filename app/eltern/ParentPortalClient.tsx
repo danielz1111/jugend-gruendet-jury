@@ -13,8 +13,13 @@ export default function ParentPortalClient({userEmail,teams,requests,companies,e
  userEmail:string|null;teams:Team[];requests:RequestRow[];companies:Company[];error:string
 }){
  const [mode,setMode]=useState<'login'|'register'>('login');
+ const [headerCompact,setHeaderCompact]=useState(false);
  useEffect(()=>{
    if(new URLSearchParams(window.location.search).get('zugang')==='registrieren')setMode('register');
+   const onScroll=()=>setHeaderCompact(window.scrollY>140);
+   onScroll();
+   window.addEventListener('scroll',onScroll,{passive:true});
+   return ()=>window.removeEventListener('scroll',onScroll);
  },[]);
  const [email,setEmail]=useState(''),[password,setPassword]=useState('');
  const [parentName,setParentName]=useState(''),[childName,setChildName]=useState(''),[teamId,setTeamId]=useState('');
@@ -47,11 +52,23 @@ export default function ParentPortalClient({userEmail,teams,requests,companies,e
   window.location.assign('/eltern');
  }
  return <main className="parent-portal" id="parent-top">
-  <header className="parent-header"><div className="parent-header-inner">
-   <Link href="/" className="parent-brand"><span className="parent-emblem"><Building2 size={27}/></span>
-    <span><strong>Landheim Ammersee</strong><small>Fachschaft Wirtschaft und Recht · Jugend gründet</small></span>
+  <header className={headerCompact?'parent-header parent-header--compact':'parent-header'}><div className="parent-header-inner">
+   <Link href="/" className="parent-brand" aria-label="Landheim Ammersee · Jugend gründet – zur Startseite">
+     <span className="parent-official-mark"><img
+       src="https://www.landheim-ammersee.de/themes/master_theme/logo.svg"
+       width="222" height="67" alt="Landheim Ammersee" className="parent-official-logo"
+     /></span>
+     <span className="parent-brand-details">
+       <span className="parent-compact-school">LANDHEIM AMMERSEE</span>
+       <strong>Fachschaft Wirtschaft und Recht</strong>
+       <small>JUGEND GRÜNDET · 2026/27</small>
+     </span>
    </Link>
-   <div className="parent-header-actions"><span>ELTERNPORTAL</span>{userEmail&&<button type="button" onClick={()=>void logout()}>Abmelden</button>}</div>
+   <div className="parent-header-actions">
+     <Link href="/#jury">Anmeldung</Link>
+     <span>ELTERNPORTAL</span>
+     {userEmail&&<button type="button" onClick={()=>void logout()}>Abmelden</button>}
+   </div>
   </div></header>
   <div className="parent-main">
    <section className="parent-intro">

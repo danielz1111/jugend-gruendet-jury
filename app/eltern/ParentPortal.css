@@ -87,3 +87,84 @@
 .parent-footer span{font-size:11px;color:#78908b}
 @media(max-width:810px){.parent-intro{grid-template-columns:1fr}.parent-intro-decoration{display:none}.parent-info-grid{grid-template-columns:1fr}.parent-auth-layout{grid-template-columns:1fr}.parent-locked{align-items:flex-start;flex-wrap:wrap}.parent-locked>span{margin-left:0}}
 @media(max-width:560px){.parent-header-inner{width:calc(100% - 28px);min-height:75px}.parent-emblem{width:40px;height:40px}.parent-brand{gap:9px}.parent-brand>span:last-child{padding-left:8px}.parent-brand strong{font-size:16px}.parent-brand small{font-size:9px}.parent-header-actions>span{display:none}.parent-main{width:calc(100% - 26px);padding-top:15px}.parent-intro>div:first-child{padding:26px}.parent-intro h1{font-size:40px}.parent-profile-grid{grid-template-columns:1fr}.parent-request-row{flex-direction:column;align-items:flex-start}}
+
+
+/* Same authentic Landheim masthead as the public homepage,
+   reduced gently when the page is scrolled. */
+.parent-portal .parent-header{transition:box-shadow .25s ease,background .25s ease}
+.parent-portal .parent-header-inner{
+  min-height:118px;max-width:1460px;
+  transition:min-height .25s ease;
+}
+.parent-portal .parent-brand{
+  min-width:0;gap:17px;
+  display:flex;align-items:center;
+}
+.parent-portal .parent-official-mark{
+  display:flex;align-items:center;justify-content:center;
+  width:222px;height:73px;flex:0 0 222px;
+  overflow:hidden;
+  transition:width .25s ease,flex-basis .25s ease,height .25s ease,opacity .25s ease;
+}
+.parent-portal .parent-official-logo{
+  display:block;width:100%;height:auto;max-height:73px;
+  object-fit:contain;filter:none!important;
+}
+.parent-portal .parent-brand-details{
+  display:flex;flex-direction:column;
+  gap:4px;padding-left:18px;
+  border-left:3px solid #bad639;
+  min-width:0;
+}
+.parent-portal .parent-brand-details strong{
+  font:700 clamp(17px,1.9vw,24px)/1.18 'DM Sans',Arial,sans-serif;
+  color:#2c4a4a;
+}
+.parent-portal .parent-brand-details small{
+  font:750 10px/1.4 'DM Sans',Arial,sans-serif;
+  letter-spacing:.14em;color:#638073;
+}
+.parent-portal .parent-compact-school{
+  display:none;font-size:9px;font-weight:800;
+  letter-spacing:.115em;color:#687e72;
+}
+.parent-portal .parent-header-actions{flex:0 0 auto}
+.parent-portal .parent-header-actions>a{
+  font-size:12px;font-weight:750;color:#315349;
+  border-bottom:2px solid #bad639;padding:10px 3px;text-decoration:none;
+}
+.parent-portal .parent-header-actions>a:hover{color:#0f313a}
+.parent-portal .parent-header--compact{
+  background:rgba(255,255,255,.985);
+  box-shadow:0 7px 25px #1a383326;
+}
+.parent-portal .parent-header--compact .parent-header-inner{min-height:67px}
+.parent-portal .parent-header--compact .parent-official-mark{
+  width:0;flex-basis:0;height:0;opacity:0;pointer-events:none;
+}
+.parent-portal .parent-header--compact .parent-brand{gap:0}
+.parent-portal .parent-header--compact .parent-compact-school{display:block}
+.parent-portal .parent-header--compact .parent-brand-details strong{font-size:16px}
+.parent-portal .parent-header--compact .parent-brand-details small{font-size:9px}
+@media(max-width:1000px){
+  .parent-portal .parent-header-inner{min-height:92px}
+  .parent-portal .parent-official-mark{width:153px;flex-basis:153px;height:60px}
+  .parent-portal .parent-brand-details strong{font-size:18px}
+  .parent-portal .parent-header-actions>span{display:none}
+}
+@media(max-width:680px){
+  .parent-portal .parent-header-inner{width:calc(100% - 26px);min-height:80px;gap:12px}
+  .parent-portal .parent-official-mark{width:92px;flex-basis:92px;height:50px}
+  .parent-portal .parent-brand{gap:8px}
+  .parent-portal .parent-brand-details{padding-left:9px;gap:2px}
+  .parent-portal .parent-brand-details strong{font-size:13px;max-width:180px}
+  .parent-portal .parent-brand-details small{font-size:8px;letter-spacing:.06em}
+  .parent-portal .parent-header-actions{gap:6px}
+  .parent-portal .parent-header-actions>a{font-size:10px}
+  .parent-portal .parent-header--compact .parent-header-inner{min-height:57px}
+}
+@media(prefers-reduced-motion:reduce){
+ .parent-portal .parent-header,
+ .parent-portal .parent-header-inner,
+ .parent-portal .parent-official-mark{transition:none}
+}

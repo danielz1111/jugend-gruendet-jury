@@ -25,8 +25,13 @@ export async function POST(req:NextRequest){
    body:JSON.stringify({email,password}),cache:'no-store'
   });
   if(!signup.ok){
+   // Don't mislabel invalid/disposable addresses as duplicate accounts.
+   const detail=await signup.json().catch(()=>({})) as {error_code?:string;code?:string};
+   const reason=detail.error_code||detail.code||'';
    const message=signup.status===429?'Zu viele Versuche. Bitte später erneut versuchen.':
-    'Die Registrierung konnte nicht abgeschlossen werden. Möglicherweise besteht bereits ein Konto.';
+    reason==='email_address_invalid'?'Diese E-Mail-Adresse wird vom Anmeldedienst nicht akzeptiert. Bitte verwenden Sie eine gültige, erreichbare E-Mail-Adresse.':
+    reason==='weak_password'?'Bitte wählen Sie ein stärkeres Passwort.':
+    'Die Registrierung konnte nicht abgeschlossen werden. Bitte überprüfen Sie Ihre Angaben oder wenden Sie sich an die Wettbewerbsleitung.';
    return NextResponse.json({error:message},{status:signup.status===429?429:400});
   }
   return NextResponse.json({ok:true,message:'Bitte bestätigen Sie Ihre E-Mail-Adresse über den zugesandten Link. Anschließend können Sie sich anmelden.'});
