@@ -82,6 +82,16 @@ export default function HomeClient({ publishedTeams = [] }: { publishedTeams: Pu
 
 
   useEffect(() => {
+    // Supabase can send invitations to the configured Site URL if no redirect
+    // override was supplied. Carry the one-use fragment to our password page.
+    const fragment=new URLSearchParams(window.location.hash.replace(/^#/,''));
+    const kind=fragment.get('type');
+    if(fragment.has('access_token')&&(kind==='invite'||kind==='recovery')){
+      window.location.replace('/jury/passwort-neu'+window.location.hash);
+    }
+  },[]);
+
+  useEffect(() => {
     // A compact navigation stays visible after the large identity scrolls away.
     const onScroll = () => setHeaderCompact(window.scrollY > 140);
     onScroll();
@@ -471,6 +481,7 @@ export default function HomeClient({ publishedTeams = [] }: { publishedTeams: Pu
               <input id="lm-login-email" type="email" autoComplete="username" required value={email} onChange={event => setEmail(event.currentTarget.value)} placeholder="name@beispiel.de"/>
               <label htmlFor="lm-login-password">PASSWORT</label>
               <div className="lm-login-password-field"><input id="lm-login-password" type={showPassword?'text':'password'} autoComplete="current-password" required value={password} onChange={event=>{setPassword(event.currentTarget.value);setLoginError('')}} placeholder="Ihr persönliches Passwort"/><button className="lm-login-password-toggle" type="button" aria-label={showPassword?'Passwort verbergen':'Passwort anzeigen'} aria-pressed={showPassword} onClick={()=>setShowPassword(v=>!v)}>{showPassword?<EyeOff size={18} aria-hidden="true"/>:<Eye size={18} aria-hidden="true"/>}</button></div>
+              <a className="lm-jury-password-help" href="/jury/passwort-vergessen">Passwort vergessen oder erstmalig festlegen?</a>
               <label className="lm-jury-remember" style={{display:'flex',alignItems:'center',gap:9,fontSize:13,color:'#e7ebe0',cursor:'pointer',margin:'13px 0'}}><input type="checkbox" checked={rememberJury} onChange={event=>setRememberJury(event.currentTarget.checked)} style={{width:17,height:17,accentColor:'#bad639'}}/> Auf diesem Gerät angemeldet bleiben (7 Tage)</label>
               {loginError && <p role="alert" className="lm-login-error">{loginError}</p>}
               <button type="submit" disabled={loginBusy} aria-busy={loginBusy}>{loginBusy ? 'Anmeldung wird geprüft …' : 'Zum persönlichen Juryportal'} <ArrowUpRight size={19}/></button>

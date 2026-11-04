@@ -345,3 +345,8 @@
   .lm-page .lm-parent-access-cta{padding:18px}
   .lm-page .lm-parent-access-actions>a{flex:1 1 auto}
 }
+
+/* Self-service juror password assistance */
+.lm-page .lm-jury-password-help{display:inline-block;margin:0 0 9px;text-decoration:underline;text-underline-offset:4px;color:#d7e9b4;font-size:12px;font-weight:700}
+.lm-page .lm-jury-password-help:hover{color:#bad639}
+.lm-page .lm-jury-password-help:focus-visible{outline:2px solid #bad639;outline-offset:4px}
