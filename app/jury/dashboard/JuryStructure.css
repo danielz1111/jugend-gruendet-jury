@@ -703,3 +703,189 @@
 /* Original Landheim logo has both colors in its SVG – never recolor it. */
 .jury-v3 .jury-v3-logo{filter:none!important}
 .jury-v3{--jury-slate-original:#6e7d87;--jury-lime:#bad639}
+
+
+/* 2026-11-04: refined enterprise stories and expert/person strip.
+   Example role mappings are display-only until formally supplied. */
+.jury-v3 .jury-company-facts{
+  padding:clamp(21px,3.3vw,36px);
+  border:1px solid #e0e9dc;
+  background:linear-gradient(148deg,#fbfcf9,#f0f5ed);
+  box-shadow:0 13px 36px #183b3c0b;
+}
+.jury-v3 .jury-company-facts-heading{
+  display:flex;align-items:center;justify-content:space-between;
+  gap:15px;margin-bottom:24px;
+}
+.jury-v3 .jury-company-overline{
+  color:#688c53;
+  font-size:10px;font-weight:850;letter-spacing:.14em;
+  text-transform:uppercase;
+}
+.jury-v3 .jury-company-facts-heading h2{
+  font:500 clamp(27px,2.8vw,38px)/1.16 'Playfair Display',Georgia,serif;
+  color:#263f42;letter-spacing:-.026em;
+  margin:10px 0 0;
+}
+.jury-v3 .jury-company-facts-mark{
+  font:500 55px/.95 'Playfair Display',Georgia,serif;
+  color:#c2cfb0;letter-spacing:-.06em;
+}
+.jury-v3 .jury-company-facts-grid{
+  display:grid;grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:12px;
+}
+.jury-v3 .jury-company-fact-card{
+  display:flex;flex-direction:column;gap:17px;
+  min-height:172px;
+  padding:clamp(17px,2vw,25px);
+  background:#fff;border:1px solid #dce6dc;
+  border-top:3px solid #bad639;
+}
+.jury-v3 .jury-company-fact-card>div{
+  display:flex;align-items:center;gap:13px;
+}
+.jury-v3 .jury-company-fact-number{
+  display:inline-grid;place-items:center;
+  width:36px;height:36px;flex:none;
+  border:1px solid #d6e4c4;background:#f0f6e6;
+  font-weight:800;font-size:11px;color:#6b8b3e;
+}
+.jury-v3 .jury-company-fact-card h3{
+  margin:0;font-size:16px;color:#294b48;
+}
+.jury-v3 .jury-company-fact-card p{
+  font-size:13px;line-height:1.75;
+  color:#516b6d;margin:0;
+}
+.jury-v3 .jury-company-team-list{
+  padding:clamp(20px,3.2vw,35px);
+  background:#fff;
+  border:1px solid #dce7df;
+  border-top:4px solid #bad639;
+}
+.jury-v3 .jury-company-team-intro{
+  display:flex;align-items:flex-start;justify-content:space-between;
+  gap:24px;flex-wrap:wrap;
+  margin-bottom:24px;
+}
+.jury-v3 .jury-company-team-intro h2{
+  font:500 clamp(26px,2.7vw,36px)/1.19 'Playfair Display',Georgia,serif;
+  color:#263f42;letter-spacing:-.02em;
+  margin:10px 0;
+}
+.jury-v3 .jury-company-team-intro p{
+  font-size:13px;line-height:1.7;margin:0;color:#64777b;
+}
+.jury-v3 .jury-role-preview-tag{
+  font-size:10px;font-weight:750;line-height:1.5;
+  color:#667567;background:#f0f3eb;
+  border:1px solid #dce4d4;padding:8px 11px;
+  max-width:240px;
+}
+.jury-v3 .jury-company-members{
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));
+  gap:11px;
+}
+.jury-v3 .jury-company-members article.jury-company-expert-card{
+  padding:17px;background:#f8faf5;
+  border:1px solid #dfe9db;
+  display:flex;align-items:flex-start;gap:13px;
+  min-width:0;
+}
+.jury-v3 .jury-company-member-avatar{
+  display:flex;align-items:center;justify-content:center;
+  width:49px;height:49px;flex:0 0 49px;
+  border:2px solid #d6e6c1;
+  background:linear-gradient(145deg,#e4eedb,#dae9d1);
+  color:#315a4f;border-radius:50%;
+  font-size:14px;font-weight:800;letter-spacing:.02em;
+}
+.jury-v3 .jury-company-member-copy{display:grid;gap:7px;min-width:0}
+.jury-v3 .jury-company-member-copy strong{
+  font-size:15px;font-weight:850;line-height:1.25;
+  color:#274444;overflow-wrap:anywhere;
+}
+.jury-v3 .jury-company-expert-label{
+  display:flex;align-items:center;gap:8px;
+  color:#40675a;font-size:11px;line-height:1.5;font-weight:700;
+}
+.jury-v3 .jury-company-expert-label b{
+  font-size:10px;display:grid;place-items:center;flex:none;
+  min-width:25px;min-height:25px;padding:3px;
+  background:#bad639;color:#284139;
+}
+.jury-v3 .jury-company-member-copy small{
+  font-size:10px;color:#798981;line-height:1.45;
+}
+.jury-v3 .jury-rating-experts{
+  margin:0 0 19px;
+  padding:clamp(18px,2.7vw,27px);
+  background:#fff;border:1px solid #dce7df;
+  border-left:4px solid #bad639;
+}
+.jury-v3 .jury-rating-experts-header{
+  display:flex;align-items:end;justify-content:space-between;
+  gap:18px;margin-bottom:16px;flex-wrap:wrap;
+}
+.jury-v3 .jury-rating-experts-header h3{
+  font:500 clamp(23px,2.4vw,31px)/1.2 'Playfair Display',Georgia,serif;
+  color:#273f45;margin:7px 0 0;
+}
+.jury-v3 .jury-rating-experts-header>small{
+  color:#617c6b;
+  background:#f2f6eb;
+  border:1px solid #e1e9d7;
+  padding:7px 9px;font-size:10px;
+}
+.jury-v3 .jury-rating-experts-body{
+  display:flex;align-items:flex-start;gap:15px;
+}
+.jury-v3 .jury-rating-team-photo{
+  display:block;
+  width:116px;height:100px;
+  flex:0 0 116px;object-fit:cover;
+  border:1px solid #cedfca;
+}
+.jury-v3 .jury-rating-experts-list{
+  display:flex;gap:9px;flex:1;flex-wrap:wrap;min-width:0;
+}
+.jury-v3 .jury-rating-person{
+  display:flex;align-items:center;gap:10px;
+  background:#f7f9f5;border:1px solid #e1e9db;
+  padding:11px 13px;
+  min-width:165px;flex:1 1 165px;
+}
+.jury-v3 .jury-rating-person-avatar{
+  display:grid;place-items:center;
+  width:40px;height:40px;flex:0 0 40px;
+  border-radius:50%;background:#e2ecd9;
+  color:#326054;border:1px solid #ceddc1;
+  font-size:12px;font-weight:850;
+}
+.jury-v3 .jury-rating-person-copy{
+  display:flex;flex-direction:column;gap:5px;min-width:0;
+}
+.jury-v3 .jury-rating-person-copy strong{
+  color:#2a4546;font-size:12px;line-height:1.3;
+  overflow-wrap:anywhere;
+}
+.jury-v3 .jury-rating-person-copy small{
+  font-size:10px;line-height:1.3;color:#687f73;
+}
+.jury-v3 .jury-rating-person-copy small b{
+  color:#395f49;
+}
+@media(max-width:810px){
+ .jury-v3 .jury-company-facts-grid{grid-template-columns:1fr}
+ .jury-v3 .jury-company-team-intro{gap:10px}
+ .jury-v3 .jury-company-fact-card{min-height:auto}
+ .jury-v3 .jury-rating-team-photo{width:88px;height:88px;flex-basis:88px}
+}
+@media(max-width:530px){
+ .jury-v3 .jury-company-facts-mark{display:none}
+ .jury-v3 .jury-company-team-list{padding:18px}
+ .jury-v3 .jury-rating-experts-body{display:block}
+ .jury-v3 .jury-rating-team-photo{width:100%;height:140px;margin-bottom:12px}
+ .jury-v3 .jury-rating-person{flex-basis:100%}
+}

@@ -299,3 +299,49 @@
 /* The official logo SVG already contains authentic Landheim Grün #BAD639 and Slate #6E7D87. */
 .lm-page .lm-official-logo{filter:none!important}
 .lm-page{--lm-original-slate:#6e7d87}
+
+/* Single entry point for visitors: Jury login remains primary,
+   parent registration is clearly separated and never uses jury credentials. */
+.lm-page .lm-parent-access-cta{
+  margin-top:23px;
+  padding:22px 21px 21px;
+  border-top:3px solid #bad639;
+  background:linear-gradient(135deg,#edf4e6,#f6f8f1);
+  color:#244242;
+}
+.lm-page .lm-parent-access-overline{
+  display:block;color:#688549;
+  font-size:10px;font-weight:850;letter-spacing:.14em;
+}
+.lm-page .lm-parent-access-cta h4{
+  font:500 clamp(20px,2vw,27px)/1.25 'Playfair Display',Georgia,serif;
+  margin:10px 0 9px;color:#284647;
+}
+.lm-page .lm-parent-access-cta p{
+  font-size:12px;line-height:1.75;color:#556d67;
+  margin:0;
+}
+.lm-page .lm-parent-access-actions{
+  display:flex;gap:9px;flex-wrap:wrap;margin-top:17px;
+}
+.lm-page .lm-parent-access-actions>a{
+  display:inline-flex;align-items:center;justify-content:center;gap:9px;
+  padding:11px 12px;border:1px solid #ccdaba;
+  background:#fff;color:#31554a;
+  font:800 11px/1.35 'DM Sans',Arial,sans-serif;
+  text-decoration:none;
+  transition:background .2s ease,border-color .2s ease;
+}
+.lm-page .lm-parent-access-actions>a:first-child{
+  background:#223e42;color:#fff;border-color:#223e42;
+}
+.lm-page .lm-parent-access-actions>a:hover{
+  background:#dfebd2;color:#23443f;border-color:#a7c071;
+}
+.lm-page .lm-parent-access-actions>a:focus-visible{
+  outline:3px solid #bad639;outline-offset:3px;
+}
+@media(max-width:530px){
+  .lm-page .lm-parent-access-cta{padding:18px}
+  .lm-page .lm-parent-access-actions>a{flex:1 1 auto}
+}

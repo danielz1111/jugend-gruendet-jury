@@ -1,10 +1,29 @@
 'use client';
 import {useEffect,useState} from 'react';
-import {ArrowLeft,ArrowRight,FileText,Users,Presentation,LockKeyhole} from 'lucide-react';
+import {ArrowLeft,ArrowRight,FileText,Users,LockKeyhole} from 'lucide-react';
 import {teamProfiles} from '../../../lib/company-profiles';
 type Team={id:string;name:string;position:number;tagline:string|null;description:string|null;jury_photo_path:string|null};
 type Member={id:string;team_id:string;display_name:string;expert_role:string|null;display_order:number};
 type Score={team_id:string;[key:string]:string|number|null};
+// Stable example assignments for layout previews only; no database values are changed.
+const exampleAreas=[
+ {id:'A',name:'Markt & Zielgruppe'},
+ {id:'B',name:'Marketing & Vertrieb'},
+ {id:'C',name:'Finanzen & Wirtschaftlichkeit'},
+ {id:'D',name:'Umsetzung & Realisierbarkeit'},
+ {id:'E',name:'Organisation & Rechtsform'}
+] as const;
+function exampleAssignment(index:number,teamPosition:number,teamSize:number){
+ const areas=teamSize===4?exampleAreas.slice(0,4):exampleAreas;
+ const slot=(index+(teamPosition-1+areas.length)%areas.length)%areas.length;
+ const area=areas[slot];
+ return teamSize===4&&area.id==='D'
+  ?{letter:'D/E',label:'Umsetzung & Organisation'}
+  :{letter:area.id,label:area.name};
+}
+function initials(name:string){
+ return name.trim().split(/\s+/).slice(0,2).map(part=>part.slice(0,1).toUpperCase()).join('')||'–';
+}
 const criteria=[{"key":"expert_a_score","name":"A · Markt und Zielgruppe","weight":10},{"key":"expert_b_score","name":"B · Marketing und Vertrieb","weight":10},{"key":"expert_c_score","name":"C · Finanzen und Wirtschaftlichkeit","weight":10},{"key":"expert_d_score","name":"D · Umsetzung und Realisierbarkeit","weight":10},{"key":"expert_e_score","name":"E · Organisation und Rechtsform","weight":10},{"key":"presentation_impact_score","name":"Überzeugungskraft der Präsentation","weight":20},{"key":"questions_quality_score","name":"Fachliche Qualität der Antworten","weight":10},{"key":"questions_confidence_score","name":"Souveränität und Sicherheit","weight":10},{"key":"questions_reasoning_score","name":"Argumentation und Reaktionsfähigkeit","weight":10}] as const;
 const hints:Record<string,string>={
  expert_a_score:'Sind Zielgruppe, Kundenproblem und Markt nachvollziehbar beschrieben?',
@@ -24,7 +43,7 @@ const expertEvidence:Record<string,Partial<Record<'A'|'B'|'C'|'D'|'E',[string|nu
 const gradeGuide='1–2: kaum erfüllt · 3–4: eher schwach · 5–6: teilweise erfüllt · 7–8: gut erfüllt · 9–10: hervorragend erfüllt';
 type Material={id:string;title:string;original_filename:string;media_type:string;created_at:string};
 type Progress={submitted_count:number;total_jurors:number;others_average:number|null;own_submitted:boolean};
-export default function TeamNavigator({teams,members,initialScores,isAdmin,initialSection='pitch',adminMode=false,activeTeamId=null,onGoToRating,onGoToCompany,onTeamSelected}:{teams:Team[];members:Member[];initialScores:Score[];isAdmin:boolean;initialSection?:'overview'|'business'|'pitch'|'company';adminMode?:boolean;activeTeamId?:string|null;onGoToRating?:()=>void;onGoToCompany?:()=>void;onTeamSelected?:(teamId:string)=>void}){
+export default function TeamNavigator({teams,members,initialScores,isAdmin,initialSection='pitch',adminMode=false,activeTeamId=null,onGoToCompany,onTeamSelected}:{teams:Team[];members:Member[];initialScores:Score[];isAdmin:boolean;initialSection?:'overview'|'business'|'pitch'|'company';adminMode?:boolean;activeTeamId?:string|null;onGoToCompany?:()=>void;onTeamSelected?:(teamId:string)=>void}){
  const [selected,setSelected]=useState(0);
  useEffect(()=>{if(activeTeamId){const index=teams.findIndex(t=>t.id===activeTeamId);if(index>=0)setSelected(index);}},[activeTeamId,teams]);
  const [enlargedImage,setEnlargedImage]=useState<Material|null>(null);
@@ -181,8 +200,6 @@ export default function TeamNavigator({teams,members,initialScores,isAdmin,initi
  const baseEvidence=expertEvidence[profile?.key||'']?.[expertTab as 'A'|'B'|'C'|'D'|'E'];
  const combinedEvidence=expertEvidence[profile?.key||'']?.E;
  const evidence=isFour&&expertTab==='D'&&combinedEvidence?([0,1,2,3].map(i=>[baseEvidence?.[i],combinedEvidence?.[i]].filter(Boolean).join(' ')||null) as [string|null,string|null,string|null,string|null]):baseEvidence;
- const profileFields=[profile?.idea,profile?.problem,profile?.solution,profile?.audience,profile?.model];
- const completedFields=profileFields.filter(Boolean).length;
  const productImage=(materials[team.id]||[]).find(m=>m.media_type.startsWith('image/')&&/visualis|produkt/i.test(m.title+' '+m.original_filename));
  const activeCriteria=criteria.filter(c=>!(isFour&&c.key==='expert_e_score'));
  const weightFor=(key:string)=>isFour&&key.startsWith('expert_')?12.5:criteria.find(c=>c.key===key)?.weight??0;
@@ -212,22 +229,52 @@ export default function TeamNavigator({teams,members,initialScores,isAdmin,initi
  <div style={{minHeight:210,display:'grid',placeItems:'center',border:'1px solid #ffffff40',borderRadius:14,overflow:'hidden',background:'#ffffff12'}}>
  {productImage?<img src={'/api/jury/materials/'+productImage.id} alt={productImage.title} style={{width:'100%',maxHeight:300,objectFit:'contain'}}/>:<div style={{padding:25,textAlign:'center',opacity:.82}}><FileText size={36} style={{margin:'0 auto 12px'}}/><p>Original-Produktbild noch nicht hinterlegt</p></div>}
  </div></div>
- <div style={{padding:'18px 22px',border:'1px solid #e4e0d9',borderRadius:13,background:'#fff'}}>
- <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',gap:10,flexWrap:'wrap'}}><strong>Angaben im Unternehmensprofil</strong><span style={{fontSize:13,color:'#526471'}}>{completedFields} von 5 Bereichen mit Angaben</span></div>
- <div role="progressbar" aria-valuenow={completedFields} aria-valuemin={0} aria-valuemax={5} aria-label="Vorhandene Profilangaben" style={{height:9,background:'#e9edf0',borderRadius:20,overflow:'hidden',margin:'14px 0 9px'}}><div style={{height:'100%',width:(completedFields/5*100)+'%',background:'#b88a38',transformOrigin:'left',animation:'juryFill 1.1s ease-out both',borderRadius:20}}/></div>
- <p style={{fontSize:12,color:'#647581',margin:0}}>Dokumentationsstand, keine Leistungsbewertung. Fehlende Inhalte werden nicht mit null Punkten bewertet.</p>
- </div>
- <div><h2 style={{fontSize:22,marginBottom:15}}>Das Unternehmen auf einen Blick</h2><div style={{display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(210px,1fr))',gap:12}}>
- {([{label:'Kundenproblem',value:profile?.problem},{label:'Die Lösung',value:profile?.solution},{label:'Zielgruppe',value:profile?.audience},{label:'Geschäftsmodell',value:profile?.model}] as const).map((item,i)=><div key={item.label} className="jury-reveal" style={{animationDelay:(i*.12)+'s',padding:20,border:'1px solid #e4e0d9',borderRadius:12,background:'#fff',minHeight:140}}><span style={{fontSize:11,letterSpacing:1.1,textTransform:'uppercase',color:'#617481',fontWeight:700}}>{item.label}</span><p style={{marginTop:13,lineHeight:1.6,color:item.value?'#173d53':'#73808a'}}>{item.value||missing}</p></div>)}
- </div></div>
- <div className="jury-company-team-list"><h2 style={{fontSize:22,marginBottom:15}}>Wer gehört zum Unternehmen?</h2>
- <p>Teammitglieder und ihre Expertenbereiche.</p>
- <div className="jury-company-members">{teamMembers.length?teamMembers.map(member=><article key={member.id}><span className="jury-company-member-avatar" aria-hidden="true"><Users size={21}/></span><div><strong>{member.display_name}</strong><small>{member.expert_role||'Unternehmerteam'}</small></div></article>):<p>Die Mitglieder werden nach Erfassung hier angezeigt.</p>}</div>
- </div>
- <div><h2 style={{fontSize:22,marginBottom:15}}>Unterlagen und Jurybewertung</h2><div style={{display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(230px,1fr))',gap:16}}>
- <button type="button" className="jury-card" onClick={()=>{if(mainTab==='company')document.getElementById('jury-company-materials')?.scrollIntoView({behavior:'smooth'});else setMainTab('business')}} style={{padding:25,textAlign:'left',border:'1px solid #d7dee2',borderRadius:14,background:'#fff',cursor:'pointer',display:'grid',gap:13,color:'#173d53'}}><FileText size={30}/><strong style={{fontSize:21}}>Businessplan</strong><span style={{lineHeight:1.55,color:'#60707c'}}>Expertenbereiche, fachliche Einordnung, Stärken, offene Fragen und Originalunterlagen.</span><span style={{fontWeight:700}}>Businessplan öffnen →</span></button>
- <button type="button" className="jury-card" onClick={()=>{if(mainTab==='company'&&onGoToRating)onGoToRating();else setMainTab('pitch')}} style={{padding:25,textAlign:'left',border:'1px solid #d7dee2',borderRadius:14,background:'#fff',cursor:'pointer',display:'grid',gap:13,color:'#173d53'}}><Presentation size={30}/><strong style={{fontSize:21}}>Pitch &amp; Juryfragen</strong><span style={{lineHeight:1.55,color:'#60707c'}}>Präsentation und Antworten bewerten sowie persönliche Jury-Notizen festhalten.</span><span style={{fontWeight:700}}>Zur Jurybewertung →</span></button>
- </div></div></div>}
+ <section className="jury-company-facts" aria-labelledby="jury-company-facts-title">
+   <div className="jury-company-facts-heading">
+     <div><span className="jury-company-overline">DIE GESCHÄFTSIDEE IN VIER FRAGEN</span>
+       <h2 id="jury-company-facts-title">Das Unternehmen auf einen Blick.</h2>
+     </div>
+     <span className="jury-company-facts-mark" aria-hidden="true">04</span>
+   </div>
+   <div className="jury-company-facts-grid">
+    {([{label:'Kundenproblem',value:profile?.problem},{label:'Die Lösung',value:profile?.solution},{label:'Zielgruppe',value:profile?.audience},{label:'Geschäftsmodell',value:profile?.model}] as const).map((item,i)=>
+      <article key={item.label} className="jury-company-fact-card">
+        <div><span className="jury-company-fact-number">{String(i+1).padStart(2,'0')}</span>
+          <h3>{item.label}</h3>
+        </div>
+        <p>{item.value||missing}</p>
+      </article>)}
+   </div>
+ </section>
+
+ <section className="jury-company-team-list" aria-labelledby="jury-team-experts-title">
+   <div className="jury-company-team-intro">
+     <div>
+       <span className="jury-company-overline">DIE MENSCHEN HINTER DER IDEE</span>
+       <h2 id="jury-team-experts-title">Wer gehört zum Unternehmen?</h2>
+       <p>Die Gründerinnen und Gründer und ihre Aufgabenbereiche auf einen Blick.</p>
+     </div>
+     <span className="jury-role-preview-tag">Beispiel-Zuordnung · noch nicht verbindlich</span>
+   </div>
+   <div className="jury-company-members">
+     {teamMembers.length?teamMembers.map((member,index)=>{
+       const role=exampleAssignment(index,team.position,teamMembers.length);
+       return <article className="jury-company-expert-card" key={member.id}>
+         <span className="jury-company-member-avatar" role="img" aria-label={'Bildplatzhalter für '+member.display_name}>
+           {initials(member.display_name)}
+         </span>
+         <div className="jury-company-member-copy">
+           <strong>{member.display_name}</strong>
+           <span className="jury-company-expert-label">
+             <b>{role.letter}</b> {role.label}
+           </span>
+           <small>Rolle vorläufig · persönliche Zuordnung folgt</small>
+         </div>
+       </article>;
+     }):<p>Die Teammitglieder werden nach Erfassung hier angezeigt.</p>}
+   </div>
+ </section>
+ </div>}
  {!adminMode&&(mainTab==='business'||mainTab==='company')&&<div id={mainTab==='company'?'jury-company-materials':undefined} className="demo-score" style={{marginTop:12}}>
  <h2>Geschäftsidee</h2>
  <p>{profile?.idea||missing}</p>
@@ -283,6 +330,32 @@ export default function TeamNavigator({teams,members,initialScores,isAdmin,initi
 {!adminMode&&mainTab==='pitch'&&<>
 
 <section className="jury-assessment-lead"><div><span className="demo-overline">IHR JURYBOGEN · TEAM {String(team.position).padStart(2,'0')}</span><h2>Jetzt ist Ihr Urteil gefragt.</h2><p>Bewerten Sie den Auftritt und die fachlichen Aussagen dieses Teams während des Pitches und der anschließenden Fragerunde. Informationen zum Unternehmen und den Originalunterlagen finden Sie in den weiteren Registern.</p></div><span className="jury-assessment-status">{isReleased?'Verbindlich abgegeben':'Persönlicher Entwurf'}</span></section>
+ <section className="jury-rating-experts" aria-label="Teammitglieder und ihre Expertenbereiche">
+   <div className="jury-rating-experts-header">
+     <div>
+       <span className="jury-company-overline">DAS TEAM HINTER DEM PITCH</span>
+       <h3>Wer stellt die Idee vor?</h3>
+     </div>
+     <small>Expertenbereiche vorläufig zugeordnet</small>
+   </div>
+   <div className="jury-rating-experts-body">
+     {team.jury_photo_path&&<img className="jury-rating-team-photo"
+       src={'/api/jury/team-photo/'+team.id}
+       alt={'Gemeinsames Teamfoto von '+team.name}/>}
+     <div className="jury-rating-experts-list">
+       {teamMembers.length?teamMembers.map((member,index)=>{
+         const role=exampleAssignment(index,team.position,teamMembers.length);
+         return <article className="jury-rating-person" key={member.id}>
+           <span className="jury-rating-person-avatar" role="img" aria-label={'Bildplatzhalter für '+member.display_name}>{initials(member.display_name)}</span>
+           <span className="jury-rating-person-copy">
+             <strong>{member.display_name}</strong>
+             <small><b>{role.letter}</b> · {role.label}</small>
+           </span>
+         </article>;
+       }):<p>Die Teammitglieder werden hier nach ihrer Erfassung angezeigt.</p>}
+     </div>
+   </div>
+ </section>
  <div className="demo-score jury-rating-focus" id="jury-rating-form">
  <div className="demo-score-heading"><h2>Jurybewertung · 1–10 Punkte</h2><span>AUTOMATISCHE SPEICHERUNG</span></div>
  <p style={{fontSize:13,color:'#667480'}}>Grau: offen · Gelb: speichert · Grün: gespeichert · Rot: Fehler</p>

@@ -1,5 +1,5 @@
 'use client';
-import {useState} from 'react';
+import {useEffect,useState} from 'react';
 import Link from 'next/link';
 import {ArrowLeft,ArrowRight,Building2,CalendarDays,CheckCircle2,FileText,LockKeyhole,Mail,ShieldCheck,Users} from 'lucide-react';
 import './ParentPortal.css';
@@ -13,6 +13,9 @@ export default function ParentPortalClient({userEmail,teams,requests,companies,e
  userEmail:string|null;teams:Team[];requests:RequestRow[];companies:Company[];error:string
 }){
  const [mode,setMode]=useState<'login'|'register'>('login');
+ useEffect(()=>{
+   if(new URLSearchParams(window.location.search).get('zugang')==='registrieren')setMode('register');
+ },[]);
  const [email,setEmail]=useState(''),[password,setPassword]=useState('');
  const [parentName,setParentName]=useState(''),[childName,setChildName]=useState(''),[teamId,setTeamId]=useState('');
  const [busy,setBusy]=useState(false),[message,setMessage]=useState(''),[failed,setFailed]=useState(false);

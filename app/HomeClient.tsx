@@ -205,7 +205,7 @@ export default function HomeClient({ publishedTeams = [] }: { publishedTeams: Pu
             <a href="#teams" onClick={closeMenu}>Die Teams</a>
             <a href="#jury-vorstellung" onClick={closeMenu}>Unsere Jury</a>
             <a href="#pitch" onClick={closeMenu}>Pitch-Tag</a>
-            <a href="#jury" className="lm-nav-jury" onClick={closeMenu}>Jury-Anmeldung <ArrowUpRight size={16} aria-hidden="true"/></a>
+            <a href="#jury" className="lm-nav-jury" onClick={closeMenu}>Anmeldung <ArrowUpRight size={16} aria-hidden="true"/></a>
           </nav>
           <button className="lm-menu-button" aria-label={menuOpen ? 'Menü schließen' : 'Menü öffnen'} aria-expanded={menuOpen} aria-controls="lm-mobile-navigation" onClick={() => setMenuOpen(!menuOpen)}>
             {menuOpen ? <X size={25}/> : <Menu size={25}/>}
@@ -238,7 +238,7 @@ export default function HomeClient({ publishedTeams = [] }: { publishedTeams: Pu
             <p className="lm-hero-lead">Neun Unternehmerteams. Neun eigene Ideen. Und die Chance, zu zeigen, was in jungen Menschen steckt.</p>
             <div className="lm-hero-actions">
               <a className="lm-primary-cta" href="#idee">Das Projekt entdecken <ArrowUpRight size={19}/></a>
-              <a className="lm-quiet-cta" href="#jury">Zum Juryportal <ArrowRight size={18}/></a>
+              <a className="lm-quiet-cta" href="#jury">Zur Anmeldung <ArrowRight size={18}/></a>
             </div>
           </div>
           <div ref={sealRef} className="lm-hero-seal lm-hero-seal-stats lm-hero-seal-triple lm-hero-seal-editorial"
@@ -455,7 +455,7 @@ export default function HomeClient({ publishedTeams = [] }: { publishedTeams: Pu
       <section id="jury" className="lm-jury lm-section" aria-labelledby="lm-jury-title">
         <div className="lm-container lm-jury-layout">
           <div className="lm-jury-copy">
-            <div className="lm-section-index lm-index-light"><span>06</span><span>GESCHÜTZTER JURYBEREICH</span></div>
+            <div className="lm-section-index lm-index-light"><span>06</span><span>GESCHÜTZTE ZUGÄNGE</span></div>
             <div className="lm-jury-symbol"><LockKeyhole size={28} strokeWidth={1.5}/></div>
             <h2 id="lm-jury-title">Ihre Erfahrung.<br/><em>Ihr Blick.</em><br/>Ihre Bewertung.</h2>
             <p>Im persönlichen Juryportal finden Sie die Unternehmerteams, ihre Unterlagen und die digitale Bewertung für den Pitch-Tag – klar strukturiert und vertraulich.</p>
@@ -474,7 +474,17 @@ export default function HomeClient({ publishedTeams = [] }: { publishedTeams: Pu
               {loginError && <p role="alert" className="lm-login-error">{loginError}</p>}
               <button type="submit" disabled={loginBusy} aria-busy={loginBusy}>{loginBusy ? 'Anmeldung wird geprüft …' : 'Zum persönlichen Juryportal'} <ArrowUpRight size={19}/></button>
             </form>
+           
             <div className="lm-login-footer"><LockKeyhole size={14}/><span>Geschützter Zugang · Nur für freigeschaltete Jurymitglieder</span></div>
+            <aside className="lm-parent-access-cta" aria-labelledby="lm-parent-access-title">
+              <span className="lm-parent-access-overline">FÜR ELTERN</span>
+              <h4 id="lm-parent-access-title">Einblick in das Unternehmen Ihres Kindes.</h4>
+              <p>Als Eltern haben Sie die Möglichkeit, Zugang zum geschützten Elternbereich zu erhalten. Nach Ihrer Registrierung können Sie die Freischaltung des Unternehmens Ihres Kindes beantragen.</p>
+              <div className="lm-parent-access-actions">
+                <a href="/eltern">Eltern-Anmeldung <ArrowUpRight size={15} aria-hidden="true"/></a>
+                <a href="/eltern?zugang=registrieren">Registrieren <ArrowUpRight size={15} aria-hidden="true"/></a>
+              </div>
+            </aside>
           </div>
         </div>
       </section>
@@ -483,7 +493,7 @@ export default function HomeClient({ publishedTeams = [] }: { publishedTeams: Pu
         <div className="lm-container">
           <div className="lm-footer-main">
             <div><span className="lm-footer-brand">LANDHEIM AMMERSEE</span><strong>JUGEND GRÜNDET</strong><p>Junge Menschen gestalten die Zukunft.</p></div>
-            <div><span>WETTBEWERB 2026/27</span><a href="#idee">Das Projekt</a><a href="#teams">Die Teams</a><a href="#jury-vorstellung">Unsere Jury</a><a href="#meilensteine">Projektfahrplan</a><a href="#pitch">Pitch-Tag</a><a href="#jury">Juryportal</a></div>
+            <div><span>WETTBEWERB 2026/27</span><a href="#idee">Das Projekt</a><a href="#teams">Die Teams</a><a href="#jury-vorstellung">Unsere Jury</a><a href="#meilensteine">Projektfahrplan</a><a href="#pitch">Pitch-Tag</a><a href="#jury">Anmeldung</a></div>
             <div><span>MEHR ENTDECKEN</span><a href="/eltern">Elternportal <ArrowUpRight size={14}/></a><a href="https://www.landheim-ammersee.de/de" target="_blank" rel="noopener noreferrer">Landheim Ammersee <ArrowUpRight size={14}/></a><a href="https://www.jugend-gruendet.de/wettbewerb/" target="_blank" rel="noopener noreferrer">Jugend gründet <ArrowUpRight size={14}/></a></div>
           </div>
           <div className="lm-footer-bottom">

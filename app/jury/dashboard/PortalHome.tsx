@@ -212,7 +212,6 @@ export default function PortalHome({
               teams={teams} members={members} initialScores={scores}
               isAdmin={isAdmin}
               initialSection={area==='companies'?'company':'pitch'}
-              onGoToRating={()=>navigate('rating')}
               onGoToCompany={()=>showCompanySection('profile')}
               onTeamSelected={setActiveTeamId}
               activeTeamId={activeTeamId}
