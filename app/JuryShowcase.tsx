@@ -12,6 +12,7 @@ type JuryProfile = {
   photo?:string;
   photoCredit?:string;
   biography:string;
+  biographyAdditional?:string[];
   topics:string[];
   source?:string;
 };
@@ -70,12 +71,19 @@ const members:JuryProfile[] = [
     topics:['Schülerperspektive','Kundennutzen aus Sicht junger Menschen','Überzeugende Ideen']
   },
   {
-    name:'Daniel Zech',
-    role:'Fachlehrer Wirtschaft und Recht · Projektleitung',
-    perspective:'Wirtschaft & Gründungspädagogik',
+    name:'D. Zech',
+    role:'Wirtschaftspädagoge (M.Sc.) · Initiator & Projektleiter',
+    perspective:'Wirtschaftspädagogik & Entrepreneurship',
     initials:'DZ',
-    biography:'Daniel Zech unterrichtet Wirtschaft und Recht am Landheim Ammersee und begleitet die schulische Umsetzung von JUGEND GRÜNDET. Er verbindet fachliches Lernen, die Entwicklung von Geschäftsmodellen und die Organisation des Jurytages.',
-    topics:['Wirtschaftliche Grundlagen','Projekt- und Gründungspädagogik','Organisation von JUGEND GRÜNDET']
+    photo:'/images/d-zech-portrait.webp',
+    photoCredit:'Porträt: privat',
+    biography:'D. Zech ist Wirtschaftspädagoge (M.Sc.) und Lehrkraft für Wirtschaft und Recht sowie Wirtschaftsinformatik am Landheim Ammersee. Er studierte an der Ludwig-Maximilians-Universität München mit Schwerpunkten in Management, Personalentwicklung und empirischer Bildungsforschung.',
+    biographyAdditional:[
+      'In seiner mit 1,0 bewerteten Masterarbeit entwickelte und überprüfte er eigenständig ein empirisches Messinstrument zur Erfassung interreligiöser Kompetenzen mithilfe probabilistischer Testtheorie und des Rasch-Modells.',
+      'Seine Laufbahn verbindet Tätigkeiten in Wirtschaft und öffentlicher Verwaltung mit langjähriger Unterrichtserfahrung. Zudem engagierte er sich über viele Jahre in kaufmännischen Prüfungsausschüssen der IHK München und Oberbayern.',
+      'Am Landheim initiierte er das Projekt „Jugend gründet“ und begleitet die Gründerteams von der Geschäftsidee bis zur Präsentation vor der Fachjury. Weitere Schwerpunkte seiner Arbeit sind der Börsenclub und das W-Seminar „Börse hautnah“.'
+    ],
+    topics:['Wirtschaftspädagogik und Entrepreneurship','Empirische Kompetenzmessung und Rasch-Modell','Praxisorientierte Wirtschafts- und Finanzbildung','IHK-Prüfungserfahrung und Projektleitung']
   }
 ];
 
@@ -124,7 +132,7 @@ export default function JuryShowcase() {
           <button type="button" className="jury-showcase-close" onClick={()=>setSelected(null)} aria-label="Juryprofil schließen"><X size={20}/></button>
         </div>
         <div className="jury-showcase-details-body">
-          <p>{member.biography}</p>
+          <div className="jury-showcase-biography"><p>{member.biography}</p>{member.biographyAdditional?.map((paragraph,i)=><p key={i}>{paragraph}</p>)}</div>
           <div className="jury-showcase-detail-topics"><strong>Erfahrung und Expertise</strong><ul>{member.topics.map(t=><li key={t}>{t}</li>)}</ul></div>
         </div>
         <div className="jury-showcase-details-footer">
