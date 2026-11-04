@@ -694,3 +694,53 @@
  .lm-page .lm-team-card-art .lm-team-card-initials{font-size:73px}
 }
 @media(prefers-reduced-motion:reduce){.lm-page .lm-team-card{transition:none!important}.lm-page .lm-team-card:hover{transform:none}.lm-page .lm-team-card-details summary svg{transition:none!important}}
+
+/* Admin-only editing of approved public team profiles. */
+.jury-public-editor-shortcut{margin-top:25px;padding:26px 30px;border:1px solid #d8ded7;background:#f7f9f4}
+.jury-public-editor-shortcut h2{font-size:clamp(25px,3vw,35px);margin:10px 0 8px}
+.jury-public-editor-shortcut p{font-size:13px;max-width:700px;color:#596d69;line-height:1.65}
+.jury-public-editor-shortcut .jury-outline-action{margin-top:12px}
+.jury-profile-editor{display:grid;grid-template-columns:minmax(195px,.32fr) minmax(0,.68fr);background:#fff;border:1px solid #e4e1d9;margin:28px 0 55px;box-shadow:0 9px 34px #10283e0a}
+.jury-profile-sidebar{padding:27px 17px;background:#f2f5ef;border-right:1px solid #dce4dc}
+.jury-profile-sidebar>.demo-overline{display:block;margin:0 10px 19px}
+.jury-profile-team-list{display:grid;gap:4px}
+.jury-profile-team-list button{display:flex;align-items:center;gap:11px;width:100%;padding:13px 10px;color:#31464a;background:transparent;border:1px solid transparent;text-align:left;cursor:pointer}
+.jury-profile-team-list button:hover{background:#e7eee6}
+.jury-profile-team-list button.selected{background:#fff;border-color:#cad8c9;box-shadow:0 3px 10px #203e3020}
+.jury-profile-team-index{font-size:10px;font-weight:700;color:#7d9067;flex-shrink:0}
+.jury-profile-team-title{flex:1;font-size:13px;font-weight:700;overflow-wrap:anywhere}
+.jury-profile-team-visibility{color:#6f8a77;flex-shrink:0}
+.jury-profile-side-note{margin:22px 11px 0;color:#657a77;font-size:11px;line-height:1.6;display:flex;gap:9px;align-items:flex-start}
+.jury-profile-side-note svg{flex-shrink:0;margin-top:1px}
+.jury-profile-form{min-width:0;padding:clamp(22px,3vw,38px);display:flex;flex-direction:column}
+.jury-profile-form-title{display:flex;gap:20px;align-items:flex-start;justify-content:space-between;margin-bottom:29px}
+.jury-profile-form-title h2{font-size:clamp(26px,3vw,38px);margin:9px 0 0}
+.jury-profile-preview-toggle{display:flex;align-items:center;gap:7px;flex-shrink:0;background:#f4f6f2;border:1px solid #dfe6dc;padding:11px;font-size:12px;color:#3b5b58;cursor:pointer}
+.jury-profile-form>label:not(.jury-profile-approval){font-size:12px;font-weight:700;color:#344d53;margin-bottom:9px}
+.jury-profile-form label small{font-weight:400;color:#768787}
+.jury-profile-form>input,.jury-profile-form>textarea{display:block;width:100%;background:#fbfcfa;border:1px solid #d3dfd8;border-radius:5px;padding:14px;color:#203940;font-size:14px;margin:0 0 23px;line-height:1.55}
+.jury-profile-form>textarea{resize:vertical;min-height:125px;margin-bottom:5px}
+.jury-profile-char-count{align-self:flex-end;color:#70857f;font-size:11px;margin-bottom:25px}
+.jury-profile-publish{border:1px solid #d6e4d6;background:#f2f6ef;padding:18px;margin-bottom:16px}
+.jury-profile-publish label,.jury-profile-approval{display:flex;align-items:flex-start;gap:12px;font-size:12px;color:#2e4d48;line-height:1.55;cursor:pointer}
+.jury-profile-publish input,.jury-profile-approval input{width:17px;height:17px;flex:0 0 17px;accent-color:#3b6654;margin-top:2px}
+.jury-profile-publish strong,.jury-profile-publish small{display:block}
+.jury-profile-publish small{margin-top:5px;color:#567068}
+.jury-profile-approval{padding:0 4px 19px}
+.jury-profile-preview{border-top:1px solid #e5ebe4;border-bottom:1px solid #e5ebe4;padding:21px 0;margin:3px 0 25px}
+.jury-profile-preview-card{margin:13px 0 9px;border:1px solid #dce5da;background:#f5f8f3;padding:21px}
+.jury-profile-preview-card>div{font:400 47px 'Playfair Display',Georgia,serif;color:#557374;line-height:1}
+.jury-profile-preview-card h3{font-size:30px;margin:12px 0;color:#30464b;overflow-wrap:anywhere}
+.jury-profile-preview-card p{font-size:13px;color:#61757a;line-height:1.7;white-space:pre-line;overflow-wrap:anywhere}
+.jury-profile-preview>small{color:#687d7b;font-size:11px}
+.jury-profile-error,.jury-profile-success{padding:12px 15px;border:1px solid #e9bbbb;background:#fff5f5;color:#8c3131;font-size:13px;line-height:1.5}
+.jury-profile-success{border-color:#c8d9c6;background:#f1f7f0;color:#2e6341;display:flex;align-items:center;gap:8px}
+.jury-profile-actions{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:15px;margin-top:12px}
+.jury-profile-actions>span{color:#607a77;font-size:11px}
+.jury-profile-actions button{display:flex;align-items:center;gap:10px;background:#284850;border:0;color:white;padding:14px 20px;font-size:12px;font-weight:700}
+.jury-profile-actions button:disabled{opacity:.5;cursor:not-allowed}
+.jury-admin-materials-heading{padding-top:34px;border-top:1px solid #d6ddd5;margin-top:25px}
+.jury-admin-materials-heading h2{font-size:clamp(27px,3vw,40px);margin:9px 0 13px}
+.jury-admin-materials-heading p{font-size:14px;color:#697b7b;line-height:1.6}
+@media(max-width:880px){.jury-profile-editor{grid-template-columns:1fr}.jury-profile-sidebar{border-right:0;border-bottom:1px solid #dce4dc}.jury-profile-team-list{grid-template-columns:repeat(3,minmax(0,1fr))}.jury-profile-team-list button{min-width:0}}
+@media(max-width:590px){.jury-profile-team-list{grid-template-columns:1fr 1fr}.jury-profile-form-title{display:block}.jury-profile-preview-toggle{margin-top:15px}.jury-profile-form{padding:19px}.jury-profile-team-title{font-size:11px}.jury-profile-actions button{width:100%;justify-content:center}.jury-public-editor-shortcut{padding:20px}}
