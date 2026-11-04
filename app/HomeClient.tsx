@@ -6,6 +6,7 @@ import './TeamReveal.css';
 import './HomepagePolish.css';
 import './HeaderIdentity.css';
 import './HomepageFinalTouches.css';
+import JuryShowcase from './JuryShowcase';
 import {
   ArrowRight, ArrowUpRight, CalendarDays, ChevronDown, Clock3, Compass,
   ExternalLink, Lightbulb, LockKeyhole, MapPin, Menu, Presentation,
@@ -201,6 +202,7 @@ export default function HomeClient({ publishedTeams = [] }: { publishedTeams: Pu
             <a href="#idee" onClick={closeMenu}>Die Idee</a>
             <a href="#weg" onClick={closeMenu}>Unser Weg</a>
             <a href="#teams" onClick={closeMenu}>Die Teams</a>
+            <a href="#jury-vorstellung" onClick={closeMenu}>Unsere Jury</a>
             <a href="#pitch" onClick={closeMenu}>Pitch-Tag</a>
             <a href="#jury" className="lm-nav-jury" onClick={closeMenu}>Jury-Anmeldung <ArrowUpRight size={16} aria-hidden="true"/></a>
           </nav>
@@ -437,6 +439,8 @@ export default function HomeClient({ publishedTeams = [] }: { publishedTeams: Pu
         </div>
       </section>
 
+      <JuryShowcase />
+
       <section className="lm-manifesto" aria-label="Motto des Wettbewerbs">
         <div className="lm-container">
           <span>LANDHEIM AMMERSEE × JUGEND GRÜNDET</span>
@@ -448,7 +452,7 @@ export default function HomeClient({ publishedTeams = [] }: { publishedTeams: Pu
       <section id="jury" className="lm-jury lm-section" aria-labelledby="lm-jury-title">
         <div className="lm-container lm-jury-layout">
           <div className="lm-jury-copy">
-            <div className="lm-section-index lm-index-light"><span>05</span><span>GESCHÜTZTER JURYBEREICH</span></div>
+            <div className="lm-section-index lm-index-light"><span>06</span><span>GESCHÜTZTER JURYBEREICH</span></div>
             <div className="lm-jury-symbol"><LockKeyhole size={28} strokeWidth={1.5}/></div>
             <h2 id="lm-jury-title">Ihre Erfahrung.<br/><em>Ihr Blick.</em><br/>Ihre Bewertung.</h2>
             <p>Im persönlichen Juryportal finden Sie die Unternehmerteams, ihre Unterlagen und die digitale Bewertung für den Pitch-Tag – klar strukturiert und vertraulich.</p>
@@ -476,7 +480,7 @@ export default function HomeClient({ publishedTeams = [] }: { publishedTeams: Pu
         <div className="lm-container">
           <div className="lm-footer-main">
             <div><span className="lm-footer-brand">LANDHEIM AMMERSEE</span><strong>JUGEND GRÜNDET</strong><p>Junge Menschen gestalten die Zukunft.</p></div>
-            <div><span>WETTBEWERB 2026/27</span><a href="#idee">Das Projekt</a><a href="#teams">Die Teams</a><a href="#pitch">Pitch-Tag</a><a href="#jury">Juryportal</a></div>
+            <div><span>WETTBEWERB 2026/27</span><a href="#idee">Das Projekt</a><a href="#teams">Die Teams</a><a href="#jury-vorstellung">Unsere Jury</a><a href="#pitch">Pitch-Tag</a><a href="#jury">Juryportal</a></div>
             <div><span>MEHR ENTDECKEN</span><a href="https://www.landheim-ammersee.de/de" target="_blank" rel="noopener noreferrer">Landheim Ammersee <ArrowUpRight size={14}/></a><a href="https://www.jugend-gruendet.de/wettbewerb/" target="_blank" rel="noopener noreferrer">Jugend gründet <ArrowUpRight size={14}/></a></div>
           </div>
           <div className="lm-footer-bottom">
