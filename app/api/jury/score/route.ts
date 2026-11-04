@@ -1,6 +1,6 @@
 import {NextResponse} from 'next/server';
 import {getJurySession} from '../../../../lib/jury-session';
-const keys=['expert_a_score','expert_b_score','expert_c_score','expert_d_score','expert_e_score','presentation_impact_score','questions_quality_score','questions_confidence_score','questions_reasoning_score'] as const;
+const keys=['presentation_impact_score','questions_quality_score','questions_confidence_score','questions_reasoning_score'] as const;
 export async function POST(req:Request){
  const session=await getJurySession();
  if(!session)return NextResponse.json({error:'Nicht angemeldet'},{status:401});
@@ -16,13 +16,10 @@ export async function POST(req:Request){
  const membersResponse=await fetch(url+'/rest/v1/team_members?select=id&team_id=eq.'+encodeURIComponent(team_id),{headers,cache:'no-store'});
  if(!membersResponse.ok)return NextResponse.json({error:'Teamgröße konnte nicht geprüft werden'},{status:502});
  const memberRows=await membersResponse.json() as Array<{id:string}>;
- const isFour=memberRows.length===4;
  if(memberRows.length!==4&&memberRows.length!==5)return NextResponse.json({error:'Teamgröße ist nicht eindeutig'},{status:409});
- if(isFour&&field==='expert_e_score')return NextResponse.json({error:'D/E wird gemeinsam bewertet'},{status:400});
  const existing=await lookup.json() as Array<{id:string;submitted_at:string|null}&Record<string,number|null>>;
  if(existing[0]?.submitted_at)return NextResponse.json({error:'Bewertung bereits freigegeben'},{status:409});
  const values:Record<string,number|string|null>={[field as string]:Number(score)};
- if(isFour&&field==='expert_d_score')values.expert_e_score=Number(score);
  const payload=existing.length?{...values,updated_at:new Date().toISOString()}:{team_id,juror_id:session.userId,...values};
  const target=existing.length?url+'/rest/v1/evaluations?id=eq.'+existing[0].id:url+'/rest/v1/evaluations';
  const res=await fetch(target,{method:existing.length?'PATCH':'POST',headers:{...headers,Prefer:'return=representation'},body:JSON.stringify(payload),cache:'no-store'});

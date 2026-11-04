@@ -24,7 +24,12 @@ function exampleAssignment(index:number,teamPosition:number,teamSize:number){
 function initials(name:string){
  return name.trim().split(/\s+/).slice(0,2).map(part=>part.slice(0,1).toUpperCase()).join('')||'–';
 }
-const criteria=[{"key":"expert_a_score","name":"A · Markt und Zielgruppe","weight":10},{"key":"expert_b_score","name":"B · Marketing und Vertrieb","weight":10},{"key":"expert_c_score","name":"C · Finanzen und Wirtschaftlichkeit","weight":10},{"key":"expert_d_score","name":"D · Umsetzung und Realisierbarkeit","weight":10},{"key":"expert_e_score","name":"E · Organisation und Rechtsform","weight":10},{"key":"presentation_impact_score","name":"Überzeugungskraft der Präsentation","weight":20},{"key":"questions_quality_score","name":"Fachliche Qualität der Antworten","weight":10},{"key":"questions_confidence_score","name":"Souveränität und Sicherheit","weight":10},{"key":"questions_reasoning_score","name":"Argumentation und Reaktionsfähigkeit","weight":10}] as const;
+const criteria=[
+ {key:'presentation_impact_score',name:'Überzeugungskraft der Präsentation',weight:50},
+ {key:'questions_quality_score',name:'Fachliche Qualität der Antworten',weight:50/3},
+ {key:'questions_confidence_score',name:'Souveränität und Sicherheit',weight:50/3},
+ {key:'questions_reasoning_score',name:'Argumentation und Reaktionsfähigkeit',weight:50/3}
+] as const;
 const hints:Record<string,string>={
  expert_a_score:'Sind Zielgruppe, Kundenproblem und Markt nachvollziehbar beschrieben?',
  expert_b_score:'Ist klar, wie das Produkt bekannt gemacht und verkauft werden soll?',
@@ -42,7 +47,6 @@ const expertEvidence:Record<string,Partial<Record<'A'|'B'|'C'|'D'|'E',[string|nu
 
 const gradeGuide='1–2: kaum erfüllt · 3–4: eher schwach · 5–6: teilweise erfüllt · 7–8: gut erfüllt · 9–10: hervorragend erfüllt';
 type Material={id:string;title:string;original_filename:string;media_type:string;created_at:string};
-type Progress={submitted_count:number;total_jurors:number;others_average:number|null;own_submitted:boolean};
 export default function TeamNavigator({teams,members,initialScores,isAdmin,initialSection='pitch',adminMode=false,activeTeamId=null,onGoToCompany,onTeamSelected}:{teams:Team[];members:Member[];initialScores:Score[];isAdmin:boolean;initialSection?:'overview'|'business'|'pitch'|'company';adminMode?:boolean;activeTeamId?:string|null;onGoToCompany?:()=>void;onTeamSelected?:(teamId:string)=>void}){
  const [selected,setSelected]=useState(0);
  useEffect(()=>{if(activeTeamId){const index=teams.findIndex(t=>t.id===activeTeamId);if(index>=0)setSelected(index);}},[activeTeamId,teams]);
@@ -165,15 +169,12 @@ export default function TeamNavigator({teams,members,initialScores,isAdmin,initi
   try{
    const response=await fetch('/api/jury/submit',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({team_id:teamId})});
    if(!response.ok){const data=await response.json() as {error?:string};throw new Error(data.error||'Freigabe fehlgeschlagen');}
-   setReleased(old=>({...old,[teamId]:true}));await refreshProgress(teamId);
+   setReleased(old=>({...old,[teamId]:true}));
   }catch(error){setReleaseError(error instanceof Error?error.message:'Freigabe fehlgeschlagen');}
   finally{setReleasing(false);}
  }
 
- const [progress,setProgress]=useState<Record<string,Progress>>({});
- const [progressError,setProgressError]=useState<Record<string,boolean>>({});
- async function refreshProgress(teamId:string){try{const r=await fetch('/api/jury/progress?team_id='+encodeURIComponent(teamId),{cache:'no-store'});if(!r.ok)throw Error('Progress');const p=await r.json() as Progress;setProgress(old=>({...old,[teamId]:p}));setProgressError(old=>({...old,[teamId]:false}));}catch{setProgressError(old=>({...old,[teamId]:true}));}}
- useEffect(()=>{if(teams[selected]){void refreshProgress(teams[selected].id);void loadNotes(teams[selected].id);void loadMaterials(teams[selected].id);}},[selected,teams]);
+ useEffect(()=>{if(teams[selected]){void loadNotes(teams[selected].id);void loadMaterials(teams[selected].id);}},[selected,teams]);
  const [scores,setScores]=useState<Record<string,Record<string,number>>>(()=>Object.fromEntries(initialScores.map(s=>[s.team_id,Object.fromEntries(criteria.filter(c=>s[c.key]!==null).map(c=>[c.key,s[c.key] as number]))])));
  const [status,setStatus]=useState<Record<string,'open'|'saving'|'saved'|'error'>>({});
  const [pending,setPending]=useState<Record<string,number>>({});
@@ -186,7 +187,6 @@ export default function TeamNavigator({teams,members,initialScores,isAdmin,initi
    setScores(old=>({...old,[teamId]:{...(old[teamId]||{}),[field]:value}}));
    setStatus(old=>({...old,[id]:'saved'}));
    setPending(old=>{const next={...old};delete next[id];return next});
-   void refreshProgress(teamId);
   }catch{setStatus(old=>({...old,[id]:'error'}))}
  }
  if(!teams.length)return <section className="demo-score"><h2>Teamdaten noch nicht eingerichtet</h2><p>In Supabase ist derzeit kein Unternehmerteam für die Jury sichtbar. Bitte zunächst die vorbereitete Teamnamen-Migration ausführen. Es werden keine Demo-Teams als echte Daten ausgegeben.</p></section>;
@@ -201,8 +201,8 @@ export default function TeamNavigator({teams,members,initialScores,isAdmin,initi
  const combinedEvidence=expertEvidence[profile?.key||'']?.E;
  const evidence=isFour&&expertTab==='D'&&combinedEvidence?([0,1,2,3].map(i=>[baseEvidence?.[i],combinedEvidence?.[i]].filter(Boolean).join(' ')||null) as [string|null,string|null,string|null,string|null]):baseEvidence;
  const productImage=(materials[team.id]||[]).find(m=>m.media_type.startsWith('image/')&&/visualis|produkt/i.test(m.title+' '+m.original_filename));
- const activeCriteria=criteria.filter(c=>!(isFour&&c.key==='expert_e_score'));
- const weightFor=(key:string)=>isFour&&key.startsWith('expert_')?12.5:criteria.find(c=>c.key===key)?.weight??0;
+ const activeCriteria=criteria;
+ const weightFor=(key:string)=>criteria.find(c=>c.key===key)?.weight??0;
  return <div className="demo-shell jury-wide-shell" style={{minHeight:600,marginTop:24,border:'1px solid #e4e0d9'}}>
  <nav className="jury-team-picker" aria-label="Unternehmerteam auswählen"><div className="jury-team-picker-head"><span className="demo-overline">DIE NEUN UNTERNEHMERTEAMS</span><span>Team auswählen · Profil und Unterlagen öffnen sich direkt</span></div><div className="jury-team-grid">{teams.map((t,i)=><button type="button" key={t.id} className={selected===i?'jury-team-tile active':'jury-team-tile'} aria-pressed={selected===i} onClick={()=>{setSelected(i);onTeamSelected?.(t.id);setExpertTab('A');setAttachmentTab('all');if(!adminMode)setMainTab(initialSection)}}><small>{String(t.position).padStart(2,'0')}</small><span className="jury-team-photo" aria-hidden="true">{t.jury_photo_path?<img src={'/api/jury/team-photo/'+t.id} alt="" loading="lazy"/>:<Users size={18}/>}</span><strong>{t.name}</strong><ArrowRight size={16}/></button>)}</div></nav>
  <section className="demo-main">
@@ -361,7 +361,7 @@ export default function TeamNavigator({teams,members,initialScores,isAdmin,initi
  <p style={{fontSize:13,color:'#667480'}}>Grau: offen · Gelb: speichert · Grün: gespeichert · Rot: Fehler</p>
  <p style={{fontSize:13,color:'#526575',lineHeight:1.6}}><strong>Bewertungsorientierung:</strong> {gradeGuide}</p>
  {activeCriteria.map((c,i)=>{
-  const phaseHeader=i===0?<div style={{marginTop:22}}><h3>1 · Fachbereiche und Präsentation</h3><p>Während des Pitches</p></div>:i===(isFour?5:6)?<div id="jury-rating-questions" style={{marginTop:24,borderTop:'2px solid #d9d4c9',paddingTop:14}}><h3>2 · Juryfragen</h3><p>Während der Fragerunde</p></div>:null;
+  const phaseHeader=i===0?<div style={{marginTop:22}}><h3>1 · Präsentation</h3><p>Während des Pitches · 50 % der Gesamtwertung</p></div>:i===1?<div id="jury-rating-questions" style={{marginTop:24,borderTop:'2px solid #d9d4c9',paddingTop:14}}><h3>2 · Juryfragen</h3><p>Während der Fragerunde · 50 % der Gesamtwertung</p></div>:null;
   const id=team.id+':'+c.key;
   const saved=scores[team.id]?.[c.key];
   const current=pending[id]??saved;
@@ -378,7 +378,7 @@ export default function TeamNavigator({teams,members,initialScores,isAdmin,initi
     />
     <strong style={{minWidth:44,textAlign:'right'}}>{current===undefined?'–':current+'/10'}</strong>
    </div>
-   <div style={{display:'flex',justifyContent:'space-between',fontSize:12,color:'#667480'}}><span>Gewichtung {weightFor(c.key).toLocaleString('de-DE')} %</span>{state==='error'&&<button type="button" onClick={()=>void save(team.id,c.key,current??5)}>Erneut speichern</button>}</div>
+   <div style={{display:'flex',justifyContent:'space-between',fontSize:12,color:'#667480'}}><span>Gewichtung {weightFor(c.key).toLocaleString('de-DE',{maximumFractionDigits:2})} %</span>{state==='error'&&<button type="button" onClick={()=>void save(team.id,c.key,current??5)}>Erneut speichern</button>}</div>
   </div></div>
  })}
  <div style={{marginTop:24,padding:18,background:'#f7f0e2',border:'1px solid #c49a45',borderRadius:10}}>
@@ -387,15 +387,6 @@ export default function TeamNavigator({teams,members,initialScores,isAdmin,initi
  const result=activeCriteria.reduce((sum,c)=>sum+(scores[team.id]?.[c.key]??0)*weightFor(c.key),0)/100;
  return <><div style={{height:16,background:'#e7ded0',borderRadius:12,overflow:'hidden'}}><div className="jury-meter-fill" style={{height:'100%',width:result*10+'%',background:'#c49a45'}}/></div><p><strong>{result.toFixed(2)} / 10</strong> · Automatisch berechnet</p></>;
  })():<p>Noch nicht vollständig bewertet</p>}
- </div>
- <div style={{marginTop:16,padding:18,background:'#eef5f9',border:'1px solid #408dab',borderRadius:10}}>
- <h3>Durchschnitt der anderen Juroren</h3>
- <p><strong>{progress[team.id]?progress[team.id].submitted_count+' von '+progress[team.id].total_jurors+' abgegeben':'Abgabestand wird geladen …'}</strong></p>
- {progress[team.id]?.own_submitted?progress[team.id].others_average!==null?<>
- <div style={{height:16,background:'#d8e6ef',borderRadius:12,overflow:'hidden'}}><div className="jury-meter-fill" style={{height:'100%',width:Number(progress[team.id].others_average)*10+'%',background:'#408dab'}}/></div>
- <p><strong>{Number(progress[team.id].others_average).toFixed(2)} / 10</strong></p>
- </>:<p>Noch keine andere vollständige Bewertung abgegeben.</p>:<p>Der Vergleich wird nach Abschluss deiner eigenen Bewertung sichtbar.</p>}
- {progressError[team.id]&&<button type="button" onClick={()=>void refreshProgress(team.id)}>Abgabestand erneut laden</button>}
  </div>
  <div style={{marginTop:20,padding:18,border:'1px solid #d8d4cd',borderRadius:10}}>
  <h3 id="jury-rating-release">Bewertung freigeben</h3>

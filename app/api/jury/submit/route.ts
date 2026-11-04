@@ -1,6 +1,6 @@
 import {NextResponse} from 'next/server';
 import {getJurySession} from '../../../../lib/jury-session';
-const keys=['expert_a_score','expert_b_score','expert_c_score','expert_d_score','expert_e_score','presentation_impact_score','questions_quality_score','questions_confidence_score','questions_reasoning_score'] as const;
+const keys=['presentation_impact_score','questions_quality_score','questions_confidence_score','questions_reasoning_score'] as const;
 export async function POST(req:Request){
  const session=await getJurySession();
  if(!session)return NextResponse.json({error:'Nicht angemeldet'},{status:401});
@@ -22,7 +22,7 @@ export async function POST(req:Request){
  const entry=rows[0];
  if(!entry)return NextResponse.json({error:'Noch keine Bewertung gespeichert'},{status:409});
  if(entry.submitted_at)return NextResponse.json({submitted:true});
- const required=keys.filter(k=>!(members.length===4&&k==='expert_e_score'));
+ const required=keys;
  if(!required.every(k=>Number.isInteger(entry[k])&&Number(entry[k])>=1&&Number(entry[k])<=10))return NextResponse.json({error:'Bitte zuerst alle Kriterien bewerten'},{status:409});
  const res=await fetch(url+'/rest/v1/evaluations?id=eq.'+entry.id+'&submitted_at=is.null',{method:'PATCH',headers:{...headers,Prefer:'return=representation'},body:JSON.stringify({submitted_at:new Date().toISOString()}),cache:'no-store'});
  if(!res.ok)return NextResponse.json({error:'Freigabe fehlgeschlagen'},{status:502});
