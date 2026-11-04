@@ -49,3 +49,11 @@ Web-Variante bereitstellen, um mobile Ladezeiten zu schützen.
 Die Originaldatei des Laptop-Fotos ist 1920 × 1080 Pixel groß.
 Der Bildwechsel benötigt keine zusätzlichen personenbezogenen Angaben.
 Die Freigaben für Bilder wurden vom Projektverantwortlichen bestätigt.
+
+## Bildoptimierung vor dem ersten Deployment
+- Alle drei offiziellen Bildquellen werden über Next.js Image mit sizes=100vw,
+  Qualitätsstufe 75 und WebP-Ausgabe angeboten; das erste Motiv wird priorisiert.
+- Der externe Bildhost ist in next.config.mjs explizit eingeschränkt.
+- Vor der finalen Freigabe im Preview bei allen drei Punkten überprüfen, dass
+  optimierte Bilder erfolgreich geladen werden; bei Fehlern passende lizenzierte
+  lokale Bilddateien verwenden.

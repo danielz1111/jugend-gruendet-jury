@@ -624,3 +624,6 @@
   .lm-page .lm-hero-gallery .lm-hero-photo{transform:none!important;transition:none!important;animation:none!important}
   .lm-page .lm-hero-dot:before{transition:none!important}
 }
+
+/* Responsive remote image optimization via next/image, original URLs preserved. */
+.lm-page .lm-hero-gallery .lm-hero-photo{object-fit:cover;object-position:center}

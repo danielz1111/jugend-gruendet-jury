@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import Image from 'next/image';
 import {
   ArrowRight, ArrowUpRight, CalendarDays, ChevronDown, Clock3, Compass,
   ExternalLink, Lightbulb, LockKeyhole, MapPin, Menu, Presentation,
@@ -143,10 +144,16 @@ export default function HomeClient({ publishedTeams = [] }: { publishedTeams: Pu
       <section className="lm-hero" aria-labelledby="lm-hero-title">
         <div className="lm-hero-gallery" aria-hidden="true">
           {heroSlides.map((slide, index) => (
-            <div
+            <Image
               key={slide.label}
+              src={slide.image}
+              alt=""
+              fill
+              sizes="100vw"
+              quality={75}
+              priority={index === 0}
               className={'lm-hero-photo lm-hero-slide' + (index === activeSlide ? ' lm-hero-slide-active' : '')}
-              style={{ backgroundImage: 'url("' + slide.image + '")', backgroundPosition: slide.position }}
+              style={{ objectPosition: slide.position }}
             />
           ))}
         </div>
