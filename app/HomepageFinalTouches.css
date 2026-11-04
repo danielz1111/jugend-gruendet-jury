@@ -1,0 +1,136 @@
+/* Homepage finishing touches: mint-green Landheim logo, legible institutional
+   masthead and three synchronised entrepreneur counters. Public page only. */
+
+/* Keep the authentic unframed SVG and recolour the logo into the mint palette. */
+.lm-page .lm-official-mark{background:transparent;border:0;padding:0}
+.lm-page .lm-official-logo{
+  filter:brightness(0) saturate(100%) invert(84%) sepia(18%) saturate(587%) hue-rotate(100deg) brightness(93%) contrast(87%);
+}
+.lm-page .lm-competition-wordmark{border-left-color:#a8d6c0}
+.lm-page .lm-header-compact .lm-competition-wordmark{border-left-color:#a8d6c0}
+
+/* The very top line (Landheim Ammersee / Internatsschulen) is now readable. */
+.lm-page .lm-utility{letter-spacing:.085em}
+.lm-page .lm-utility-inner{min-height:47px;gap:22px}
+.lm-page .lm-utility-inner>span:first-child{
+  color:#edf8f0;font-size:14px;font-weight:800;letter-spacing:.075em;
+}
+.lm-page .lm-utility-inner>span:last-child{
+  color:#d9e6df;font-size:11px;letter-spacing:.1em;font-weight:700;
+}
+.lm-page .lm-utility-dot{color:#a8dec6}
+
+/* Compact, evenly paced three-figure presentation in the hero sidebar. */
+.lm-page .lm-hero-seal-triple{
+  padding:20px 22px 21px;
+  background:linear-gradient(155deg,#263f42d9,#1e3339df);
+  border:1px solid #cae7d17d;
+}
+.lm-page .lm-hero-seal-triple .lm-hero-seal-overline{
+  color:#bfe6d3;font-size:11px;line-height:1.55;
+  letter-spacing:.12em;margin-bottom:8px;
+}
+.lm-page .lm-hero-seal-triple .lm-seal-stat-block,
+.lm-page .lm-hero-seal-triple .lm-seal-stat-block.lm-seal-stat-second{
+  display:grid;grid-template-columns:80px minmax(0,1fr);
+  column-gap:11px;align-items:center;
+  border-bottom:1px solid #cce3d63b;
+  padding:11px 0 12px;min-height:77px;
+}
+.lm-page .lm-hero-seal-triple .lm-seal-stat-number{
+  display:block;margin:0;min-height:0;
+  font:500 clamp(53px,4.8vw,66px)/.98 'Playfair Display',Georgia,serif;
+  font-variant-numeric:tabular-nums;letter-spacing:-.075em;
+  color:#f8fbf3;
+}
+.lm-page .lm-hero-seal-triple .lm-seal-stat-label{
+  display:block;align-self:center;
+  font-size:10.5px;line-height:1.48;letter-spacing:.095em;
+  color:#e6efe9;overflow-wrap:anywhere;
+}
+.lm-page .lm-hero-seal-triple .lm-seal-stat-teams{border-bottom:0}
+.lm-page .lm-hero-seal-triple .lm-seal-divider{margin:12px 0 12px}
+.lm-page .lm-seal-pitch-label{
+  display:block;margin-bottom:7px;
+  font-size:10px;font-weight:800;letter-spacing:.15em;color:#aee0c8;
+}
+.lm-page .lm-hero-seal-triple .lm-seal-date{
+  font-size:17px;letter-spacing:.035em;line-height:1.25;color:#fff;
+}
+.lm-page .lm-hero-seal-triple .lm-seal-countdown{
+  display:flex;align-items:center;gap:8px;flex-wrap:wrap;
+  font-size:13px;color:#dceba3;letter-spacing:.075em;
+  padding-top:11px;
+}
+.lm-page .lm-hero-seal-triple .lm-seal-countdown strong{
+  font-size:32px;color:#e7efae;
+}
+@media(max-width:1220px){
+  .lm-page .lm-utility-inner>span:first-child{font-size:13px}
+  .lm-page .lm-hero-seal-triple .lm-seal-stat-block,
+  .lm-page .lm-hero-seal-triple .lm-seal-stat-block.lm-seal-stat-second{
+    grid-template-columns:70px minmax(0,1fr);column-gap:8px;
+    min-height:70px;padding:9px 0;
+  }
+  .lm-page .lm-hero-seal-triple .lm-seal-stat-number{font-size:56px}
+  .lm-page .lm-hero-seal-triple .lm-seal-stat-label{font-size:9.5px}
+}
+@media(max-width:980px){
+  .lm-page .lm-hero-seal-triple{padding:14px 17px 16px}
+  .lm-page .lm-hero-seal-triple .lm-seal-stat-block,
+  .lm-page .lm-hero-seal-triple .lm-seal-stat-block.lm-seal-stat-second{
+    grid-template-columns:60px minmax(0,1fr);
+    min-height:59px;column-gap:7px;padding:7px 0;
+  }
+  .lm-page .lm-hero-seal-triple .lm-seal-stat-number{font-size:47px}
+  .lm-page .lm-hero-seal-triple .lm-seal-stat-label{font-size:8.5px;letter-spacing:.055em}
+  .lm-page .lm-hero-seal-triple .lm-seal-date{font-size:12.5px}
+  .lm-page .lm-hero-seal-triple .lm-seal-countdown strong{font-size:25px}
+}
+@media(max-width:760px){
+  .lm-page .lm-utility-inner{min-height:44px}
+  .lm-page .lm-utility-inner>span:first-child{font-size:12px}
+  .lm-page .lm-utility-inner>span:last-child{font-size:10px}
+  .lm-page .lm-hero-seal-triple{
+    display:grid;grid-template-columns:repeat(3,minmax(0,1fr));
+    gap:0 10px;padding:16px 19px;
+  }
+  .lm-page .lm-hero-seal-triple .lm-hero-seal-overline{
+    grid-column:1/-1;margin-bottom:4px;
+  }
+  .lm-page .lm-hero-seal-triple .lm-seal-stat-block,
+  .lm-page .lm-hero-seal-triple .lm-seal-stat-block.lm-seal-stat-second{
+    display:flex;flex-direction:column;align-items:flex-start;
+    justify-content:flex-start;gap:5px;min-width:0;
+    border-bottom:1px solid #cce3d63b;
+    padding:9px 2px 11px;min-height:100px;
+  }
+  .lm-page .lm-hero-seal-triple .lm-seal-stat-number{font-size:clamp(42px,7.2vw,58px)}
+  .lm-page .lm-hero-seal-triple .lm-seal-stat-label{
+    font-size:9px;align-self:flex-start;line-height:1.42;letter-spacing:.04em;
+  }
+  .lm-page .lm-hero-seal-triple .lm-seal-divider{display:none}
+  .lm-page .lm-hero-seal-triple .lm-seal-pitch-label{
+    grid-column:1/-1;margin-top:13px;margin-bottom:6px;
+  }
+  .lm-page .lm-hero-seal-triple .lm-seal-date{
+    grid-column:1/3;align-self:center;font-size:14px;
+  }
+  .lm-page .lm-hero-seal-triple .lm-seal-countdown{
+    grid-column:3;align-self:center;padding:0;
+    gap:4px;font-size:10px;letter-spacing:.015em;
+  }
+}
+@media(max-width:520px){
+  .lm-page .lm-utility-inner>span:first-child{font-size:10.5px;letter-spacing:.02em}
+  .lm-page .lm-utility-inner>span:last-child{display:none}
+  .lm-page .lm-hero-seal-triple{gap:0 7px;padding:13px 14px}
+  .lm-page .lm-hero-seal-triple .lm-seal-stat-block,
+  .lm-page .lm-hero-seal-triple .lm-seal-stat-block.lm-seal-stat-second{
+    min-height:91px;padding:8px 0;
+  }
+  .lm-page .lm-hero-seal-triple .lm-seal-stat-number{font-size:clamp(38px,10vw,48px)}
+  .lm-page .lm-hero-seal-triple .lm-seal-stat-label{font-size:8.2px}
+  .lm-page .lm-hero-seal-triple .lm-seal-date{font-size:12px}
+  .lm-page .lm-hero-seal-triple .lm-seal-countdown strong{font-size:22px}
+}

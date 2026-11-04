@@ -5,6 +5,7 @@ import Image from 'next/image';
 import './TeamReveal.css';
 import './HomepagePolish.css';
 import './HeaderIdentity.css';
+import './HomepageFinalTouches.css';
 import {
   ArrowRight, ArrowUpRight, CalendarDays, ChevronDown, Clock3, Compass,
   ExternalLink, Lightbulb, LockKeyhole, MapPin, Menu, Presentation,
@@ -66,9 +67,9 @@ export default function HomeClient({ publishedTeams = [] }: { publishedTeams: Pu
   const [activeSlide, setActiveSlide] = useState(0);
   const [daysUntilPitch, setDaysUntilPitch] = useState<number | null>(null);
   const sealRef = useRef<HTMLDivElement | null>(null);
-  const [animatedStats, setAnimatedStats] = useState({ students: 0, teams: 0 });
-  // The aggregate comes from the current roster (42 students in 9 teams),
-  // not from published private student identities.
+  const [animatedStats, setAnimatedStats] = useState({ classes: 0, students: 0, teams: 0 });
+  // Aggregated project figures; no student-identifying information is published.
+  const classCount = 7;
   const studentCount = 42;
   const teams = [...publishedTeams]
     .filter(team => team.id && team.name?.trim())
@@ -114,16 +115,17 @@ export default function HomeClient({ publishedTeams = [] }: { publishedTeams: Pu
         inView = true;
         window.cancelAnimationFrame(frame);
         if (reducedMotion) {
-          setAnimatedStats({ students: studentCount, teams: teams.length });
+          setAnimatedStats({ classes: classCount, students: studentCount, teams: teams.length });
           return;
         }
         const started = performance.now();
-        setAnimatedStats({ students: 0, teams: 0 });
+        setAnimatedStats({ classes: 0, students: 0, teams: 0 });
         const advance = (now: number) => {
           if (!inView) return;
           const progress = Math.min((now - started) / duration, 1);
           const eased = 1 - Math.pow(1 - progress, 3);
           setAnimatedStats({
+            classes: Math.round(classCount * eased),
             students: Math.round(studentCount * eased),
             teams: Math.round(teams.length * eased)
           });
@@ -133,7 +135,7 @@ export default function HomeClient({ publishedTeams = [] }: { publishedTeams: Pu
       } else if (!entry.isIntersecting && inView) {
         inView = false;
         window.cancelAnimationFrame(frame);
-        setAnimatedStats({ students: 0, teams: 0 });
+        setAnimatedStats({ classes: 0, students: 0, teams: 0 });
       }
     }, { threshold: 0.35 });
     observer.observe(node);
@@ -235,17 +237,23 @@ export default function HomeClient({ publishedTeams = [] }: { publishedTeams: Pu
               <a className="lm-quiet-cta" href="#jury">Zum Juryportal <ArrowRight size={18}/></a>
             </div>
           </div>
-          <div ref={sealRef} className="lm-hero-seal lm-hero-seal-stats" aria-label={studentCount+' Schülerinnen und Schüler in '+teams.length+' Teams. Pitch am 15. Januar 2027.'}>
+          <div ref={sealRef} className="lm-hero-seal lm-hero-seal-stats lm-hero-seal-triple"
+            aria-label={classCount+' Klassen, '+studentCount+' Schülerinnen und Schüler in '+teams.length+' Gründerteams. Pitch am 15. Januar 2027.'}>
             <span className="lm-hero-seal-overline">LANDHEIM ENTREPRENEURS</span>
-            <div className="lm-seal-stat-block" aria-hidden="true">
+            <div className="lm-seal-stat-block lm-seal-stat-classes" aria-hidden="true">
+              <strong className="lm-seal-stat-number">{String(animatedStats.classes).padStart(2, '0')}</strong>
+              <span className="lm-seal-stat-label">KLASSEN</span>
+            </div>
+            <div className="lm-seal-stat-block lm-seal-stat-students" aria-hidden="true">
               <strong className="lm-seal-stat-number">{animatedStats.students}</strong>
               <span className="lm-seal-stat-label">SCHÜLERINNEN<br/>UND SCHÜLER</span>
             </div>
-            <div className="lm-seal-stat-block lm-seal-stat-second" aria-hidden="true">
+            <div className="lm-seal-stat-block lm-seal-stat-teams" aria-hidden="true">
               <strong className="lm-seal-stat-number">{String(animatedStats.teams).padStart(2, '0')}</strong>
               <span className="lm-seal-stat-label">GRÜNDERTEAMS</span>
             </div>
-            <span className="lm-seal-divider"/>
+            <span className="lm-seal-divider" aria-hidden="true"/>
+            <span className="lm-seal-pitch-label">UNSER PITCH-TAG</span>
             <span className="lm-seal-date">15. JANUAR 2027</span>
             {daysUntilPitch !== null && daysUntilPitch > 0 && <span className="lm-seal-countdown">NOCH <strong>{daysUntilPitch}</strong> TAGE</span>}
           </div>
