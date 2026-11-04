@@ -481,7 +481,7 @@ export default function HomeClient({ publishedTeams = [] }: { publishedTeams: Pu
           <div className="lm-footer-main">
             <div><span className="lm-footer-brand">LANDHEIM AMMERSEE</span><strong>JUGEND GRÜNDET</strong><p>Junge Menschen gestalten die Zukunft.</p></div>
             <div><span>WETTBEWERB 2026/27</span><a href="#idee">Das Projekt</a><a href="#teams">Die Teams</a><a href="#jury-vorstellung">Unsere Jury</a><a href="#pitch">Pitch-Tag</a><a href="#jury">Juryportal</a></div>
-            <div><span>MEHR ENTDECKEN</span><a href="https://www.landheim-ammersee.de/de" target="_blank" rel="noopener noreferrer">Landheim Ammersee <ArrowUpRight size={14}/></a><a href="https://www.jugend-gruendet.de/wettbewerb/" target="_blank" rel="noopener noreferrer">Jugend gründet <ArrowUpRight size={14}/></a></div>
+            <div><span>MEHR ENTDECKEN</span><a href="/eltern">Elternportal <ArrowUpRight size={14}/></a><a href="https://www.landheim-ammersee.de/de" target="_blank" rel="noopener noreferrer">Landheim Ammersee <ArrowUpRight size={14}/></a><a href="https://www.jugend-gruendet.de/wettbewerb/" target="_blank" rel="noopener noreferrer">Jugend gründet <ArrowUpRight size={14}/></a></div>
           </div>
           <div className="lm-footer-bottom">
             <span>© 2026/27 · Schulprojekt am Landheim Ammersee</span>

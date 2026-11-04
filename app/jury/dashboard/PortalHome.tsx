@@ -10,6 +10,7 @@ import {
 import TeamNavigator from './TeamNavigator';
 import LiveEventPanel from './LiveEventPanel';
 import PublicTeamEditor from './PublicTeamEditor';
+import ParentAccessAdmin from './ParentAccessAdmin';
 import './JuryStructure.css';
 
 type Team = {
@@ -265,6 +266,7 @@ export default function PortalHome({
                 Änderungen an den Teamprofilen werden erst nach dem Speichern veröffentlicht.</p>
             </div>
             <div className="jury-v3-admin-content">
+              <ParentAccessAdmin teams={teams}/>
               <PublicTeamEditor teams={teams}/>
               <div className="jury-v3-admin-divider">
                 <span className="jury-v3-overline">VERTRAULICHE DOKUMENTE</span>

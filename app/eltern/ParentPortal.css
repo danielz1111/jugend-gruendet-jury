@@ -1,0 +1,89 @@
+.parent-portal{min-height:100vh;background:#f5f8f4;color:#233d43;font-family:'DM Sans',Arial,sans-serif}
+.parent-portal *{box-sizing:border-box}
+.parent-portal a,.parent-portal button{transition:background-color .18s,border-color .18s}
+.parent-portal :is(a,button,input,select):focus-visible{outline:3px solid #b8d53d;outline-offset:3px}
+.parent-header{position:sticky;top:0;z-index:50;background:#fffefaef;box-shadow:0 4px 24px #1b363b18;border-bottom:1px solid #e1e7dd;backdrop-filter:blur(14px)}
+.parent-header-inner{width:min(calc(100% - 48px),1350px);margin:auto;display:flex;align-items:center;justify-content:space-between;min-height:92px;gap:24px}
+.parent-brand{display:flex;align-items:center;gap:17px;text-decoration:none;color:#28454a}
+.parent-emblem{display:grid;place-items:center;background:#bfd839;color:#213a43;width:56px;height:56px}
+.parent-brand>span:last-child{display:grid;gap:5px;border-left:2px solid #bed63e;padding-left:14px}
+.parent-brand strong{font:500 clamp(20px,2vw,26px)/1.2 'Playfair Display',Georgia,serif}
+.parent-brand small{font-size:11px;color:#628078;font-weight:650}
+.parent-header-actions{display:flex;align-items:center;gap:16px}
+.parent-header-actions>span{color:#607a70;font-size:11px;font-weight:800;letter-spacing:.12em}
+.parent-header-actions button{border:1px solid #d5e0d7;background:#fff;padding:11px 14px;color:#324d4b;font-weight:700;cursor:pointer}
+.parent-main{width:min(calc(100% - 52px),1260px);margin:0 auto;padding:34px 0 54px}
+.parent-intro{display:grid;grid-template-columns:minmax(0,1.65fr) minmax(250px,.5fr);background:linear-gradient(120deg,#1e3e45,#1b323b);color:white;overflow:hidden}
+.parent-intro>div:first-child{padding:clamp(34px,5vw,65px)}
+.parent-overline{display:block;color:#77936b;letter-spacing:.13em;font-weight:800;font-size:11px}
+.parent-intro .parent-overline{color:#cbdf8a}
+.parent-intro h1{font:500 clamp(41px,5vw,70px)/1.06 'Playfair Display',Georgia,serif;letter-spacing:-.04em;margin:21px 0}
+.parent-intro h1 em{color:#dcf0a2;font-weight:400}
+.parent-intro p{font-size:15px;color:#e4ede8;line-height:1.8;max-width:700px}
+.parent-intro-decoration{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:24px;background:radial-gradient(circle at center,#9fb84c35,transparent 73%),#193139b0;color:#e6efce;text-align:center}
+.parent-intro-decoration svg{color:#c9e15a}
+.parent-intro-decoration strong{font:500 27px/1.27 'Playfair Display',Georgia,serif}
+.parent-essentials,.parent-access{padding:47px 0 17px}
+.parent-essentials h2,.parent-access>h2{font:500 clamp(30px,4vw,48px)/1.15 'Playfair Display',Georgia,serif;margin:12px 0 23px;letter-spacing:-.03em}
+.parent-info-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+.parent-info-grid article{background:white;border:1px solid #dfe7df;padding:25px;display:flex;flex-direction:column;gap:12px;min-height:174px}
+.parent-info-grid svg{color:#89a630}
+.parent-info-grid strong{font-size:19px}
+.parent-info-grid span{font-size:13px;line-height:1.6;color:#637775}
+.parent-info-note{font-size:13px;color:#6e807f;margin-top:15px}
+.parent-auth-layout{display:grid;grid-template-columns:1fr 1fr;gap:32px;background:white;border:1px solid #dde7df;padding:clamp(22px,4vw,44px)}
+.parent-auth-desc h3{font:500 clamp(24px,3vw,33px)/1.18 'Playfair Display',Georgia,serif;margin:0 0 14px}
+.parent-auth-desc>p{line-height:1.8;font-size:14px;color:#5a7275;max-width:500px}
+.parent-auth-privacy{display:flex;align-items:flex-start;gap:12px;background:#f3f7ef;padding:20px;font-size:12px;line-height:1.7;color:#536968;margin-top:25px}
+.parent-auth-privacy svg{color:#85a331;flex:none}
+.parent-auth-form,.parent-request-form{display:grid;gap:17px}
+.parent-auth-tabs{display:grid;grid-template-columns:1fr 1fr;border-bottom:1px solid #e0e8df}
+.parent-auth-tabs button{border:0;border-bottom:3px solid transparent;background:white;color:#56716e;padding:14px;font-weight:800;cursor:pointer}
+.parent-auth-tabs button.active{border-bottom-color:#bdd837;color:#22443e;background:#f5f8ef}
+.parent-auth-form label,.parent-request-form label{font-size:12px;color:#405e5d;font-weight:750;display:grid;gap:9px}
+.parent-auth-form input,.parent-request-form :is(input,select){width:100%;padding:14px;border:1px solid #d3ded7;background:#fff;font:inherit;color:#223e44}
+.parent-submit{display:flex;align-items:center;justify-content:space-between;gap:14px;background:#25483f;border:0;color:white;padding:15px 20px;font-weight:800;cursor:pointer;font-size:13px}
+.parent-submit:hover{background:#163d35}
+.parent-submit:disabled{opacity:.45;cursor:not-allowed}
+.parent-auth-form small{font-size:12px;line-height:1.6;color:#6b807f}
+.parent-error{padding:14px;background:#fff2ec;color:#934228;font-size:13px}
+.parent-success{padding:14px;background:#eff6e4;color:#3d6047;font-size:13px}
+.parent-account{display:flex;align-items:center;gap:11px;flex-wrap:wrap;background:#eaf2e7;border:1px solid #dbe8d5;padding:16px 20px;color:#3f6060}
+.parent-logged-in{display:grid;gap:27px}
+.parent-request-list{display:grid;gap:10px}
+.parent-request-list h3,.parent-request-form-wrap h3{font-size:23px;margin:0 0 10px}
+.parent-request-row{display:flex;justify-content:space-between;gap:13px;align-items:center;background:white;border:1px solid #e0e8e0;padding:16px 21px}
+.parent-request-status{padding:7px 10px;font-size:12px;font-weight:800;background:#f0f1ea;color:#627273}
+.parent-status-approved{background:#e3f1db;color:#326b37}
+.parent-status-rejected{background:#f8eae5;color:#7a4d42}
+.parent-company{background:white;border:1px solid #d6e3d9;margin-bottom:20px}
+.parent-company-heading{background:linear-gradient(120deg,#1b3c43,#2b5152);color:#fff;padding:30px}
+.parent-company-heading .parent-overline{color:#d4e990}
+.parent-company-heading h3{font:500 clamp(30px,3.6vw,45px)/1.16 'Playfair Display',Georgia,serif;margin:11px 0;color:white}
+.parent-company-heading p{color:#e6efea;font-size:14px;line-height:1.6}
+.parent-company-profile{padding:clamp(22px,3vw,34px)}
+.parent-company-profile h4{font-size:23px;margin:5px 0 16px}
+.parent-company-profile>p{font-size:14px;line-height:1.75;color:#526e70}
+.parent-profile-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin:25px 0}
+.parent-profile-grid>div{background:#f6f8f4;padding:18px;border:1px solid #e1e8df}
+.parent-profile-grid strong{font-size:12px;color:#38564c}
+.parent-profile-grid p{font-size:13px;line-height:1.7;color:#546c6c}
+.parent-member-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px}
+.parent-member-grid>div{display:flex;align-items:center;gap:12px;padding:14px;border:1px solid #dce5da}
+.parent-member-grid svg{color:#759744;flex:none}
+.parent-member-grid span{display:grid;gap:5px}
+.parent-member-grid strong{font-size:13px}
+.parent-member-grid small{color:#6a8180;font-size:12px}
+.parent-request-form-wrap{background:white;padding:clamp(22px,3vw,34px);border:1px solid #dde6dd}
+.parent-request-form-wrap>p{font-size:14px;line-height:1.7;color:#5a7071;max-width:750px}
+.parent-request-form{max-width:610px;margin-top:24px}
+.parent-locked{margin-top:34px;padding:25px;background:#eef1ec;border:1px solid #d9e0d8;color:#7a8580;display:flex;align-items:center;gap:16px}
+.parent-locked>svg{flex:none}
+.parent-locked h2{font-size:21px;margin:0 0 5px;color:#687973}
+.parent-locked p{font-size:13px;margin:0;line-height:1.7}
+.parent-locked>span{margin-left:auto;display:flex;align-items:center;gap:7px;font-size:11px;font-weight:800;flex:none;border:1px solid #cbd4c9;padding:10px}
+.parent-footer{margin-top:40px;border-top:1px solid #d9e3dc;padding-top:24px;display:flex;align-items:center;justify-content:space-between;gap:18px;flex-wrap:wrap}
+.parent-footer a{display:flex;align-items:center;gap:9px;color:#30564e;text-decoration:none;font-weight:700;font-size:13px}
+.parent-footer span{font-size:11px;color:#78908b}
+@media(max-width:810px){.parent-intro{grid-template-columns:1fr}.parent-intro-decoration{display:none}.parent-info-grid{grid-template-columns:1fr}.parent-auth-layout{grid-template-columns:1fr}.parent-locked{align-items:flex-start;flex-wrap:wrap}.parent-locked>span{margin-left:0}}
+@media(max-width:560px){.parent-header-inner{width:calc(100% - 28px);min-height:75px}.parent-emblem{width:40px;height:40px}.parent-brand{gap:9px}.parent-brand>span:last-child{padding-left:8px}.parent-brand strong{font-size:16px}.parent-brand small{font-size:9px}.parent-header-actions>span{display:none}.parent-main{width:calc(100% - 26px);padding-top:15px}.parent-intro>div:first-child{padding:26px}.parent-intro h1{font-size:40px}.parent-profile-grid{grid-template-columns:1fr}.parent-request-row{flex-direction:column;align-items:flex-start}}
