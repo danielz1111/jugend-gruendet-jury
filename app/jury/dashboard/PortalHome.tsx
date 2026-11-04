@@ -1,32 +1,260 @@
 'use client';
-import {useState} from 'react';
-import {ArrowLeft,ArrowRight,BookOpen,FileText,Presentation,ShieldCheck,Users,CalendarDays,ClipboardCheck,Settings,Phone,MapPin,Clock} from 'lucide-react';
+
+import { useState } from 'react';
+import Image from 'next/image';
+import {
+  ArrowRight, BookOpen, Building2, CalendarDays, CheckCircle2,
+  ClipboardCheck, Clock3, FileText, LogOut, MapPin, Presentation,
+  Settings, ShieldCheck, Users
+} from 'lucide-react';
 import TeamNavigator from './TeamNavigator';
 import LiveEventPanel from './LiveEventPanel';
 import PublicTeamEditor from './PublicTeamEditor';
-type Team={id:string;name:string;position:number;tagline:string|null;description:string|null;jury_photo_path:string|null;is_public:boolean};
-type Member={id:string;team_id:string;display_name:string;expert_role:string|null;display_order:number};
-type Score={team_id:string;[key:string]:string|number|null};
-type Area='home'|'intro'|'companies'|'schedule'|'admin';
-export default function PortalHome({displayName,teams,members,scores,isAdmin}:{displayName:string;teams:Team[];members:Member[];scores:Score[];isAdmin:boolean}){
- const [area,setArea]=useState<Area>('home');
- const [activeTeamId,setActiveTeamId]=useState<string|null>(null);
- const submittedCount=scores.filter(score=>Boolean(score.submitted_at)).length;
- const salutation=displayName.trim().replace(/[.!]+$/,'');
- const greeting=/^(Herr|Frau)\b/i.test(salutation)?salutation:/^D\.\s*Zech$/i.test(salutation)?'Herr Zech':salutation;
- const welcome=/^Frau\b/i.test(greeting)?'liebe '+greeting:/^Herr\b/i.test(greeting)?'lieber '+greeting:greeting;
- const navigate=(next:Area)=>{setArea(next);window.scrollTo({top:0,behavior:'smooth'})};
- const openLiveTeam=(teamId:string)=>{setActiveTeamId(teamId);navigate('companies')};
- const tiles=[{id:'companies' as const,number:'01',title:'Unternehmen & Bewertung',subtitle:'Neun Ideen. Ihr Juryurteil.',detail:'Wählen Sie ein Team und beginnen Sie direkt mit der Bewertung. Profile und Unterlagen bleiben jederzeit erreichbar.',icon:ClipboardCheck},{id:'intro' as const,number:'02',title:'Worum es geht',subtitle:'Das pädagogische Konzept',detail:'Wie Jugend gründet funktioniert, was die Jugendlichen lernen und welchen Beitrag die Jury leistet.',icon:BookOpen},{id:'schedule' as const,number:'03',title:'Unser Pitch-Tag',subtitle:'15. Januar 2027 · Landheim Ammersee',detail:'Ort, Ablauf und der aktuelle Aufruf der Teams für die Präsentationsveranstaltung.',icon:CalendarDays}];
- return <div className="jury-portal">
- {area==='home'?<><section className="jury-welcome jury-welcome-upgrade"><div className="jury-welcome-copy"><span className="demo-overline">IHR PERSÖNLICHER JURYZUGANG · LANDHEIM AMMERSEE</span><h1><span className="jury-welcome-intro">Herzlich willkommen,</span><br/><em key={welcome} className="jury-welcome-name">{welcome}.</em></h1><p>Schön, dass Sie unsere Gründerteams begleiten. Ihre Perspektive, Ihre Fragen und Ihre Erfahrung machen diesen Tag für unsere Schülerinnen und Schüler besonders wertvoll.</p><div className="jury-welcome-actions"><button type="button" className="jury-primary-action" onClick={()=>navigate('companies')}>Unternehmen bewerten <ArrowRight size={18}/></button><button type="button" className="jury-outline-action" onClick={()=>navigate('intro')}>Projekt kennenlernen <ArrowRight size={17}/></button></div><div className="jury-welcome-meta"><span><ShieldCheck size={16}/> Geschützter Jurybereich</span><span><Users size={16}/> {teams.length} Unternehmerteams</span></div></div><div className="jury-welcome-visual" role="img" aria-label="Luftaufnahme des Landheims Ammersee"><div className="jury-welcome-visual-caption"><span>LANDHEIM AMMERSEE · SCHONDORF</span><strong>Ein Ort für neue Perspektiven.</strong><small>Bildquelle: Landheim Ammersee</small></div></div></section>
-<div className="jury-home-label"><div><span className="demo-overline">IHR PERSÖNLICHER WEGWEISER</span><h2>Alles Wichtige auf einen Blick.</h2></div><p>Wählen Sie direkt den passenden Bereich. Die Bewertung steht bewusst an erster Stelle.</p></div>
-<div className="jury-home-tiles">{tiles.map(t=><button type="button" className={'jury-home-tile '+(t.id==='companies'?'jury-home-tile-featured':'')} key={t.id} onClick={()=>navigate(t.id)}><span className="jury-home-tile-top"><span>{t.number} / 03</span><t.icon size={29} strokeWidth={1.6}/></span><strong>{t.title}</strong><b>{t.subtitle}</b><p>{t.detail}</p><span className="jury-home-tile-bottom">{t.id==='companies'?'Zum Bewertungsbereich':'Bereich entdecken'} <ArrowRight size={18}/></span></button>)}</div>
-<div className="jury-dashboard-progress" aria-label="Mein Bewertungsfortschritt"><div><span>MEIN JURYFORTSCHRITT</span><strong>{submittedCount} von {teams.length} Teams bewertet</strong><p>{Math.max(0,teams.length-submittedCount)} Bewertungen noch offen · nur Ihre eigene Übersicht</p></div><div className="jury-dashboard-meter" role="progressbar" aria-label="Anteil abgegebener Bewertungen" aria-valuemin={0} aria-valuemax={teams.length} aria-valuenow={submittedCount}><span style={{width:(teams.length?100*submittedCount/teams.length:0)+'%'}}/></div></div><LiveEventPanel teams={teams} isAdmin={isAdmin} onOpenTeam={openLiveTeam}/>{isAdmin&&<div className="jury-public-editor-shortcut"><span className="demo-overline">FÜR DIE WETTBEWERBSLEITUNG</span><h2>Öffentliche Teamprofile</h2><p>Teamnamen, Kurztexte und Freigaben zentral verwalten – getrennt von Juryunterlagen und Bewertungen.</p><button type="button" className="jury-outline-action" onClick={()=>navigate('admin')}>Teamprofile bearbeiten <ArrowRight size={17}/></button></div>}</>:<><div className="jury-section-nav"><button onClick={()=>navigate('home')}><ArrowLeft size={17}/> Zur Jury-Startseite</button><div><button className={area==='intro'?'active':''} onClick={()=>navigate('intro')}>Das Projekt</button><button className={area==='companies'?'active':''} onClick={()=>navigate('companies')}>Unternehmen</button><button className={area==='schedule'?'active':''} onClick={()=>navigate('schedule')}>Pitch-Tag</button>{isAdmin&&<button className={area==='admin'?'active':''} onClick={()=>navigate('admin')}><Settings size={15}/> Administration</button>}</div></div>{area==='intro'?<section className="jury-intro jury-intro-upgrade"><span className="demo-overline">02 · DIE IDEE HINTER JUGEND GRÜNDET</span><div className="jury-intro-hero"><div><h1>Wirtschaft verstehen.<br/><em>Unternehmerisch handeln.</em></h1><p className="jury-intro-lead">Jugend gründet ist mehr als ein Wettbewerb: Junge Menschen entwickeln eigene Ideen, durchdenken betriebswirtschaftliche Fragen und lernen, Verantwortung im Team zu übernehmen. Die unternehmerische Erfahrung zählt – nicht eine echte Firmengründung.</p></div><div className="jury-intro-hero-image" role="img" aria-label="Campus des Landheims Ammersee"><span>LANDHEIM AMMERSEE · LERNEN MIT KOPF, HERZ UND HAND</span></div></div>
-<div className="jury-intro-heading"><span className="demo-overline">DAS PÄDAGOGISCHE KONZEPT</span><h2>Was die Jugendlichen dabei lernen.</h2></div>
-<div className="jury-intro-steps jury-concept-steps"><article><span>01 / EIGENVERANTWORTUNG</span><BookOpen size={26}/><h2>Probleme erkennen</h2><p>Die Teams entdecken Bedürfnisse, untersuchen Zielgruppen und entwickeln einen eigenständigen Lösungsansatz.</p></article><article><span>02 / UNTERNEHMERISCHES DENKEN</span><Users size={26}/><h2>Ideen durchdenken</h2><p>Markt, Marketing, Finanzierung, Organisation und Machbarkeit werden in einem Businessplan zusammengeführt.</p></article><article><span>03 / PERSÖNLICHKEIT</span><Presentation size={26}/><h2>Überzeugend auftreten</h2><p>Im Pitch vertreten die Jugendlichen ihre Entscheidungen, hören kritische Fragen und lernen, nachvollziehbar zu argumentieren.</p></article></div>
-<div className="jury-concept-phases"><span className="demo-overline">SO FUNKTIONIERT DER WETTBEWERB</span><div className="jury-concept-phase-grid"><div><span className="jury-phase-number">PHASE 01</span><h3>Geschäftsidee & Businessplan</h3><p>Im ersten Schulhalbjahr entwickeln die Teams ihre Ideen und ein unternehmerisches Gesamtkonzept.</p></div><div><span className="jury-phase-number">PHASE 02</span><h3>Planspiel & Unternehmensführung</h3><p>Im zweiten Schulhalbjahr erproben sie betriebswirtschaftliche Entscheidungen in einem virtuellen Unternehmensplanspiel.</p></div></div><p className="jury-concept-footnote">Unser schulinterner Pitch-Tag am 15. Januar 2027 ist eine eigene Präsentationsveranstaltung am Landheim; er ist nicht mit einem offiziellen Pitch-Event des Bundeswettbewerbs gleichzusetzen.</p></div>
-<div className="jury-concept-juror"><div><span className="demo-overline">IHRE ROLLE IN DER JURY</span><h2>Neugierig fragen. Fair beurteilen. Mut machen.</h2><p>Sie erhalten vorab Einblick in die Unternehmensprofile und können die Businesspläne als Hintergrundinformation nutzen. Am Pitch-Tag beobachten Sie die Präsentationen und die Antworten auf Ihre Fragen. Ihre Bewertung erfolgt persönlich und vertraulich im Juryportal.</p></div><div className="jury-concept-juror-aside"><strong>Worauf kommt es an?</strong><p>Verständliche Darstellung der Geschäftsidee, nachvollziehbare Argumente, reflektierte Entscheidungen und ein souveräner Umgang mit Fragen. Kurze Orientierungshilfen erläutern die Kriterien direkt im Bewertungsbogen.</p><p>Es wird keine gesonderte Vorab-Punktevergabe für den eingereichten Businessplan verlangt.</p></div></div>
-<div className="jury-concept-links"><strong>Zum Weiterlesen</strong><p>Für die fachliche Einordnung finden Sie hier die offiziellen Hintergrundinformationen – ohne Umweg über einzelne Businesspläne.</p><div><a href="https://www.jugend-gruendet.de/wettbewerb/" target="_blank" rel="noopener noreferrer">JUGEND GRÜNDET: Idee und Ablauf <ArrowRight size={17}/></a><a href="https://www.landheim-ammersee.de/de/ueber-das-landheim" target="_blank" rel="noopener noreferrer">Landheim Ammersee: Pädagogischer Ansatz <ArrowRight size={17}/></a></div></div></section>:<>{area==='admin'&&isAdmin?<section className="jury-intro"><span className="demo-overline">ADMINISTRATION · WETTBEWERBSLEITUNG</span><h1>Teamprofile verwalten.</h1><p className="jury-intro-lead">Bearbeiten Sie die öffentlich sichtbaren Namen und Kurzbeschreibungen aller neun Teams. Änderungen werden erst beim bewussten Speichern übernommen. Die Veröffentlichung lässt sich für jedes Team einzeln ausschalten.</p><PublicTeamEditor teams={teams}/><div className="jury-admin-materials-heading"><span className="demo-overline">NUR FÜR DEN GESCHÜTZTEN JURYBEREICH</span><h2>Juryunterlagen verwalten</h2><p>Businesspläne und Anlagen bleiben im privaten Bereich. ZIP-Importe und Datei-Uploads erfolgen ausschließlich hier.</p></div><TeamNavigator teams={teams} members={members} initialScores={scores} isAdmin={isAdmin} adminMode/></section>:area==='schedule'?<section className="jury-intro"><span className="demo-overline">03 · DER PITCH-TAG</span><h1>Unser Pitch-Tag am Landheim.</h1><p className="jury-intro-lead">15. Januar 2027 · Vortragssaal · 13:15–17:30 Uhr</p><div className="jury-schedule"><div className="jury-schedule-heading"><Clock size={24}/><div><strong>Vorläufiger Zeitrahmen</strong><p>Die Einteilung der einzelnen Teams ist ein Platzhalter und wird nach Festlegung der Reihenfolge ergänzt.</p></div></div>{[{time:'13:15 Uhr',name:'Begrüßung und Einführung',detail:'Ankommen, organisatorische Hinweise und Vorstellung der Jury'},{time:'Anschließend',name:'Präsentationen der neun Unternehmerteams',detail:'Je Team: Pitch mit Expertenbereichen A–E beziehungsweise D/E sowie anschließende Juryfragen. Reihenfolge und Einzelzeiten folgen.'},{time:'Bis 17:30 Uhr',name:'Juryberatung und Abschluss',detail:'Abschließende Beratung und weiterer Ablauf – genaue Zeiten werden noch bestätigt.'}].map((item,i)=><div className="jury-schedule-row" key={i}><span>{item.time}</span><div><strong>{item.name}</strong><p>{item.detail}</p></div></div>)}</div><LiveEventPanel teams={teams} isAdmin={isAdmin} onOpenTeam={openLiveTeam}/><div className="jury-contact"><div><MapPin size={21}/><span><strong>Veranstaltungsort</strong><small>Vortragssaal · Landheim Ammersee</small></span></div><div><Phone size={21}/><span><strong>Kontakt am Wettbewerbstag: D. Zech</strong><small>Mobilnummer: [wird ergänzt]</small><small>E-Mail: [wird ergänzt]</small></span></div></div><button type="button" onClick={()=>navigate('companies')}>Unternehmen öffnen <ArrowRight size={16}/></button></section>:<><div className="jury-area-heading"><span className="demo-overline">01 · TEAMPROFILE UND JURYBEWERTUNG</span><h1>Neun Ideen. Ihre Perspektive.</h1><p>Wählen Sie ein Unternehmen. Die Bewertung wird zuerst geöffnet; das Unternehmensprofil und die Originalunterlagen erreichen Sie daneben über eigene Register.</p></div><TeamNavigator teams={teams} members={members} initialScores={scores} isAdmin={isAdmin} initialSection="pitch" activeTeamId={activeTeamId}/></>}</>}</>}
- </div>
+import './JuryStructure.css';
+
+type Team = {
+  id:string;name:string;position:number;tagline:string|null;
+  description:string|null;jury_photo_path:string|null;is_public:boolean
+};
+type Member = {id:string;team_id:string;display_name:string;expert_role:string|null;display_order:number};
+type Score = {team_id:string;[key:string]:string|number|null};
+type Area = 'rating'|'companies'|'essentials'|'admin';
+
+const navigation = [
+  {id:'rating' as const,title:'Bewertung',label:'01',icon:ClipboardCheck},
+  {id:'companies' as const,title:'Unternehmen & Start-ups',label:'02',icon:Building2},
+  {id:'essentials' as const,title:'Alles Wichtige in Kürze',label:'03',icon:CalendarDays}
+];
+
+export default function PortalHome({
+  displayName,teams,members,scores,isAdmin
+}:{
+  displayName:string;teams:Team[];members:Member[];scores:Score[];isAdmin:boolean
+}){
+  const [area,setArea]=useState<Area>('rating');
+  const [activeTeamId,setActiveTeamId]=useState<string|null>(null);
+  const salutation=displayName.trim().replace(/[.!]+$/,'');
+  const greeting=/^(Herr|Frau)\b/i.test(salutation)
+    ?salutation:/^D\.\s*Zech$/i.test(salutation)?'Herr Zech':salutation;
+  const welcome=/^Frau\b/i.test(greeting)
+    ?'liebe '+greeting:/^Herr\b/i.test(greeting)?'lieber '+greeting:greeting;
+  const submittedCount=scores.filter(score=>Boolean(score.submitted_at)).length;
+  const navigate=(next:Area)=>{
+    setArea(next);
+    window.scrollTo({top:0,behavior:'smooth'});
+  };
+  const openLiveTeam=(teamId:string)=>{
+    setActiveTeamId(teamId);
+    navigate('rating');
+  };
+
+  return (
+    <div className="jury-v3" id="jury-top">
+      <header className="jury-v3-header">
+        <div className="jury-v3-header-inner">
+          <a href="/" className="jury-v3-identity" aria-label="Zur Jugend-gründet-Startseite">
+            <span className="jury-v3-logo-wrap">
+              <Image
+                src="https://www.landheim-ammersee.de/themes/master_theme/logo.svg"
+                alt="Landheim Ammersee"
+                width={182} height={58} unoptimized priority
+                className="jury-v3-logo"
+              />
+            </span>
+            <span className="jury-v3-brand">
+              <strong>Landheim Ammersee</strong>
+              <span>Fachbereich Wirtschaft und Recht</span>
+              <small>JUGEND GRÜNDET · JURYPORTAL</small>
+            </span>
+          </a>
+          <nav className="jury-v3-header-nav" aria-label="Juryportal – Hauptbereiche">
+            {navigation.map(item=><button key={item.id} type="button"
+              onClick={()=>navigate(item.id)}
+              className={area===item.id?'jury-v3-nav-link active':'jury-v3-nav-link'}
+              aria-current={area===item.id?'page':undefined}>
+              <span className="jury-v3-nav-number">{item.label}</span>
+              <span>{item.title}</span>
+            </button>)}
+            {isAdmin&&<button type="button" onClick={()=>navigate('admin')}
+              className={area==='admin'?'jury-v3-nav-link jury-v3-admin-tab active':'jury-v3-nav-link jury-v3-admin-tab'}
+              aria-current={area==='admin'?'page':undefined}>
+              <Settings size={16} aria-hidden="true"/> Verwaltung
+            </button>}
+          </nav>
+          <form method="post" action="/api/jury/logout" className="jury-v3-logout">
+            <button type="submit" title="Vom Juryportal abmelden">
+              <LogOut size={17} aria-hidden="true"/><span>Abmelden</span>
+            </button>
+          </form>
+        </div>
+      </header>
+
+      <main className="jury-v3-content">
+        <section className="jury-v3-welcome" aria-labelledby="jury-v3-welcome-title">
+          <div className="jury-v3-welcome-copy">
+            <span className="jury-v3-overline">IHR PERSÖNLICHER JURYZUGANG · LANDHEIM AMMERSEE</span>
+            <h1 id="jury-v3-welcome-title">
+              Herzlich willkommen,<br/><em>{welcome}.</em>
+            </h1>
+            <p>Schön, dass Sie unsere Gründerteams begleiten. Ihre Erfahrung und Ihre Fragen
+              geben den Ideen der Schülerinnen und Schüler wertvolle Impulse.</p>
+            <div className="jury-v3-welcome-foot">
+              <span><ShieldCheck size={16} aria-hidden="true"/> Geschützter Bereich</span>
+              <span><Users size={16} aria-hidden="true"/> {teams.length} Unternehmerteams</span>
+            </div>
+          </div>
+          <div className="jury-v3-welcome-image" role="img" aria-label="Luftbild des Landheim-Campus am Ammersee">
+            <span>LANDHEIM AMMERSEE · SCHONDORF</span>
+          </div>
+        </section>
+
+        <section className="jury-v3-section" aria-live="polite">
+          {area==='rating'&&<>
+            <div className="jury-v3-heading">
+              <span className="jury-v3-overline">01 / IHR JURYURTEIL</span>
+              <h2>Bewertung.</h2>
+              <p>Wählen Sie ein Team und bewerten Sie dessen Präsentation und die Antworten
+                auf die Juryfragen. Ihre Punkte und persönlichen Notizen sind vertraulich.
+                Die Businesspläne dienen zur Vorbereitung – nicht als eigene Vorabbewertung.</p>
+            </div>
+            <div className="jury-v3-score-status">
+              <div>
+                <span>MEIN BEWERTUNGSFORTSCHRITT</span>
+                <strong>{submittedCount} von {teams.length} Teams abgeschlossen</strong>
+                <small>{Math.max(0,teams.length-submittedCount)} Bewertungen noch offen</small>
+              </div>
+              <div className="jury-v3-score-meter" role="progressbar"
+                aria-label="Abgegebene Bewertungen" aria-valuemin={0}
+                aria-valuemax={teams.length} aria-valuenow={submittedCount}>
+                <span style={{width:(teams.length?submittedCount*100/teams.length:0)+'%'}}/>
+              </div>
+            </div>
+          </>}
+          {area==='companies'&&<>
+            <div className="jury-v3-heading">
+              <span className="jury-v3-overline">02 / DIE JUNGEN UNTERNEHMEN</span>
+              <h2>Unternehmen &amp; Start-ups.</h2>
+              <p>Lernen Sie die neun Geschäftsideen, Unternehmensprofile und Teammitglieder
+                kennen. Die eingereichten Businesspläne und Anlagen finden Sie
+                im geschützten Unterlagenbereich des jeweils ausgewählten Teams.</p>
+            </div>
+          </>}
+
+          {/* Keep the workspace mounted when changing sections so locally held
+              assessment state is not discarded. Switch its active inner tab. */}
+          <div className="jury-v3-workspace" hidden={area!=='rating'&&area!=='companies'}>
+            <TeamNavigator
+              teams={teams} members={members} initialScores={scores}
+              isAdmin={isAdmin}
+              initialSection={area==='companies'?'overview':'pitch'}
+              activeTeamId={activeTeamId}
+            />
+          </div>
+
+          {area==='essentials'&&<>
+            <div className="jury-v3-heading">
+              <span className="jury-v3-overline">03 / IHR WEGWEISER</span>
+              <h2>Alles Wichtige in Kürze.</h2>
+              <p>Termin, Ablauf, Ort und die wichtigsten Informationen für
+                Ihren Einsatz als Jurymitglied – übersichtlich auf einer Seite.</p>
+            </div>
+            <div className="jury-v3-event">
+              <div className="jury-v3-event-date">
+                <CalendarDays size={26} aria-hidden="true"/>
+                <strong>15.</strong>
+                <span>JANUAR 2027</span>
+                <small>FREITAG</small>
+              </div>
+              <div className="jury-v3-event-details">
+                <span className="jury-v3-overline">UNSER SCHULINTERNER PITCH-TAG</span>
+                <h3>Die Bühne gehört den Ideen.</h3>
+                <div className="jury-v3-event-facts">
+                  <p><Clock3 size={20} aria-hidden="true"/> 13:15–17:30 Uhr</p>
+                  <p><MapPin size={20} aria-hidden="true"/> Vortragssaal · Landheim Ammersee</p>
+                </div>
+              </div>
+            </div>
+
+            <div className="jury-v3-info-grid">
+              <article>
+                <span>01 / ANKOMMEN</span>
+                <Clock3 size={24} aria-hidden="true"/>
+                <h3>Beginn um 13:15 Uhr</h3>
+                <p>Begrüßung, organisatorische Hinweise und Vorstellung der Jury.</p>
+              </article>
+              <article>
+                <span>02 / PITCHES</span>
+                <Presentation size={24} aria-hidden="true"/>
+                <h3>Neun Teams präsentieren</h3>
+                <p>Präsentationen und anschließende Fragen. Die Teamreihenfolge
+                  und die Einzelzeiten werden noch ergänzt.</p>
+              </article>
+              <article>
+                <span>03 / ABSCHLUSS</span>
+                <CheckCircle2 size={24} aria-hidden="true"/>
+                <h3>Juryberatung bis 17:30 Uhr</h3>
+                <p>Gemeinsamer Abschluss. Genaue Zeiten folgen nach
+                  Festlegung des Veranstaltungsablaufs.</p>
+              </article>
+            </div>
+
+            <LiveEventPanel teams={teams} isAdmin={isAdmin} onOpenTeam={openLiveTeam}/>
+
+            <div className="jury-v3-essential-bottom">
+              <article>
+                <BookOpen size={23} aria-hidden="true"/>
+                <div>
+                  <h3>Worum geht es bei Jugend gründet?</h3>
+                  <p>Die Schülerinnen und Schüler entwickeln eigenständige Geschäftsideen,
+                    arbeiten in Teams an Businessplänen und trainieren unternehmerisches Denken.
+                    Die Jury beurteilt am Pitch-Tag die Präsentation und die Antworten
+                    auf ihre Fragen.</p>
+                  <a href="https://www.jugend-gruendet.de/wettbewerb/"
+                    target="_blank" rel="noopener noreferrer">
+                    Hintergrund zum Wettbewerb <ArrowRight size={16} aria-hidden="true"/>
+                  </a>
+                </div>
+              </article>
+              <article>
+                <FileText size={23} aria-hidden="true"/>
+                <div>
+                  <h3>Unterlagen und Bewertungen</h3>
+                  <p>Businesspläne und Anlagen sind im Bereich „Unternehmen & Start-ups“
+                    je Team hinterlegt. Die persönlichen Bewertungsbögen befinden sich
+                    ausschließlich im Bereich „Bewertung“.</p>
+                  <button type="button" onClick={()=>navigate('companies')}>
+                    Unternehmen ansehen <ArrowRight size={16} aria-hidden="true"/>
+                  </button>
+                </div>
+              </article>
+            </div>
+          </>}
+
+          {area==='admin'&&isAdmin&&<>
+            <div className="jury-v3-heading">
+              <span className="jury-v3-overline">NUR FÜR DIE WETTBEWERBSLEITUNG</span>
+              <h2>Verwaltung.</h2>
+              <p>Öffentliche Teamprofile und vertrauliche Juryunterlagen verwalten.
+                Änderungen an den Teamprofilen werden erst nach dem Speichern veröffentlicht.</p>
+            </div>
+            <div className="jury-v3-admin-content">
+              <PublicTeamEditor teams={teams}/>
+              <div className="jury-v3-admin-divider">
+                <span className="jury-v3-overline">VERTRAULICHE DOKUMENTE</span>
+                <h3>Businesspläne und Juryunterlagen</h3>
+                <p>Uploads und ZIP-Importe bleiben im geschützten Administrationsbereich.</p>
+              </div>
+              <TeamNavigator teams={teams} members={members}
+                initialScores={scores} isAdmin={isAdmin} adminMode/>
+            </div>
+          </>}
+        </section>
+
+        <footer className="jury-v3-footer">
+          <span>LANDHEIM AMMERSEE · FACHBEREICH WIRTSCHAFT UND RECHT</span>
+          <a href="/">Zur öffentlichen Projektseite <ArrowRight size={16} aria-hidden="true"/></a>
+        </footer>
+      </main>
+    </div>
+  );
 }

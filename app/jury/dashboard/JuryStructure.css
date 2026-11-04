@@ -1,0 +1,283 @@
+/* Juryportal – accessible three-part navigation, inspired by the public
+   Landheim visual language. Deliberately scoped: public homepage unchanged. */
+.jury-v3{
+  --jury-ink:#243d42;--jury-petrol:#1b343d;--jury-lime:#bdd837;
+  --jury-paper:#f6f8f5;--jury-line:#dce5de;--jury-muted:#64777c;
+  background:var(--jury-paper);color:var(--jury-ink);min-height:100vh;
+  font-family:'DM Sans',Arial,sans-serif;
+}
+.jury-v3 *{box-sizing:border-box}
+.jury-v3 button{cursor:pointer;font-family:inherit}
+.jury-v3-header{
+  position:sticky;top:0;z-index:90;
+  background:rgba(255,255,255,.97);
+  border-bottom:1px solid #dfe7df;
+  box-shadow:0 5px 25px #19354012;
+  -webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);
+}
+.jury-v3-header-inner{
+  width:min(100% - 64px,1450px);margin:0 auto;
+  display:grid;grid-template-columns:minmax(310px,1fr) auto auto;
+  gap:clamp(15px,2vw,31px);align-items:center;min-height:94px;
+}
+.jury-v3-identity{
+  display:flex;align-items:center;gap:17px;min-width:0;
+  text-decoration:none;color:inherit;
+}
+.jury-v3-logo-wrap{width:169px;height:67px;flex:none;display:flex;align-items:center}
+.jury-v3-logo{
+  display:block;width:100%;height:100%;object-fit:contain;
+  filter:brightness(0) saturate(100%) invert(83%) sepia(44%) saturate(687%) hue-rotate(25deg) brightness(97%) contrast(87%);
+}
+.jury-v3-brand{
+  display:flex;flex-direction:column;gap:4px;
+  border-left:2px solid var(--jury-lime);padding-left:15px;min-width:0;
+}
+.jury-v3-brand strong{
+  font:500 clamp(18px,1.7vw,23px)/1.17 'Playfair Display',Georgia,serif;
+  color:#213e43;letter-spacing:-.025em;
+}
+.jury-v3-brand>span{
+  font-weight:700;font-size:12px;line-height:1.4;color:#334c51;
+}
+.jury-v3-brand small{
+  color:#6b8277;font-size:9px;font-weight:800;letter-spacing:.1em;
+}
+.jury-v3-header-nav{
+  display:flex;align-items:center;gap:4px;
+}
+.jury-v3-nav-link{
+  display:inline-flex;align-items:center;gap:7px;justify-content:center;
+  background:transparent;border:0;border-bottom:3px solid transparent;
+  color:#36515a;font-size:12px;font-weight:800;
+  padding:25px 11px 22px;line-height:1.28;white-space:nowrap;
+  transition:background .18s,color .18s,border-color .18s;
+}
+.jury-v3-nav-link:hover{background:#f0f5ed}
+.jury-v3-nav-link.active{border-bottom-color:var(--jury-lime);color:#1e3941;background:#f4f7ef}
+.jury-v3-nav-number{font-size:9px;font-weight:800;color:#8ea43c;letter-spacing:.1em}
+.jury-v3-admin-tab{font-size:11px}
+.jury-v3-logout button{
+  display:flex;align-items:center;gap:7px;justify-content:center;
+  background:transparent;border:1px solid #d8e0dc;
+  padding:11px 13px;font-size:12px;font-weight:750;color:#455c61;
+  transition:background .18s;
+}
+.jury-v3-logout button:hover{background:#eaf0e7}
+.jury-v3 a:focus-visible,.jury-v3 button:focus-visible{
+  outline:3px solid #a5bb35;outline-offset:3px;
+}
+.jury-v3-content{
+  width:min(100% - 76px,1360px);margin:auto;padding:39px 0 64px;
+}
+.jury-v3-welcome{
+  display:grid;grid-template-columns:minmax(0,1.35fr) minmax(260px,.65fr);
+  min-height:325px;background:var(--jury-petrol);
+  overflow:hidden;box-shadow:0 24px 64px #152f3a1a;
+}
+.jury-v3-welcome-copy{
+  padding:clamp(32px,4.5vw,62px);
+  background:radial-gradient(ellipse at 100% 15%,#52706b40,transparent 60%),
+    linear-gradient(115deg,#1e3b43,#19333c);
+  color:#fff;position:relative;z-index:1;
+  display:flex;flex-direction:column;align-items:flex-start;justify-content:center;
+}
+.jury-v3-overline{
+  display:block;color:#6d876d;letter-spacing:.15em;
+  font-size:11px;font-weight:800;line-height:1.5;
+}
+.jury-v3-welcome-copy>.jury-v3-overline{color:#d9e997;font-size:10px}
+.jury-v3-welcome h1{
+  font:500 clamp(37px,4.1vw,59px)/1.09 'Playfair Display',Georgia,serif;
+  letter-spacing:-.045em;margin:20px 0 15px;
+}
+.jury-v3-welcome h1 em{font-weight:400;color:#dce8ae}
+.jury-v3-welcome p{
+  font-size:15px;line-height:1.75;color:#e2ebe9;
+  max-width:720px;margin:0;
+}
+.jury-v3-welcome-foot{
+  display:flex;align-items:center;gap:23px;flex-wrap:wrap;
+  margin-top:23px;font-size:11px;font-weight:700;color:#e5eed9;
+}
+.jury-v3-welcome-foot>span{display:inline-flex;align-items:center;gap:9px}
+.jury-v3-welcome-foot svg{color:#bdd837}
+.jury-v3-welcome-image{
+  position:relative;min-height:300px;
+  background:linear-gradient(90deg,#17313950,#172d2f0c),
+    url('https://www.landheim-ammersee.de/sites/default/files/styles/image_16_6__1920_720/public/media/images/imgi_1_Landheim-Ammersee-grosser-naturnaher-Campus-direkt-am-See-scaled.jpg?h=d1cb525d&itok=rJDNVaZV')
+    center/cover no-repeat;
+}
+.jury-v3-welcome-image>span{
+  position:absolute;bottom:19px;right:19px;
+  font-size:9px;letter-spacing:.12em;font-weight:800;color:#fff;
+  background:#13333ac4;padding:9px 12px;
+}
+.jury-v3-section{min-height:600px;padding:44px 0 0}
+.jury-v3-heading{max-width:900px;margin-bottom:26px}
+.jury-v3-heading h2{
+  font:500 clamp(37px,4vw,61px)/1.1 'Playfair Display',Georgia,serif;
+  letter-spacing:-.04em;color:#263f46;margin:12px 0 14px;
+}
+.jury-v3-heading p{
+  color:#5e747b;font-size:15px;line-height:1.85;margin:0;max-width:860px;
+}
+.jury-v3-score-status{
+  display:grid;grid-template-columns:minmax(260px,1fr) minmax(140px,.85fr);
+  align-items:center;gap:28px;
+  background:#fff;border:1px solid var(--jury-line);
+  padding:20px 27px;margin:25px 0 32px;
+}
+.jury-v3-score-status>div:first-child{
+  display:flex;flex-direction:column;gap:5px;
+}
+.jury-v3-score-status>div:first-child>span{
+  font-size:10px;font-weight:800;letter-spacing:.14em;color:#71877f;
+}
+.jury-v3-score-status strong{font-size:20px;color:#263e43}
+.jury-v3-score-status small{font-size:12px;color:#6b7f81}
+.jury-v3-score-meter{
+  background:#e8eee7;height:10px;overflow:hidden;border-radius:12px;
+}
+.jury-v3-score-meter>span{
+  display:block;height:100%;background:linear-gradient(90deg,#75a392,var(--jury-lime));
+  transition:width .3s ease;
+}
+.jury-v3-workspace[hidden]{display:none!important}
+.jury-v3-workspace{margin:12px 0 35px}
+.jury-v3-workspace .jury-team-picker{border-radius:0}
+.jury-v3-workspace .jury-wide-shell{border-radius:0}
+.jury-v3-workspace .jury-team-tile:focus-visible{
+  outline:3px solid #bdd837;outline-offset:2px;
+}
+.jury-v3-event{
+  display:grid;grid-template-columns:225px minmax(0,1fr);
+  background:linear-gradient(117deg,#1e3c42,#213b48);color:white;margin:26px 0 22px;
+}
+.jury-v3-event-date{
+  padding:26px 25px 25px;background:#152f38;
+  display:flex;flex-direction:column;align-items:flex-start;
+}
+.jury-v3-event-date svg{color:var(--jury-lime)}
+.jury-v3-event-date strong{
+  font:500 92px/.95 'Playfair Display',Georgia,serif;
+  letter-spacing:-.09em;color:#e4edbc;margin:15px 0 8px;
+}
+.jury-v3-event-date span{font-size:16px;font-weight:800;letter-spacing:.14em}
+.jury-v3-event-date small{margin-top:12px;font-size:10px;letter-spacing:.16em;color:#cbded4}
+.jury-v3-event-details{
+  padding:clamp(28px,3.6vw,50px);display:flex;flex-direction:column;justify-content:center;
+}
+.jury-v3-event-details .jury-v3-overline{color:#cde08b}
+.jury-v3-event-details h3{
+  font:500 clamp(28px,3vw,43px)/1.14 'Playfair Display',Georgia,serif;
+  letter-spacing:-.025em;margin:12px 0 20px;color:#fff;
+}
+.jury-v3-event-facts{display:flex;flex-wrap:wrap;gap:12px 24px}
+.jury-v3-event-facts p{display:flex;gap:9px;align-items:center;font-size:14px;color:#ebf0e8;margin:0}
+.jury-v3-event-facts svg{color:#d4e88e;flex:none}
+.jury-v3-info-grid{
+  display:grid;grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:15px;margin:20px 0 29px;
+}
+.jury-v3-info-grid article{
+  padding:28px;background:#fff;border:1px solid var(--jury-line);
+  box-shadow:0 10px 33px #233e4410;
+}
+.jury-v3-info-grid article>span{font-size:10px;color:#7c8f84;font-weight:800;letter-spacing:.13em}
+.jury-v3-info-grid article>svg{display:block;color:#96ad3e;margin-top:19px}
+.jury-v3-info-grid h3{font-size:20px;margin:13px 0 9px;color:#273f45}
+.jury-v3-info-grid p{font-size:13px;color:#64777b;line-height:1.75;margin:0}
+.jury-v3-essential-bottom{
+  display:grid;grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:16px;margin:29px 0;
+}
+.jury-v3-essential-bottom article{
+  display:flex;gap:16px;padding:26px;
+  border:1px solid var(--jury-line);background:#fff;
+}
+.jury-v3-essential-bottom article>svg{color:#799849;flex:none}
+.jury-v3-essential-bottom h3{font-size:19px;margin:0 0 10px}
+.jury-v3-essential-bottom p{margin:0 0 14px;font-size:13px;line-height:1.75;color:#64777b}
+.jury-v3-essential-bottom a,.jury-v3-essential-bottom button{
+  display:inline-flex;align-items:center;gap:9px;color:#284f48;
+  text-decoration:none;font-size:13px;font-weight:800;
+  background:none;border:0;padding:0;
+}
+.jury-v3-admin-content{display:grid;gap:28px}
+.jury-v3-admin-divider{margin:15px 0 0;border-top:1px solid #ccd9cd;padding-top:25px}
+.jury-v3-admin-divider h3{font-size:28px;margin:8px 0}
+.jury-v3-admin-divider p{font-size:13px;color:#64777b}
+.jury-v3-footer{
+  border-top:1px solid #d6e0d7;margin-top:52px;
+  display:flex;justify-content:space-between;align-items:center;gap:20px;
+  flex-wrap:wrap;padding-top:23px;
+}
+.jury-v3-footer span{
+  color:#71867f;font-size:10px;letter-spacing:.12em;font-weight:800;
+}
+.jury-v3-footer a{
+  color:#345f56;display:flex;align-items:center;gap:9px;
+  font-weight:750;text-decoration:none;font-size:12px;
+}
+@media(max-width:1250px){
+  .jury-v3-header-inner{
+    grid-template-columns:minmax(0,1fr) auto;
+    grid-template-areas:"brand logout" "nav nav";
+    row-gap:0;
+  }
+  .jury-v3-identity{grid-area:brand;padding-top:8px}
+  .jury-v3-header-nav{grid-area:nav;justify-content:center;border-top:1px solid #edf1e9}
+  .jury-v3-logout{grid-area:logout}
+  .jury-v3-nav-link{padding:11px 15px 13px}
+}
+@media(max-width:850px){
+  .jury-v3-header-inner{width:calc(100% - 32px)}
+  .jury-v3-content{width:calc(100% - 34px);padding-top:20px}
+  .jury-v3-welcome{grid-template-columns:1fr}
+  .jury-v3-welcome-image{min-height:180px}
+  .jury-v3-welcome-copy{padding:32px}
+  .jury-v3-info-grid{grid-template-columns:1fr}
+  .jury-v3-info-grid article{padding:24px}
+  .jury-v3-essential-bottom{grid-template-columns:1fr}
+}
+@media(max-width:600px){
+  .jury-v3-header-inner{width:calc(100% - 24px);gap:3px}
+  .jury-v3-logo-wrap{width:93px;height:47px}
+  .jury-v3-identity{gap:9px}
+  .jury-v3-brand{padding-left:9px}
+  .jury-v3-brand strong{font-size:15px}
+  .jury-v3-brand>span{font-size:9px}
+  .jury-v3-brand small{font-size:7px;letter-spacing:.05em}
+  .jury-v3-logout button{padding:9px;font-size:11px}
+  .jury-v3-logout button span{display:none}
+  .jury-v3-header-nav{
+    overflow-x:auto;justify-content:flex-start;width:100%;
+    scrollbar-width:thin;gap:0;
+  }
+  .jury-v3-nav-link{padding:11px 12px;font-size:11px;white-space:nowrap}
+  .jury-v3-nav-number{display:none}
+  .jury-v3-content{width:calc(100% - 26px);padding-top:14px}
+  .jury-v3-welcome-copy{padding:25px 22px}
+  .jury-v3-welcome h1{font-size:clamp(31px,8vw,42px);margin:13px 0}
+  .jury-v3-welcome p{font-size:13px}
+  .jury-v3-welcome-foot{gap:11px;margin-top:17px;font-size:10px}
+  .jury-v3-welcome-image{min-height:125px}
+  .jury-v3-section{padding-top:29px}
+  .jury-v3-heading h2{font-size:clamp(30px,8vw,43px)}
+  .jury-v3-heading p{font-size:13px}
+  .jury-v3-score-status{grid-template-columns:1fr;gap:14px;padding:19px}
+  .jury-v3-score-status strong{font-size:17px}
+  .jury-v3-event{grid-template-columns:1fr}
+  .jury-v3-event-date{display:grid;grid-template-columns:auto 1fr;gap:4px 14px;align-items:center}
+  .jury-v3-event-date strong{grid-column:1;grid-row:1/4;font-size:75px;margin:0}
+  .jury-v3-event-date svg{display:none}
+  .jury-v3-event-date span,.jury-v3-event-date small{grid-column:2}
+  .jury-v3-event-date small{margin-top:0}
+  .jury-v3-event-details{padding:26px}
+  .jury-v3-event-details h3{font-size:29px}
+  .jury-v3-footer span{font-size:9px}
+}
+@media(prefers-reduced-motion:reduce){
+  .jury-v3-nav-link,.jury-v3-score-meter>span{transition:none}
+}

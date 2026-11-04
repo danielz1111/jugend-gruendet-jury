@@ -26,5 +26,24 @@ export default async function Dashboard(){
  if(!session)redirect('/jury');
  let teams:Team[]=[];let members:Member[]=[];let scores:Score[]=[];let error=false;
  try{[teams,members,scores]=await Promise.all([getTeams(session.token),getMembers(session.token),getScores(session.token)])}catch{error=true}
- return <main className="demo"><header className="demo-header"><Link href="/">← Zur Website</Link><strong>JUGEND GRÜNDET <span> / JURYPORTAL</span></strong><form action="/api/jury/logout" method="post"><button className="jury-logout">Abmelden</button></form></header>{error?<section className="jury-portal"><div role="alert" className="demo-score"><h2>Verbindung vorübergehend nicht verfügbar</h2><p>Die Teamdaten konnten nicht geladen werden. Bitte versuchen Sie es später erneut.</p></div></section>:<PortalHome displayName={session.displayName} teams={teams} members={members} scores={scores} isAdmin={session.isAdmin}/>}</main>;
+ return error
+  ? <main className="demo">
+      <header className="demo-header">
+        <Link href="/">← Zur Website</Link>
+        <strong>JUGEND GRÜNDET <span> / JURYPORTAL</span></strong>
+        <form action="/api/jury/logout" method="post">
+          <button className="jury-logout">Abmelden</button>
+        </form>
+      </header>
+      <section className="jury-portal">
+        <div role="alert" className="demo-score">
+          <h2>Verbindung vorübergehend nicht verfügbar</h2>
+          <p>Die Teamdaten konnten nicht geladen werden. Bitte versuchen Sie es später erneut.</p>
+        </div>
+      </section>
+    </main>
+  : <main className="demo">
+      <PortalHome displayName={session.displayName} teams={teams} members={members}
+        scores={scores} isAdmin={session.isAdmin}/>
+    </main>;
 }
