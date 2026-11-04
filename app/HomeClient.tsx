@@ -12,19 +12,19 @@ type LandingTeam = { id: string; name: string; position: number; published: bool
 
 const heroSlides = [
   {
-    image: 'https://www.landheim-ammersee.de/sites/default/files/media/images/Landheim-Ammersee-Landheim%20Campus%20-%20Scho%CC%88ner%20gehts%20nicht%20-Luftaufnahme%20-%20Timm%20Schro%CC%88der%20-%20Landheim%20Ammersee%20Campus%202.jpg',
-    label: 'Landheim-Campus aus der Luft',
-    position: 'center 46%'
+    image: 'https://www.landheim-ammersee.de/sites/default/files/media/images/landheim-ammersee-og-image-ueber-das-landheim-luftbild.jpg',
+    label: 'Landheim-Campus mit Blick auf den Ammersee',
+    position: 'center 48%'
   },
   {
-    image: 'https://www.landheim-ammersee.de/sites/default/files/media/images/Landheim%20im%20Fr%C3%BChling.jpg',
-    label: 'Haupthaus im Frühling',
-    position: 'center 52%'
+    image: 'https://www.landheim-ammersee.de/sites/default/files/media/images/1-lebendiges-lernen-Landheim-Lernorte-1149.jpg',
+    label: 'Gemeinsam lernen und Ideen entwickeln',
+    position: 'center 43%'
   },
   {
-    image: 'https://www.landheim-ammersee.de/sites/default/files/media/images/Landheim-Ammersee-Landheim%20Campus%20-%20Scho%CC%88ner%20gehts%20nicht%20-Steganlage%20%20-%20Landheim%20Amersee%20Christina%20Ingerfurth%20.jpg',
-    label: 'Landheim-Steg am Ammersee',
-    position: 'center 55%'
+    image: 'https://www.landheim-ammersee.de/sites/default/files/media/images/Landheim-Ammersee-Handwerk%20-%20Stolz%20auf%20das%20Selbstgemacht%20-%20Schreinerei%20-%20Jan%20Greune%20-%20Landhein%20Ammersee_107818.jpg',
+    label: 'Ideen praktisch umsetzen in der Landheim-Werkstatt',
+    position: 'center 47%'
   }
 ] as const;
 

@@ -25,7 +25,7 @@ Jury-Anmeldung prüfen; dann Änderungen in einem einzigen Branch-Update bündel
 
 ## Bildwechsel in der Startseite (als Paket vorbereitet)
 - Drei authentische, öffentlich sichtbare Landheim-Motive aus der offiziellen Fotosektion:
-  Landheim-Campus aus der Luft, Haupthaus im Frühling, Landheim-Steg am Ammersee.
+  Landheim-Campus mit Ammersee, gemeinsames Arbeiten am Laptop im Freien, praktische Arbeit in der Schreinerei.
 - Automatischer Wechsel alle 8 Sekunden; sanfte Überblendung von ca. 1,45 Sekunden.
 - Überschrift, Handlungsbuttons und Jury-Zugang bewegen sich nicht.
 - Drei Tastatur- und Touch-bedienbare Bildindikatoren mit verständlicher Beschriftung.
@@ -33,3 +33,19 @@ Jury-Anmeldung prüfen; dann Änderungen in einem einzigen Branch-Update bündel
 - Fotografische Rechte wurden vom Projektverantwortlichen nach eigener Aussage freigegeben.
 - Bilddateien sind aktuell externe, offizielle URL-Quellen; vor finaler Freigabe bei
   Bedarf als optimierte lokale Dateien übernehmen, um Abhängigkeiten zu reduzieren.
+
+
+## Überarbeitete Bildauswahl – 4. November 2026
+Die bisherige Bildfolge aus zwei Architekturmotiven und einem leeren Steg wurde
+zugunsten eines für den Gründerwettbewerb aussagekräftigeren Bildbogens ersetzt:
+1. ORT: Campus und Ammersee – Identität und Wiedererkennung.
+2. IDEEN: Schülerinnen und Schüler lernen kollaborativ mit Laptop – Teamarbeit.
+3. UMSETZUNG: Landheim-Schreinerei – »Macht's selber«, greifbare Ergebnisse.
+
+Es handelt sich um drei tatsächliche, öffentlich abrufbare Aufnahmen der offiziellen
+Landheim-Website. Die Schreinerei-Originaldatei ist 8640 × 5760 Pixel groß;
+vor Veröffentlichung unbedingt technisch optimieren oder als passende
+Web-Variante bereitstellen, um mobile Ladezeiten zu schützen.
+Die Originaldatei des Laptop-Fotos ist 1920 × 1080 Pixel groß.
+Der Bildwechsel benötigt keine zusätzlichen personenbezogenen Angaben.
+Die Freigaben für Bilder wurden vom Projektverantwortlichen bestätigt.
