@@ -94,7 +94,7 @@ function Portrait({profile}:{profile:JuryProfile}) {
     {profile.photo && <img
       src={profile.photo}
       alt={'Porträt von '+profile.name}
-      loading="lazy"
+      loading="eager"
       decoding="async"
       onError={(e)=>{e.currentTarget.style.display='none';}}
     />}
