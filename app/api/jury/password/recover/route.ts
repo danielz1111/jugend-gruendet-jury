@@ -17,7 +17,7 @@ export async function POST(request:NextRequest){
   // Read the preapproval table through a narrowly scoped boolean RPC.
   // The full jury email list is not sent to public website visitors.
   const preapproval=await fetch(url+'/rest/v1/rpc/jury_email_preapproved',{
-   method:'POST',headers,body:JSON.stringify({p_email:email}),cache:'no-store'
+   method:'POST',headers:{...headers,'x-jury-requested-email':email},body:JSON.stringify({p_email:email}),cache:'no-store'
   });
   if(!preapproval.ok)return NextResponse.json({error:'Der Zugangsdienst ist vorübergehend nicht erreichbar.'},{status:503});
   const approved=(await preapproval.json())===true;
