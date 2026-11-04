@@ -281,3 +281,93 @@
 @media(prefers-reduced-motion:reduce){
   .jury-v3-nav-link,.jury-v3-score-meter>span{transition:none}
 }
+
+/* Jury navigation v4: the personal greeting belongs to Overview alone.
+   Section rails guide vertical reading without hiding team dossiers. */
+.jury-v3-header{position:sticky;top:0;z-index:105}
+.jury-v3-overview-rail,.jury-v3-company-rail{
+  display:flex;flex-direction:column;align-items:stretch;gap:4px;
+  background:#fff;border:1px solid #dfe7df;
+  box-shadow:0 10px 24px #1935400a;
+  padding:18px 15px;
+}
+.jury-v3-overview-rail>span,.jury-v3-company-rail>span{
+  font-size:10px;color:#6a807a;font-weight:800;letter-spacing:.11em;
+  border-bottom:1px solid #e3e9e2;padding:3px 10px 12px;margin-bottom:5px;
+}
+.jury-v3-overview-rail>a,.jury-v3-company-rail>a,
+.jury-v3-company-rail>button{
+  display:flex;align-items:center;justify-content:space-between;
+  text-decoration:none;text-align:left;color:#344c51;
+  background:transparent;border:0;border-left:3px solid transparent;
+  font-size:13px;line-height:1.45;font-weight:700;padding:12px 10px;
+}
+.jury-v3-overview-rail>a:hover,.jury-v3-company-rail>a:hover,
+.jury-v3-company-rail>button:hover{
+  background:#f3f6e9;border-left-color:#bdd837;color:#1d4141;
+}
+.jury-v3-overview-rail .jury-v3-rail-back,
+.jury-v3-company-rail .jury-v3-rail-back{
+  color:#63817b;border-top:1px solid #e3e9e2;
+  margin-top:13px;padding-top:16px;font-size:12px;
+}
+.jury-v3-rail-layout,
+.jury-v3-company-workspace{
+  display:grid;grid-template-columns:210px minmax(0,1fr);
+  align-items:start;gap:clamp(18px,2.5vw,32px);
+}
+.jury-v3-rail-main{min-width:0}
+.jury-v3-overview-rail,.jury-v3-company-rail{
+  position:sticky;top:111px;
+}
+.jury-v3-company-workspace .jury-wide-shell{margin-top:0!important;min-width:0}
+.jury-v3-company-workspace .demo-main{min-width:0}
+.jury-v3-company-workspace .jury-team-picker{background:#1c3a44}
+#jury-arrival,#jury-program,#jury-live,#jury-background,
+#jury-evaluation-help,#jury-company-profile,#jury-company-materials{
+  scroll-margin-top:125px;
+}
+#jury-company-materials{border-top:3px solid #bdd837;margin-top:26px!important}
+.jury-v3-rail-main .jury-v3-event{margin-top:0}
+.jury-v3-rail-main .jury-v3-info-grid{margin-top:19px}
+.jury-v3-rail-main .jury-v3-essential-bottom{margin-bottom:10px}
+@media(max-width:1120px){
+ .jury-v3-rail-layout,.jury-v3-company-workspace{
+   grid-template-columns:175px minmax(0,1fr);gap:17px;
+ }
+ .jury-v3-overview-rail,.jury-v3-company-rail{padding:11px 8px}
+ .jury-v3-overview-rail>a,.jury-v3-company-rail>a,.jury-v3-company-rail>button{font-size:12px}
+}
+@media(max-width:850px){
+ .jury-v3-rail-layout,.jury-v3-company-workspace{display:block}
+ .jury-v3-overview-rail,.jury-v3-company-rail{
+   position:sticky;top:113px;z-index:12;
+   display:flex;flex-direction:row;flex-wrap:nowrap;
+   gap:7px;align-items:center;overflow-x:auto;padding:10px;
+   margin-bottom:16px;scrollbar-width:thin;
+ }
+ .jury-v3-overview-rail>span,.jury-v3-company-rail>span{display:none}
+ .jury-v3-overview-rail>a,.jury-v3-company-rail>a,.jury-v3-company-rail>button{
+   flex:none;border:1px solid #e1e9de;white-space:nowrap;padding:9px;
+   font-size:11px;
+ }
+ .jury-v3-rail-back{display:none!important}
+ .jury-v3-rail-main .jury-v3-event{margin-top:15px}
+}
+@media(max-width:600px){
+ .jury-v3-overview-rail,.jury-v3-company-rail{top:122px}
+}
+
+.jury-company-team-list>p{color:#60777b;margin:0 0 15px;font-size:13px}
+.jury-company-members{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px}
+.jury-company-members article{
+  padding:16px;display:flex;gap:13px;align-items:center;
+  border:1px solid #dce7dd;background:#fff;
+}
+.jury-company-member-avatar{
+  width:42px;height:42px;flex:none;display:grid;place-items:center;
+  background:#e7f1df;border-radius:50%;color:#476b55;
+}
+.jury-company-members article>div{display:grid;gap:4px}
+.jury-company-members strong{font-size:14px;color:#263f45;line-height:1.4}
+.jury-company-members small{font-size:11px;color:#637a7c}

@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import {redirect} from 'next/navigation';
+import {cookies} from 'next/headers';
 import {getJurySession} from '../../../lib/jury-session';
 import PortalHome from './PortalHome';
 export const dynamic='force-dynamic';
@@ -23,7 +24,10 @@ async function getMembers(token:string):Promise<Member[]>{
 }
 export default async function Dashboard(){
  const session=await getJurySession();
- if(!session)redirect('/jury');
+ if(!session){
+   const refresh=(await cookies()).get('jury_refresh')?.value;
+   redirect(refresh?'/api/jury/refresh':'/jury');
+ }
  let teams:Team[]=[];let members:Member[]=[];let scores:Score[]=[];let error=false;
  try{[teams,members,scores]=await Promise.all([getTeams(session.token),getMembers(session.token),getScores(session.token)])}catch{error=true}
  return error

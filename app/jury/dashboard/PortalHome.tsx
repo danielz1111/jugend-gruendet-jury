@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Image from 'next/image';
 import {
   ArrowRight, BookOpen, Building2, CalendarDays, CheckCircle2,
@@ -18,12 +18,12 @@ type Team = {
 };
 type Member = {id:string;team_id:string;display_name:string;expert_role:string|null;display_order:number};
 type Score = {team_id:string;[key:string]:string|number|null};
-type Area = 'rating'|'companies'|'essentials'|'admin';
+type Area = 'overview'|'rating'|'companies'|'admin';
 
 const navigation = [
-  {id:'rating' as const,title:'Bewertung',label:'01',icon:ClipboardCheck},
+  {id:'overview' as const,title:'Überblick',label:'01',icon:CalendarDays},
   {id:'companies' as const,title:'Unternehmen & Start-ups',label:'02',icon:Building2},
-  {id:'essentials' as const,title:'Alles Wichtige in Kürze',label:'03',icon:CalendarDays}
+  {id:'rating' as const,title:'Jurybewertung',label:'03',icon:ClipboardCheck}
 ];
 
 export default function PortalHome({
@@ -31,7 +31,7 @@ export default function PortalHome({
 }:{
   displayName:string;teams:Team[];members:Member[];scores:Score[];isAdmin:boolean
 }){
-  const [area,setArea]=useState<Area>('rating');
+  const [area,setArea]=useState<Area>('overview');
   const [activeTeamId,setActiveTeamId]=useState<string|null>(null);
   const salutation=displayName.trim().replace(/[.!]+$/,'');
   const greeting=/^(Herr|Frau)\b/i.test(salutation)
@@ -39,6 +39,12 @@ export default function PortalHome({
   const welcome=/^Frau\b/i.test(greeting)
     ?'liebe '+greeting:/^Herr\b/i.test(greeting)?'lieber '+greeting:greeting;
   const submittedCount=scores.filter(score=>Boolean(score.submitted_at)).length;
+  // Renew the optional remembered jury session while the page is in use.
+  useEffect(()=>{
+    const renew=()=>{if(!document.hidden)void fetch('/api/jury/refresh',{method:'POST',cache:'no-store'}).catch(()=>undefined)};
+    const interval=window.setInterval(renew,25*60*1000);
+    return ()=>window.clearInterval(interval);
+  },[]);
   const navigate=(next:Area)=>{
     setArea(next);
     window.scrollTo({top:0,behavior:'smooth'});
@@ -63,7 +69,7 @@ export default function PortalHome({
             </span>
             <span className="jury-v3-brand">
               <strong>Landheim Ammersee</strong>
-              <span>Fachbereich Wirtschaft und Recht</span>
+              <span>Fachschaft Wirtschaft und Recht</span>
               <small>JUGEND GRÜNDET · JURYPORTAL</small>
             </span>
           </a>
@@ -89,8 +95,8 @@ export default function PortalHome({
         </div>
       </header>
 
-      <main className="jury-v3-content">
-        <section className="jury-v3-welcome" aria-labelledby="jury-v3-welcome-title">
+      <div className="jury-v3-content">
+        {area==='overview'&&<section className="jury-v3-welcome" aria-labelledby="jury-v3-welcome-title">
           <div className="jury-v3-welcome-copy">
             <span className="jury-v3-overline">IHR PERSÖNLICHER JURYZUGANG · LANDHEIM AMMERSEE</span>
             <h1 id="jury-v3-welcome-title">
@@ -106,12 +112,12 @@ export default function PortalHome({
           <div className="jury-v3-welcome-image" role="img" aria-label="Luftbild des Landheim-Campus am Ammersee">
             <span>LANDHEIM AMMERSEE · SCHONDORF</span>
           </div>
-        </section>
+        </section>}
 
         <section className="jury-v3-section" aria-live="polite">
           {area==='rating'&&<>
             <div className="jury-v3-heading">
-              <span className="jury-v3-overline">01 / IHR JURYURTEIL</span>
+              <span className="jury-v3-overline">03 / IHR JURYURTEIL</span>
               <h2>Bewertung.</h2>
               <p>Wählen Sie ein Team und bewerten Sie dessen Präsentation und die Antworten
                 auf die Juryfragen. Ihre Punkte und persönlichen Notizen sind vertraulich.
@@ -133,7 +139,7 @@ export default function PortalHome({
           {area==='companies'&&<>
             <div className="jury-v3-heading">
               <span className="jury-v3-overline">02 / DIE JUNGEN UNTERNEHMEN</span>
-              <h2>Unternehmen &amp; Start-ups.</h2>
+              <h2>Unsere Unternehmen &amp; Start-ups.</h2>
               <p>Lernen Sie die neun Geschäftsideen, Unternehmensprofile und Teammitglieder
                 kennen. Die eingereichten Businesspläne und Anlagen finden Sie
                 im geschützten Unterlagenbereich des jeweils ausgewählten Teams.</p>
@@ -142,23 +148,42 @@ export default function PortalHome({
 
           {/* Keep the workspace mounted when changing sections so locally held
               assessment state is not discarded. Switch its active inner tab. */}
-          <div className="jury-v3-workspace" hidden={area!=='rating'&&area!=='companies'}>
+          <div className={area==='companies'?'jury-v3-workspace jury-v3-company-workspace':'jury-v3-workspace'} hidden={area!=='rating'&&area!=='companies'}>
+            {area==='companies'&&<aside className="jury-v3-company-rail" aria-label="Navigation im Unternehmensbereich">
+              <span>UNTERNEHMEN</span>
+              <a href="#jury-company-profile">Unternehmensprofil</a>
+              <a href="#jury-company-materials">Unterlagen</a>
+              <button type="button" onClick={()=>navigate('rating')}>Zur Jurybewertung <ArrowRight size={14}/></button>
+              <a href="#jury-top" className="jury-v3-rail-back">Zurück nach oben ↑</a>
+            </aside>}
             <TeamNavigator
               teams={teams} members={members} initialScores={scores}
               isAdmin={isAdmin}
-              initialSection={area==='companies'?'overview':'pitch'}
+              initialSection={area==='companies'?'company':'pitch'}
+              onGoToRating={()=>navigate('rating')}
               activeTeamId={activeTeamId}
             />
           </div>
 
-          {area==='essentials'&&<>
+          {area==='overview'&&<>
             <div className="jury-v3-heading">
-              <span className="jury-v3-overline">03 / IHR WEGWEISER</span>
-              <h2>Alles Wichtige in Kürze.</h2>
+              <span className="jury-v3-overline">01 / HERZLICH WILLKOMMEN IM LANDHEIM</span>
+              <h2>Alles Wichtige für Ihren Jurytag.</h2>
               <p>Termin, Ablauf, Ort und die wichtigsten Informationen für
                 Ihren Einsatz als Jurymitglied – übersichtlich auf einer Seite.</p>
             </div>
-            <div className="jury-v3-event">
+            <div className="jury-v3-rail-layout">
+              <aside className="jury-v3-overview-rail" aria-label="Abschnitte auf dieser Seite">
+                <span>IHR WEGWEISER</span>
+                <a href="#jury-arrival">Ankommen</a>
+                <a href="#jury-program">Ablauf</a>
+                <a href="#jury-live">Aktueller Teamaufruf</a>
+                <a href="#jury-background">Hintergrund & Landheim</a>
+                <a href="#jury-evaluation-help">Bewertung & Unterlagen</a>
+                <a href="#jury-top" className="jury-v3-rail-back">Zurück nach oben ↑</a>
+              </aside>
+              <div className="jury-v3-rail-main">
+            <div className="jury-v3-event" id="jury-arrival">
               <div className="jury-v3-event-date">
                 <CalendarDays size={26} aria-hidden="true"/>
                 <strong>15.</strong>
@@ -175,7 +200,7 @@ export default function PortalHome({
               </div>
             </div>
 
-            <div className="jury-v3-info-grid">
+            <div className="jury-v3-info-grid" id="jury-program">
               <article>
                 <span>01 / ANKOMMEN</span>
                 <Clock3 size={24} aria-hidden="true"/>
@@ -198,10 +223,10 @@ export default function PortalHome({
               </article>
             </div>
 
-            <LiveEventPanel teams={teams} isAdmin={isAdmin} onOpenTeam={openLiveTeam}/>
+            <div id="jury-live"><LiveEventPanel teams={teams} isAdmin={isAdmin} onOpenTeam={openLiveTeam}/></div>
 
             <div className="jury-v3-essential-bottom">
-              <article>
+              <article id="jury-background">
                 <BookOpen size={23} aria-hidden="true"/>
                 <div>
                   <h3>Worum geht es bei Jugend gründet?</h3>
@@ -215,7 +240,7 @@ export default function PortalHome({
                   </a>
                 </div>
               </article>
-              <article>
+              <article id="jury-evaluation-help">
                 <FileText size={23} aria-hidden="true"/>
                 <div>
                   <h3>Unterlagen und Bewertungen</h3>
@@ -227,6 +252,8 @@ export default function PortalHome({
                   </button>
                 </div>
               </article>
+            </div>
+              </div>
             </div>
           </>}
 
@@ -251,10 +278,10 @@ export default function PortalHome({
         </section>
 
         <footer className="jury-v3-footer">
-          <span>LANDHEIM AMMERSEE · FACHBEREICH WIRTSCHAFT UND RECHT</span>
+          <span>LANDHEIM AMMERSEE · FACHSCHAFT WIRTSCHAFT UND RECHT</span>
           <a href="/">Zur öffentlichen Projektseite <ArrowRight size={16} aria-hidden="true"/></a>
         </footer>
-      </main>
+      </div>
     </div>
   );
 }
