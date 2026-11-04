@@ -237,20 +237,23 @@ export default function HomeClient({ publishedTeams = [] }: { publishedTeams: Pu
               <a className="lm-quiet-cta" href="#jury">Zum Juryportal <ArrowRight size={18}/></a>
             </div>
           </div>
-          <div ref={sealRef} className="lm-hero-seal lm-hero-seal-stats lm-hero-seal-triple"
+          <div ref={sealRef} className="lm-hero-seal lm-hero-seal-stats lm-hero-seal-triple lm-hero-seal-editorial"
             aria-label={classCount+' Klassen, '+studentCount+' Schülerinnen und Schüler in '+teams.length+' Gründerteams. Pitch am 15. Januar 2027.'}>
-            <span className="lm-hero-seal-overline">LANDHEIM ENTREPRENEURS</span>
-            <div className="lm-seal-stat-block lm-seal-stat-classes" aria-hidden="true">
+            <span className="lm-hero-seal-overline lm-seal-brand-heading"><span>LANDHEIM</span><span>ENTREPRENEURS</span></span>
+            <div className={'lm-seal-stat-block lm-seal-stat-classes' + (animatedStats.classes === classCount ? ' lm-count-done' : '')} aria-hidden="true">
               <strong className="lm-seal-stat-number">{String(animatedStats.classes).padStart(2, '0')}</strong>
               <span className="lm-seal-stat-label">KLASSEN</span>
+              <span className="lm-seal-progress" aria-hidden="true"><span style={{width: (classCount > 0 ? Math.min(100, Math.round(animatedStats.classes / classCount * 100)) : 0) + '%'}}/></span>
             </div>
-            <div className="lm-seal-stat-block lm-seal-stat-students" aria-hidden="true">
+            <div className={'lm-seal-stat-block lm-seal-stat-students' + (animatedStats.students === studentCount ? ' lm-count-done' : '')} aria-hidden="true">
               <strong className="lm-seal-stat-number">{animatedStats.students}</strong>
               <span className="lm-seal-stat-label">SCHÜLERINNEN<br/>UND SCHÜLER</span>
+              <span className="lm-seal-progress" aria-hidden="true"><span style={{width: (studentCount > 0 ? Math.min(100, Math.round(animatedStats.students / studentCount * 100)) : 0) + '%'}}/></span>
             </div>
-            <div className="lm-seal-stat-block lm-seal-stat-teams" aria-hidden="true">
+            <div className={'lm-seal-stat-block lm-seal-stat-teams' + (animatedStats.teams === teams.length ? ' lm-count-done' : '')} aria-hidden="true">
               <strong className="lm-seal-stat-number">{String(animatedStats.teams).padStart(2, '0')}</strong>
               <span className="lm-seal-stat-label">GRÜNDERTEAMS</span>
+              <span className="lm-seal-progress" aria-hidden="true"><span style={{width: (teams.length > 0 ? Math.min(100, Math.round(animatedStats.teams / teams.length * 100)) : 0) + '%'}}/></span>
             </div>
             <span className="lm-seal-divider" aria-hidden="true"/>
             <span className="lm-seal-pitch-label">UNSER PITCH-TAG</span>
