@@ -1,0 +1,111 @@
+/* Landheim-style masthead: unframed official logo with a compact sticky navigation.
+   Public homepage only. Do not change the jury portal. */
+
+/* overflow:hidden on the full page creates an unintended scrolling ancestor
+   and prevents position:sticky from following the viewport. */
+.lm-page{overflow:clip}
+.lm-page .lm-header{
+  position:sticky;top:0;z-index:100;
+  background:rgba(255,255,253,.97);
+  border-bottom:1px solid #e1e7e2;
+  box-shadow:0 6px 30px #1a383312;
+  -webkit-backdrop-filter:blur(16px);
+  backdrop-filter:blur(16px);
+  transition:background .28s ease,box-shadow .28s ease;
+}
+.lm-page .lm-header-inner{
+  min-height:103px;
+  gap:clamp(14px,2.4vw,36px);
+  transition:min-height .3s ease;
+}
+.lm-page .lm-wordmark{gap:18px;min-width:0}
+.lm-page .lm-official-mark{
+  width:225px;height:79px;padding:0;margin:0;
+  border:0;background:transparent;flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;
+  transition:width .28s ease,height .28s ease,opacity .18s ease;
+}
+.lm-page .lm-official-logo{
+  width:100%;height:100%;object-fit:contain;
+  /* The SVG is the white-on-dark logo used on the official website.
+     Render it in a legible slate monochrome on our light header. */
+  filter:brightness(0) saturate(100%) invert(23%) sepia(9%) saturate(1001%) hue-rotate(143deg) brightness(91%) contrast(95%);
+}
+.lm-page .lm-competition-wordmark{
+  border-left:2px solid #b4cc44;
+  padding-left:19px;
+  min-width:0;
+  display:flex;flex-direction:column;align-items:flex-start;justify-content:center;
+}
+.lm-page .lm-competition-wordmark strong{
+  font:500 clamp(17px,1.68vw,22px)/1.18 'Playfair Display',Georgia,serif;
+  letter-spacing:-.022em;white-space:normal;color:#2c4a4a;
+}
+.lm-page .lm-competition-wordmark small{
+  font-size:10px;letter-spacing:.13em;color:#62776c;font-weight:700;margin-top:9px;
+  white-space:nowrap;
+}
+.lm-page .lm-compact-school-name{
+  display:none;font-size:9px;letter-spacing:.13em;font-weight:800;
+  color:#6d8079;margin-bottom:5px;
+}
+.lm-page .lm-nav{gap:clamp(11px,1.6vw,24px)}
+.lm-page .lm-nav>a{white-space:nowrap;font-size:13px}
+.lm-page .lm-nav>a.lm-nav-jury{padding:15px 15px}
+
+/* On scrolling, the large official mark recedes; branding and menu remain visible. */
+.lm-page .lm-header-compact{
+  background:rgba(255,255,255,.98);
+  box-shadow:0 7px 25px #1a383323;
+}
+.lm-page .lm-header-compact .lm-header-inner{min-height:69px}
+.lm-page .lm-header-compact .lm-official-mark{
+  width:0;height:0;opacity:0;pointer-events:none;overflow:hidden;
+}
+.lm-page .lm-header-compact .lm-wordmark{gap:0}
+.lm-page .lm-header-compact .lm-competition-wordmark{
+  border-left:3px solid #b4cc44;padding-left:14px;
+}
+.lm-page .lm-header-compact .lm-compact-school-name{display:block}
+.lm-page .lm-header-compact .lm-competition-wordmark strong{
+  font-size:16px;line-height:1.2;
+}
+.lm-page .lm-header-compact .lm-fachschaft-break{display:none}
+.lm-page .lm-header-compact .lm-competition-wordmark small{display:none}
+.lm-page #idee,.lm-page #weg,.lm-page #teams,.lm-page #pitch,.lm-page #jury{
+  scroll-margin-top:84px;
+}
+@media(max-width:1220px){
+  .lm-page .lm-official-mark{width:175px;height:69px}
+  .lm-page .lm-competition-wordmark{padding-left:13px}
+  .lm-page .lm-competition-wordmark strong{font-size:18px}
+  .lm-page .lm-competition-wordmark small{font-size:8.8px}
+  .lm-page .lm-nav{gap:12px}
+  .lm-page .lm-nav>a{font-size:12px}
+  .lm-page .lm-nav>a.lm-nav-jury{padding:14px 13px}
+}
+@media(max-width:980px){
+  .lm-page .lm-header-inner{min-height:82px}
+  .lm-page .lm-official-mark{width:182px;height:65px}
+  .lm-page .lm-competition-wordmark strong{font-size:19px}
+  .lm-page .lm-competition-wordmark small{font-size:10px}
+  .lm-page .lm-header-compact .lm-header-inner{min-height:66px}
+  .lm-page .lm-header-compact .lm-competition-wordmark strong{font-size:16px}
+  .lm-page .lm-nav{gap:0}
+  .lm-page .lm-nav>a{font-size:14px}
+}
+@media(max-width:600px){
+  .lm-page .lm-header-inner{min-height:76px;gap:9px}
+  .lm-page .lm-wordmark{gap:10px}
+  .lm-page .lm-official-mark{width:127px;height:52px}
+  .lm-page .lm-competition-wordmark{padding-left:9px;border-left-width:2px}
+  .lm-page .lm-competition-wordmark strong{font-size:clamp(12px,3.3vw,16px);line-height:1.17}
+  .lm-page .lm-competition-wordmark small{font-size:7.5px;letter-spacing:.045em;margin-top:5px}
+  .lm-page .lm-header-compact .lm-header-inner{min-height:63px}
+  .lm-page .lm-header-compact .lm-compact-school-name{font-size:8px}
+  .lm-page .lm-header-compact .lm-competition-wordmark strong{font-size:clamp(12px,3.6vw,15px)}
+  .lm-page .lm-menu-button{flex-shrink:0}
+}
+@media(prefers-reduced-motion:reduce){
+  .lm-page .lm-header,.lm-page .lm-header-inner,.lm-page .lm-official-mark{transition:none}
+}

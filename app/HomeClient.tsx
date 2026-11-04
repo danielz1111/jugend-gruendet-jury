@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from 'react';
 import Image from 'next/image';
 import './TeamReveal.css';
 import './HomepagePolish.css';
+import './HeaderIdentity.css';
 import {
   ArrowRight, ArrowUpRight, CalendarDays, ChevronDown, Clock3, Compass,
   ExternalLink, Lightbulb, LockKeyhole, MapPin, Menu, Presentation,
@@ -56,6 +57,7 @@ const phases = [
 
 export default function HomeClient({ publishedTeams = [] }: { publishedTeams: PublishedTeam[] }) {
   const [menuOpen, setMenuOpen] = useState(false);
+  const [headerCompact, setHeaderCompact] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
@@ -73,6 +75,14 @@ export default function HomeClient({ publishedTeams = [] }: { publishedTeams: Pu
     .sort((a, b) => a.position - b.position)
     .slice(0, 9);
 
+
+  useEffect(() => {
+    // A compact navigation stays visible after the large identity scrolls away.
+    const onScroll = () => setHeaderCompact(window.scrollY > 140);
+    onScroll();
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
+  }, []);
 
   useEffect(() => {
     const updateCountdown = () => {
@@ -166,7 +176,7 @@ export default function HomeClient({ publishedTeams = [] }: { publishedTeams: Pu
         </div>
       </div>
 
-      <header className="lm-header">
+      <header className={headerCompact ? "lm-header lm-header-compact" : "lm-header"}>
         <div className="lm-container lm-header-inner">
           <a className="lm-wordmark" href="#top" onClick={closeMenu} aria-label="Jugend gründet am Landheim Ammersee, zur Startseite">
             <span className="lm-official-mark"><Image
@@ -178,7 +188,11 @@ export default function HomeClient({ publishedTeams = [] }: { publishedTeams: Pu
               className="lm-official-logo"
               priority
             /></span>
-            <span className="lm-wordmark-type lm-competition-wordmark"><strong>JUGEND GRÜNDET</strong><small>SCHULJAHR 2026/27</small></span>
+            <span className="lm-wordmark-type lm-competition-wordmark">
+              <span className="lm-compact-school-name">LANDHEIM AMMERSEE</span>
+              <strong>Fachschaft<br className="lm-fachschaft-break"/> Wirtschaft und Recht</strong>
+              <small>JUGEND GRÜNDET · 2026/27</small>
+            </span>
           </a>
           <nav id="lm-mobile-navigation" className={menuOpen ? 'lm-nav lm-nav-open' : 'lm-nav'} aria-label="Hauptnavigation">
             <a href="#idee" onClick={closeMenu}>Die Idee</a>
