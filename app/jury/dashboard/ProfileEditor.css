@@ -1,0 +1,64 @@
+/* Single-save editorial workspace: one overview for all nine public profiles. */
+.jury-simple-profiles{margin:25px 0 40px;color:#203e43}
+.jury-simple-header{display:flex;align-items:center;justify-content:space-between;gap:30px;margin:0 0 22px}
+.jury-simple-header h2{font-size:clamp(26px,3vw,39px);letter-spacing:-.035em;line-height:1.16;margin:10px 0}
+.jury-simple-header p{font-size:13px;line-height:1.75;color:#637a78;max-width:640px}
+.jury-simple-stats{display:flex;gap:24px;background:#f1f6ef;border:1px solid #dde8da;padding:18px 25px;flex-shrink:0}
+.jury-simple-stats>span{display:flex;flex-direction:column;gap:6px;font-size:11px;font-weight:700;color:#658077}
+.jury-simple-stats strong{font-size:26px;letter-spacing:-.04em;color:#23473e}
+.jury-simple-layout{display:grid;grid-template-columns:minmax(216px,.31fr) minmax(0,.69fr);border:1px solid #dce4dc;background:white;box-shadow:0 10px 32px #223e280a}
+.jury-simple-list{display:grid;align-content:start;gap:3px;background:#f3f7f1;border-right:1px solid #dce4da;padding:15px}
+.jury-simple-list button{width:100%;display:flex;align-items:center;gap:12px;background:transparent;border:1px solid transparent;padding:13px 11px;cursor:pointer;text-align:left;color:#315251}
+.jury-simple-list button.active{background:white;border-color:#cbd9c9;box-shadow:0 2px 12px #1c42251a}
+.jury-simple-list button:hover:not(:disabled){background:#e7efe5}
+.jury-simple-list button:focus-visible,.jury-simple-profiles button:focus-visible,.jury-simple-profiles select:focus-visible{outline:3px solid #8dab86;outline-offset:2px}
+.jury-simple-number{font-size:12px;font-weight:800;color:#8b9d7e}
+.jury-simple-team-name{flex:1;min-width:0;display:grid;gap:6px}
+.jury-simple-team-name strong{font-size:13px;overflow-wrap:anywhere}
+.jury-simple-team-name small{font-size:10px;line-height:1.45;color:#798d81}
+.jury-simple-dot{font-size:18px;line-height:1;color:#c48a2d}
+.jury-simple-workspace{min-width:0;padding:clamp(21px,3.2vw,39px)}
+.jury-simple-workspace-top{padding-bottom:20px;border-bottom:1px solid #e3e9e2}
+.jury-simple-workspace-top h3{font-size:clamp(26px,3vw,37px);margin:12px 0 0;color:#203d43}
+.jury-simple-import{display:flex;gap:9px;align-items:center;color:#35644e;font-size:12px;margin-top:14px}
+.jury-simple-fields{display:grid;gap:8px;margin:23px 0 0}
+.jury-simple-fields>label{font-size:12px;font-weight:750;color:#294b4e;margin-top:7px}
+.jury-simple-fields>input,.jury-simple-fields>textarea{width:100%;max-width:100%;background:#f9fbf9;border:1px solid #d5e1d7;border-radius:3px;color:#244245;padding:13px 14px;font-size:14px;line-height:1.65;margin-bottom:10px}
+.jury-simple-fields>textarea{resize:vertical;min-height:123px}
+.jury-simple-visibility{display:flex;align-items:center;gap:18px;justify-content:space-between;background:#f3f8f2;padding:18px;margin:12px 0}
+.jury-simple-visibility>div{display:grid;gap:5px}
+.jury-simple-visibility strong{font-size:13px}
+.jury-simple-visibility small{font-size:11px;color:#668179;line-height:1.5}
+.jury-simple-visibility select{padding:10px 12px;border:1px solid #b7cbb9;background:#fff;color:#23473b;font-size:12px;font-weight:700;min-width:116px}
+.jury-simple-preview{margin-top:26px;border-top:1px solid #e2e9e1;padding-top:20px}
+.jury-simple-preview-card{border:1px solid #d7e0d6;background:linear-gradient(135deg,#f4f6f0,#fff);padding:19px 22px;margin-top:12px;display:grid;gap:9px}
+.jury-simple-preview-card>span{font:500 27px/1.2 'Playfair Display',Georgia,serif;color:#2f4b4e}
+.jury-simple-preview-card strong{font-size:14px;color:#3c6756}
+.jury-simple-preview-card p{font-size:12px;line-height:1.7;color:#5d7771;margin:0}
+.jury-simple-footer{display:flex;align-items:center;justify-content:space-between;gap:20px;margin:0;border:1px solid #dce4da;border-top:0;background:#edf4ec;padding:21px 23px}
+.jury-simple-footer>div:first-child{display:grid;gap:5px}
+.jury-simple-footer strong{font-size:13px}
+.jury-simple-footer small{font-size:11px;color:#627c71}
+.jury-simple-actions{display:flex;align-items:center;gap:9px}
+.jury-simple-actions button{display:inline-flex;align-items:center;justify-content:center;gap:10px;border:0;padding:13px 17px;font-size:12px;font-weight:750;cursor:pointer}
+.jury-simple-actions .jury-simple-save{background:#245044;color:white}
+.jury-simple-actions .jury-simple-discard{background:#fff;color:#476358;border:1px solid #ceddcf}
+.jury-simple-actions button:disabled{cursor:not-allowed;opacity:.6}
+.jury-simple-success,.jury-simple-error{display:flex;gap:10px;padding:15px 19px;font-size:13px;line-height:1.5}
+.jury-simple-success{border:1px solid #c7dbca;background:#f1f8ef;color:#356749}
+.jury-simple-error{border:1px solid #e2bdbb;background:#fff3f3;color:#963d39}
+.jury-simple-privacy{display:flex;align-items:center;gap:8px;color:#6b817a;font-size:11px;line-height:1.6;margin:14px 0}
+.jury-simple-privacy svg{flex-shrink:0}
+@media(max-width:920px){
+ .jury-simple-layout{grid-template-columns:1fr}
+ .jury-simple-list{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));border-right:0;border-bottom:1px solid #dce4da}
+ .jury-simple-list button{min-width:0}
+ .jury-simple-header{align-items:flex-start;flex-direction:column}
+}
+@media(max-width:620px){
+ .jury-simple-list{grid-template-columns:repeat(2,minmax(0,1fr))}
+ .jury-simple-stats{width:100%;justify-content:space-around}
+ .jury-simple-visibility,.jury-simple-footer{align-items:stretch;flex-direction:column}
+ .jury-simple-actions{justify-content:stretch;flex-direction:column-reverse}
+ .jury-simple-actions button{width:100%}
+}

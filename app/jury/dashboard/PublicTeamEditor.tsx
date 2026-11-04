@@ -1,142 +1,168 @@
 'use client';
 
-import {useEffect,useState} from 'react';
+import {useEffect,useMemo,useState} from 'react';
 import {ArrowRight,CheckCircle2,Eye,EyeOff,Save,ShieldCheck} from 'lucide-react';
-import {getExistingTeamCopy} from './TeamNavigator';
+import './ProfileEditor.css';
 
-type Team = {
-  id:string;
-  name:string;
-  position:number;
-  tagline:string|null;
-  description:string|null;
-  is_public:boolean;
-};
+type Team={id:string;name:string;position:number;tagline:string|null;description:string|null;is_public:boolean};
+type Draft={name:string;tagline:string;description:string;is_public:boolean};
+type Suggestion={team_id:string;source_filename:string|null;tagline:string|null;description:string|null};
 
-type Draft = {name:string;tagline:string;description:string;is_public:boolean};
-type Suggestion={team_id:string;tagline:string|null;description:string|null;source_filename:string|null};
-function draftFrom(team:Team):Draft {
-  return {
-    name:team.name,
-    tagline:team.tagline||'',
-    description:team.description||'',
-    is_public:team.is_public
-  };
+function toDraft(team:Team):Draft{
+ return {name:team.name,tagline:team.tagline||'',description:team.description||'',is_public:team.is_public};
 }
-export default function PublicTeamEditor({teams}:{teams:Team[]}) {
-  const [saved,setSaved]=useState<Team[]>(()=>teams.slice().sort((a,b)=>a.position-b.position));
-  const [activeId,setActiveId]=useState<string|null>(teams[0]?.id||null);
-  const current=saved.find(team=>team.id===activeId);
-  const [draft,setDraft]=useState<Draft>(()=>teams[0]?draftFrom(teams[0]):{name:'',tagline:'',description:'',is_public:false});
-  const [approved,setApproved]=useState(false);
-  const [busy,setBusy]=useState(false);
-  const [error,setError]=useState('');
-  const [notice,setNotice]=useState('');
-  const [preview,setPreview]=useState(true);
-  const [suggestions,setSuggestions]=useState<Record<string,Suggestion>>({});
-  useEffect(()=>{
-    const handler=(event:Event)=>{
-      const value=(event as CustomEvent<Suggestion>).detail;
-      if(value&&typeof value.team_id==='string')setSuggestions(old=>({...old,[value.team_id]:value}));
-    };
-    window.addEventListener('jury:profile-suggestion',handler);
-    return ()=>window.removeEventListener('jury:profile-suggestion',handler);
-  },[]);
+function hasChanges(team:Team,draft:Draft):boolean{
+ return draft.name!==team.name||draft.tagline!==(team.tagline||'')||
+  draft.description!==(team.description||'')||draft.is_public!==team.is_public;
+}
 
-  const dirty=!!current&&(draft.name!==current.name||draft.tagline!==(current.tagline||'')||draft.description!==(current.description||'')||draft.is_public!==current.is_public);
+export default function PublicTeamEditor({teams,onTeamsChange}:{teams:Team[];onTeamsChange?:(teams:Team[])=>void}){
+ const [saved,setSaved]=useState<Team[]>(()=>teams.slice().sort((a,b)=>a.position-b.position));
+ const [drafts,setDrafts]=useState<Record<string,Draft>>(()=>Object.fromEntries(teams.map(team=>[team.id,toDraft(team)])));
+ const [selectedId,setSelectedId]=useState<string>(teams[0]?.id||'');
+ const [busy,setBusy]=useState(false);
+ const [done,setDone]=useState(0);
+ const [error,setError]=useState('');
+ const [message,setMessage]=useState('');
+ const [sources,setSources]=useState<Record<string,Suggestion>>({});
+ const selected=saved.find(team=>team.id===selectedId);
+ const draft=selected?drafts[selected.id]:undefined;
+ const changes=useMemo(()=>saved.filter(team=>drafts[team.id]&&hasChanges(team,drafts[team.id])),[saved,drafts]);
+ const ideas=saved.filter(team=>Boolean(drafts[team.id]?.description.trim())).length;
+ const slogans=saved.filter(team=>Boolean(drafts[team.id]?.tagline.trim())).length;
 
-  function choose(team:Team) {
-    if(busy||team.id===activeId)return;
-    if(dirty&&!window.confirm('Nicht gespeicherte Änderungen verwerfen und zu einem anderen Team wechseln?'))return;
-    setActiveId(team.id);setDraft(draftFrom(team));setApproved(false);setNotice('');setError('');
+ useEffect(()=>{
+  const onSuggestion=(event:Event)=>{
+   const suggestion=(event as CustomEvent<Suggestion>).detail;
+   if(!suggestion||typeof suggestion.team_id!=='string')return;
+   const target=saved.find(team=>team.id===suggestion.team_id);
+   if(!target)return;
+   setSources(old=>({...old,[target.id]:suggestion}));
+   setDrafts(old=>{
+    const current=old[target.id];
+    if(!current||hasChanges(target,current))return old;
+    return {...old,[target.id]:{
+     ...current,
+     tagline:suggestion.tagline??current.tagline,
+     description:suggestion.description??current.description
+    }};
+   });
+   setSelectedId(target.id);
+   setMessage('Neue Angaben für '+target.name+' erkannt. Bitte prüfen und gemeinsam speichern.');
+  };
+  window.addEventListener('jury:profile-suggestion',onSuggestion);
+  return ()=>window.removeEventListener('jury:profile-suggestion',onSuggestion);
+ },[saved]);
+
+ function update<K extends keyof Draft>(key:K,value:Draft[K]){
+  if(!selected)return;
+  setDrafts(old=>({...old,[selected.id]:{...old[selected.id],[key]:value}}));
+  setError('');setMessage('');
+ }
+ function undoAll(){
+  if(!changes.length||busy)return;
+  if(!window.confirm('Alle ungespeicherten Änderungen verwerfen?'))return;
+  setDrafts(Object.fromEntries(saved.map(team=>[team.id,toDraft(team)])));
+  setSources({});setError('');setMessage('');
+ }
+ async function saveAll(){
+  if(!changes.length||busy)return;
+  for(const team of changes){
+   const item=drafts[team.id];
+   if(item.name.trim().length<2||item.name.trim().length>80||item.tagline.length>160||item.description.length>2000){
+    setError('Die Eingaben für '+team.name+' überschreiten die erlaubte Länge.');setSelectedId(team.id);return;
+   }
   }
-  async function save(event:React.FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-    if(!current||busy||!dirty)return;
-    setError('');setNotice('');
-    if(draft.is_public&&!approved){
-      setError('Bestätigen Sie bitte die öffentliche Freigabe der Angaben.');
-      return;
-    }
-    setBusy(true);
-    try{
-      const response=await fetch('/api/jury/team-profiles',{
-        method:'PATCH',cache:'no-store',
-        headers:{'Content-Type':'application/json'},
-        body:JSON.stringify({id:current.id,...draft})
-      });
-      const body=await response.json() as {error?:string;team?:Team};
-      if(!response.ok||!body.team)throw new Error(body.error||'Teamprofil konnte nicht gespeichert werden.');
-      const savedTeam=body.team;
-      setSaved(previous=>previous.map(team=>team.id===savedTeam.id?{...team,...savedTeam}:team));
-      setDraft(draftFrom(savedTeam));setApproved(false);
-      setNotice(draft.is_public?'Profil gespeichert. Die Angaben sind für die öffentliche Anzeige freigegeben.':'Profil gespeichert. Das Team ist für die öffentliche Anzeige gesperrt.');
-    }catch(problem){
-      setError(problem instanceof Error?problem.message:'Speichern fehlgeschlagen.');
-    }finally{setBusy(false)}
+  if(!window.confirm('Änderungen an '+changes.length+' Teamprofilen speichern?\\n\\n'+changes.map(team=>team.name).join(', ')+'\\n\\nÖffentlich markierte Angaben erscheinen anschließend auf der Homepage.'))return;
+  setBusy(true);setDone(0);setError('');setMessage('');
+  const succeeded:Team[]=[];const failed:string[]=[];
+  for(const team of changes){
+   const value=drafts[team.id];
+   try{
+    const response=await fetch('/api/jury/team-profiles',{
+     method:'PATCH',cache:'no-store',headers:{'Content-Type':'application/json'},
+     body:JSON.stringify({id:team.id,...value})
+    });
+    const body=await response.json() as {team?:Team;error?:string};
+    if(!response.ok||!body.team)throw Error(body.error||'Speichern fehlgeschlagen');
+    succeeded.push(body.team);
+   }catch{failed.push(team.name);}
+   setDone(succeeded.length+failed.length);
   }
-  if(!current)return <div className="jury-profile-editor"><p>Es sind noch keine Teams zur Bearbeitung vorhanden.</p></div>;
-  const initials=draft.name.split(/[\s-]+/).filter(Boolean).slice(0,2).map(w=>w.charAt(0)).join('').toUpperCase()||'JG';
-  const pending=!(draft.tagline.trim()||draft.description.trim());
-  const existingCopy=getExistingTeamCopy(current.name);
-  const hasExistingCopy=Boolean(existingCopy&&(existingCopy.tagline!==draft.tagline||existingCopy.description!==draft.description));
-  return <div className="jury-profile-editor">
-    <div className="jury-profile-sidebar">
-      <span className="demo-overline">TEAM AUSWÄHLEN</span>
-      <div className="jury-profile-team-list" role="group" aria-label="Teamprofile auswählen">
-        {saved.map(team=><button type="button" key={team.id} disabled={busy} aria-pressed={team.id===activeId} className={team.id===activeId?'selected':''} onClick={()=>choose(team)}>
-          <span className="jury-profile-team-index">{String(team.position).padStart(2,'0')}</span>
-          <span className="jury-profile-team-title">{team.name}</span>
-          <span className="jury-profile-team-visibility" title={team.is_public?'Öffentlich':'Nicht öffentlich'}>{team.is_public?<Eye size={16}/>:<EyeOff size={16}/>}</span>
-        </button>)}
-      </div>
-      <p className="jury-profile-side-note"><ShieldCheck size={16}/> Nur die Wettbewerbsleitung darf diese Angaben bearbeiten.</p>
-    </div>
-    <form className="jury-profile-form" onSubmit={save}>
-      <div className="jury-profile-form-title"><div><span className="demo-overline">UNTERNEHMERTEAM {String(current.position).padStart(2,'0')}</span><h2>Öffentliches Profil</h2></div><button type="button" onClick={()=>setPreview(value=>!value)} className="jury-profile-preview-toggle">{preview?'Vorschau ausblenden':'Vorschau einblenden'} <Eye size={16}/></button></div>
-      {suggestions[current.id]&&<div role="status" style={{border:'1px solid #a8c09d',background:'#f0f6ed',padding:18,marginBottom:24}}>
-        <strong>Neue Profilangaben aus der ZIP-Datei erkannt</strong>
-        <p style={{fontSize:12}}>{suggestions[current.id].source_filename}</p>
-        {suggestions[current.id].tagline&&<p><b>Slogan:</b> {suggestions[current.id].tagline}</p>}
-        {suggestions[current.id].description&&<p><b>Geschäftsidee:</b> {suggestions[current.id].description}</p>}
-        <button type="button" style={{padding:'11px 14px',background:'#23463f',color:'white',border:0}} onClick={()=>{
-          if(dirty&&!window.confirm('Ungespeicherte Änderungen überschreiben?'))return;
-          const suggestion=suggestions[current.id];
-          setDraft(old=>({...old,tagline:suggestion.tagline??old.tagline,description:suggestion.description??old.description}));
-          setApproved(false);
-          setNotice('Vorschlag übernommen. Bitte prüfen, Freigabe bestätigen und speichern.');
-          setSuggestions(old=>{const updated={...old};delete updated[current.id];return updated;});
-        }}>Vorschlag ins Formular übernehmen</button>
-      </div>}
-      {hasExistingCopy&&<div className="jury-profile-existing-copy" style={{padding:'16px 20px',background:'#f3f5ef',border:'1px solid #d3ddce',marginBottom:22}}>
-        <strong>Bereits vorhandene Angaben gefunden</strong>
-        <p style={{fontSize:13,margin:'9px 0',lineHeight:1.65}}>Slogan und Geschäftsidee liegen aus der bisherigen Bearbeitung vor. Sie können sie zur Prüfung ins Formular übernehmen – ohne öffentliche Sofortveröffentlichung.</p>
-        <button type="button" disabled={busy} onClick={()=>{
-          if(!existingCopy)return;
-          if(dirty&&!window.confirm('Ungespeicherte Änderungen durch die bisherigen Angaben ersetzen?'))return;
-          setDraft(previous=>({...previous,tagline:existingCopy.tagline,description:existingCopy.description}));
-          setApproved(false);
-          setError('');
-          setNotice('Vorhandene Angaben übernommen. Bitte Text prüfen, öffentliche Freigabe bestätigen und speichern.');
-        }} style={{background:'#284850',color:'white',border:0,padding:'11px 16px',cursor:'pointer'}}>
-          Vorhandene Texte übernehmen <ArrowRight size={15} aria-hidden="true"/>
-        </button>
-      </div>}
-      <label htmlFor="jury-profile-name">Name des Unternehmerteams</label>
-      <input id="jury-profile-name" value={draft.name} onChange={event=>setDraft(old=>({...old,name:event.target.value}))} maxLength={80} required minLength={2} disabled={busy}/>
-      <label htmlFor="jury-profile-tagline">Kurzzeile / Slogan <small>(optional, maximal 160 Zeichen)</small></label>
-      <input id="jury-profile-tagline" value={draft.tagline} onChange={event=>setDraft(old=>({...old,tagline:event.target.value}))} maxLength={160} placeholder="Ein Satz, der die Idee auf den Punkt bringt" disabled={busy}/>
-      <label htmlFor="jury-profile-description">Beschreibung der Geschäftsidee <small>(optional, maximal 2.000 Zeichen)</small></label>
-      <textarea id="jury-profile-description" rows={5} maxLength={2000} value={draft.description} onChange={event=>setDraft(old=>({...old,description:event.target.value}))} placeholder="Welches Problem löst das Team? Wie funktioniert die Idee?" disabled={busy}/>
-      <span className="jury-profile-char-count">{draft.description.length} / 2.000 Zeichen</span>
-      <div className="jury-profile-publish">
-        <label><input type="checkbox" checked={draft.is_public} disabled={busy} onChange={event=>{setDraft(old=>({...old,is_public:event.target.checked}));setApproved(false)}}/><span><strong>Dieses Team öffentlich anzeigen</strong><small>Nur für freigegebene Teamangaben. Ist die Option ausgeschaltet, erscheint dieses Team nicht auf der öffentlichen Homepage.</small></span></label>
-      </div>
-      {draft.is_public&&<label className="jury-profile-approval"><input type="checkbox" checked={approved} onChange={event=>setApproved(event.target.checked)} disabled={busy}/><span>Ich bestätige, dass Teamname und Texte für die öffentliche Darstellung freigegeben sind.</span></label>}
-      {preview&&<div className="jury-profile-preview"><span className="demo-overline">VORSCHAU · {draft.is_public?'ÖFFENTLICH FREIGEGEBEN':'NICHT VERÖFFENTLICHT'}</span><div className="jury-profile-preview-card"><div aria-hidden="true">{initials}</div><h3>{draft.name.trim()||'Teamname'}</h3>{draft.tagline.trim()&&<p style={{fontWeight:700,color:'#345c53'}}>{draft.tagline.trim()}</p>}<p>{draft.description.trim()||'Die Geschäftsidee wird nach der Freigabe vorgestellt.'}</p></div><small>Die Vorschau zeigt nur Text. Fotos und Logos werden nach gesonderter Bildfreigabe ergänzt.</small></div>}
-      {error&&<p role="alert" className="jury-profile-error">{error}</p>}
-      {notice&&<p role="status" className="jury-profile-success"><CheckCircle2 size={17}/>{notice}</p>}
-      <div className="jury-profile-actions"><span>{dirty?'Ungespeicherte Änderungen':pending?'Kurzprofil noch nicht ausgefüllt':'Profil auf aktuellem Stand'}</span><button type="submit" disabled={busy||!dirty||!draft.name.trim()||draft.name.trim().length<2||(draft.is_public&&!approved)}><Save size={17}/>{busy?'Wird gespeichert …':'Änderungen speichern'} <ArrowRight size={15}/></button></div>
-    </form>
+  const next=saved.map(team=>succeeded.find(t=>t.id===team.id)||team);
+  setSaved(next);
+  setDrafts(old=>{
+   const result={...old};
+   for(const team of succeeded)result[team.id]=toDraft(team);
+   return result;
+  });
+  setSources(old=>{
+   const result={...old};
+   for(const team of succeeded)delete result[team.id];
+   return result;
+  });
+  onTeamsChange?.(next);
+  if(succeeded.length)setMessage(succeeded.length+' Profil(e) gespeichert. Die Homepage aktualisiert sich automatisch.');
+  if(failed.length)setError('Diese Änderungen konnten nicht gespeichert werden: '+failed.join(', ')+'.');
+  setBusy(false);
+ }
+ if(!selected||!draft)return <p>Es sind noch keine Unternehmerteams vorhanden.</p>;
+ return <section className="jury-simple-profiles" aria-label="Öffentliche Teamprofile">
+  <div className="jury-simple-header">
+   <div><span className="demo-overline">DIE TEAMPROFILE</span><h2>Alle Teams. Einmal speichern.</h2>
+    <p>Wählen Sie ein Team, bearbeiten Sie die Angaben und wechseln Sie beliebig zwischen den Profilen. Alle Änderungen werden am Ende gemeinsam gespeichert.</p>
+   </div>
+   <div className="jury-simple-stats">
+    <span><strong>{ideas}/{saved.length}</strong>Kurzprofile</span>
+    <span><strong>{slogans}/{saved.length}</strong>Slogans</span>
+   </div>
   </div>
+  <div className="jury-simple-layout">
+   <nav className="jury-simple-list" aria-label="Unternehmerteam wählen">
+    {saved.map(team=>{
+     const item=drafts[team.id];
+     return <button type="button" key={team.id} disabled={busy} className={team.id===selectedId?'active':''} aria-current={team.id===selectedId?'true':undefined} onClick={()=>setSelectedId(team.id)}>
+      <span className="jury-simple-number">{String(team.position).padStart(2,'0')}</span>
+      <span className="jury-simple-team-name"><strong>{item?.name||team.name}</strong><small>{item?.description.trim()?'Geschäftsidee hinterlegt':'Geschäftsidee fehlt'}{item?.tagline.trim()?' · Slogan':''}</small></span>
+      {hasChanges(team,item)&&<span className="jury-simple-dot" title="Ungespeicherte Änderung" aria-label="Ungespeicherte Änderung">●</span>}
+     </button>;
+    })}
+   </nav>
+   <div className="jury-simple-workspace">
+    <div className="jury-simple-workspace-top">
+     <span className="demo-overline">TEAM {String(selected.position).padStart(2,'0')}</span>
+     <h3>{draft.name||selected.name}</h3>
+     {sources[selected.id]&&<p className="jury-simple-import"><CheckCircle2 size={17}/> Neuer Businessplan erkannt. Bitte die vorgeschlagenen Angaben prüfen.</p>}
+    </div>
+    <div className="jury-simple-fields">
+     <label htmlFor="team-name">Teamname</label>
+     <input id="team-name" value={draft.name} maxLength={80} disabled={busy} onChange={event=>update('name',event.target.value)}/>
+     <label htmlFor="team-slogan">Slogan</label>
+     <input id="team-slogan" value={draft.tagline} maxLength={160} disabled={busy} placeholder="Noch kein Slogan vorhanden" onChange={event=>update('tagline',event.target.value)}/>
+     <label htmlFor="team-description">Was macht das Unternehmen?</label>
+     <textarea id="team-description" rows={5} maxLength={2000} disabled={busy} value={draft.description} placeholder="Die Geschäftsidee in ein bis zwei verständlichen Sätzen" onChange={event=>update('description',event.target.value)}/>
+     <div className="jury-simple-visibility">
+      <div><strong>Sichtbarkeit auf der Homepage</strong><small>Nur Teamname, Slogan und Geschäftsidee – keine Schülernamen oder privaten Anlagen.</small></div>
+      <select value={draft.is_public?'public':'hidden'} onChange={event=>update('is_public',event.target.value==='public')} disabled={busy} aria-label={'Sichtbarkeit für '+draft.name}>
+       <option value="public">Öffentlich</option><option value="hidden">Verborgen</option>
+      </select>
+     </div>
+    </div>
+    <div className="jury-simple-preview">
+     <span className="demo-overline">VORSCHAU DER TEAMKARTE</span>
+     <div className="jury-simple-preview-card"><span>{draft.name}</span><strong>{draft.tagline||'Slogan noch nicht vorhanden'}</strong><p>{draft.description||'Beschreibung folgt.'}</p></div>
+    </div>
+   </div>
+  </div>
+  <div className="jury-simple-footer">
+   <div><strong>{changes.length?changes.length+' ungespeicherte Teamprofile':'Alle Profile auf aktuellem Stand'}</strong><small>Es werden nur tatsächlich geänderte Profile gespeichert.</small></div>
+   <div className="jury-simple-actions">
+    {changes.length>0&&<button type="button" className="jury-simple-discard" disabled={busy} onClick={undoAll}>Verwerfen</button>}
+    <button type="button" className="jury-simple-save" disabled={busy||changes.length===0} onClick={()=>void saveAll()}><Save size={18}/>{busy?'Speichere '+done+' von '+changes.length+' …':changes.length?'Alle Änderungen speichern':'Keine Änderungen offen'}<ArrowRight size={17}/></button>
+   </div>
+  </div>
+  {message&&<p role="status" className="jury-simple-success"><CheckCircle2 size={18}/>{message}</p>}
+  {error&&<p role="alert" className="jury-simple-error">{error}</p>}
+  <p className="jury-simple-privacy"><ShieldCheck size={16}/> Änderungen sind zunächst nur im geschützten Portal sichtbar. Beim Speichern werden öffentlich markierte Teamtexte für die Homepage freigegeben. <Eye size={15}/> Öffentliche Teams <EyeOff size={15}/> verborgene Teams</p>
+ </section>;
 }

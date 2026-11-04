@@ -1,0 +1,26 @@
+/* Team cards: always show name and slogan, reveal the business idea on hover. */
+.lm-page .lm-team-card{position:relative;isolation:isolate}
+.lm-page .lm-team-card .lm-team-card-slogan{display:block!important;color:#345b52;font-size:clamp(14px,1.2vw,17px);font-weight:700;line-height:1.48;letter-spacing:.005em;margin:7px 0 16px}
+.lm-page .lm-team-card .lm-team-card-slogan-pending{font-size:13px;font-weight:400;font-style:italic;color:#86968c}
+.lm-page .lm-team-card-description-accessible{position:absolute;width:1px;height:1px;margin:-1px!important;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0;padding:0}
+.lm-page .lm-team-card-reveal{position:absolute;inset:0;z-index:6;padding:clamp(22px,2.6vw,32px);display:flex;flex-direction:column;justify-content:center;gap:10px;background:linear-gradient(145deg,#203e3b 0%,#284f46 58%,#315c53 100%);color:#f8faf4;opacity:0;transform:translateY(15px);pointer-events:none;transition:opacity .36s ease,transform .36s ease}
+.lm-page .lm-team-card-reveal::before{position:absolute;content:'';top:0;left:0;width:55%;height:3px;background:#b7c89a}
+.lm-page .lm-team-card-reveal-eyebrow{font-size:10px;letter-spacing:.17em;font-weight:750;color:#c4d4b3}
+.lm-page .lm-team-card-reveal strong{font:500 clamp(26px,2.5vw,34px)/1.15 'Playfair Display',Georgia,serif;letter-spacing:-.03em;color:#fff}
+.lm-page .lm-team-card-reveal p{font-size:clamp(13px,1.04vw,15px);line-height:1.73;color:#f0f7ec;margin:7px 0 0;overflow-wrap:anywhere;max-width:44ch}
+.lm-page .lm-team-card-reveal-foot{font-size:9px;color:#cadbcd;letter-spacing:.12em;margin-top:15px}
+@media(hover:hover) and (pointer:fine){
+ .lm-page .lm-team-card-has-idea:hover .lm-team-card-reveal{opacity:1;transform:translateY(0)}
+ .lm-page .lm-team-card-has-idea:hover{box-shadow:0 15px 40px #152e2c2c}
+}
+.lm-page .lm-team-card-has-idea:focus-visible{outline:3px solid #88a870;outline-offset:4px}
+.lm-page .lm-team-card-has-idea:focus-visible .lm-team-card-reveal{opacity:1;transform:translateY(0)}
+@media(hover:none),(pointer:coarse){
+ .lm-page .lm-team-card-reveal{display:none}
+ .lm-page .lm-team-card-description-accessible{position:static;width:auto;height:auto;margin:13px 0 0!important;overflow:visible;clip:auto;white-space:normal;font-size:13px;line-height:1.7;color:#5f7570;padding:0}
+ .lm-page .lm-team-card{min-height:0}
+ .lm-page .lm-team-card-foot{margin-top:10px}
+}
+@media(prefers-reduced-motion:reduce){
+ .lm-page .lm-team-card-reveal{transition:none;transform:none}
+}

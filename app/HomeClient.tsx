@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import Image from 'next/image';
+import './TeamReveal.css';
 import {
   ArrowRight, ArrowUpRight, CalendarDays, ChevronDown, Clock3, Compass,
   ExternalLink, Lightbulb, LockKeyhole, MapPin, Menu, Presentation,
@@ -315,22 +316,27 @@ export default function HomeClient({ publishedTeams = [] }: { publishedTeams: Pu
                 const description = team.description?.trim() || '';
                 const initials = team.name.split(/[\s-]+/).filter(Boolean).slice(0, 2).map(word => word.charAt(0)).join('').toUpperCase();
                 return (
-                  <article className="lm-team-card" key={team.id} aria-labelledby={'team-' + team.id} tabIndex={short?0:undefined}>
+                  <article className={'lm-team-card '+(description?'lm-team-card-has-idea':'lm-team-card-empty')} key={team.id} aria-labelledby={'team-' + team.id} tabIndex={description?0:undefined}>
                     <div className="lm-team-card-art" aria-hidden="true">
-                      <span className="lm-team-card-initials">{initials || 'JG'}</span>
-                      {short && <span className="lm-team-card-art-slogan" aria-hidden="true">{short}</span>}
+                      <span className="lm-team-card-initials">{initials||'JG'}</span>
                       <span className="lm-team-card-art-folio">GRÜNDERTEAM / {number}</span>
                     </div>
                     <div className="lm-team-card-bottom">
                       <span className="lm-team-card-eyebrow">JUGEND GRÜNDET <span>· TEAM {number}</span></span>
                       <h3 id={'team-' + team.id}>{team.name}</h3>
-                      {short && <p className="lm-team-card-slogan">{short}</p>}
-                      <p className={description ? 'lm-team-card-teaser' : 'lm-team-card-pending'}>{description || 'Die Geschäftsidee wird nach Freigabe vorgestellt.'}</p>
+                      <p className={short?'lm-team-card-slogan':'lm-team-card-slogan lm-team-card-slogan-pending'}>{short||'Slogan folgt'}</p>
+                      {description&&<p className="lm-team-card-description-accessible">{description}</p>}
                       <div className="lm-team-card-foot">
                         <span className="lm-team-card-footline" aria-hidden="true"/>
-                        <span>{short || description ? 'PROJEKTPROFIL' : 'KURZPROFIL FOLGT'}</span>
+                        <span>{description?'GESCHÄFTSIDEE ENTDECKEN':'GESCHÄFTSIDEE FOLGT'}</span>
                       </div>
                     </div>
+                    {description&&<div className="lm-team-card-reveal" aria-hidden="true">
+                      <span className="lm-team-card-reveal-eyebrow">DIE GESCHÄFTSIDEE · TEAM {number}</span>
+                      <strong>{team.name}</strong>
+                      <p>{description}</p>
+                      <span className="lm-team-card-reveal-foot">JUGEND GRÜNDET · LANDHEIM AMMERSEE</span>
+                    </div>}
                   </article>
                 );
               })}
