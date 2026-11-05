@@ -24,3 +24,24 @@
 @media(prefers-reduced-motion:reduce){
  .lm-page .lm-team-card-reveal{transition:none;transform:none}
 }
+
+
+/* On touch devices, reveal company ideas by tapping the whole team card.
+   Use viewport fallback because iPadOS/Safari hover heuristics can vary. */
+.lm-page .lm-team-card-touch-hint{display:none}
+@media (hover:none),(pointer:coarse),(max-width:760px){
+  .lm-page .lm-team-card-has-idea{cursor:pointer;-webkit-tap-highlight-color:rgba(186,214,57,.22);touch-action:manipulation}
+  .lm-page .lm-team-card-has-idea:focus-visible{outline:3px solid #88a870;outline-offset:4px}
+  .lm-page .lm-team-card-desktop-hint{display:none}
+  .lm-page .lm-team-card-touch-hint{display:inline;color:#31584b;font-weight:800;letter-spacing:.045em}
+  .lm-page .lm-team-card-reveal{display:none!important}
+  .lm-page .lm-team-card-description-accessible{
+    display:none!important;position:static;width:auto;height:auto;min-width:0;
+    margin:13px 0 0!important;padding:14px 0 1px;border-top:1px solid #dce8d6;
+    overflow:visible;clip:auto;white-space:normal;
+    font-size:14px;line-height:1.75;color:#31584b;overflow-wrap:anywhere
+  }
+  .lm-page .lm-team-card-expanded .lm-team-card-description-accessible{display:block!important}
+  .lm-page .lm-team-card-expanded{border-color:#8faa81;box-shadow:0 12px 30px #31584b19}
+  .lm-page .lm-team-card-expanded .lm-team-card-foot{margin-top:17px}
+}

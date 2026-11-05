@@ -62,6 +62,7 @@ const phases = [
 
 export default function HomeClient({ publishedTeams = [] }: { publishedTeams: PublishedTeam[] }) {
   const [menuOpen, setMenuOpen] = useState(false);
+  const [expandedTeamId, setExpandedTeamId] = useState<string | null>(null);
   const [headerCompact, setHeaderCompact] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -418,7 +419,26 @@ export default function HomeClient({ publishedTeams = [] }: { publishedTeams: Pu
                 const description = team.description?.trim() || '';
                 const initials = team.name.split(/[\s-]+/).filter(Boolean).slice(0, 2).map(word => word.charAt(0)).join('').toUpperCase();
                 return (
-                  <article className={'lm-team-card '+(description?'lm-team-card-has-idea':'lm-team-card-empty')} key={team.id} aria-labelledby={'team-' + team.id} tabIndex={description?0:undefined}>
+                  <article
+                    className={'lm-team-card '+(description?'lm-team-card-has-idea':'lm-team-card-empty')+(expandedTeamId===team.id?' lm-team-card-expanded':'')}
+                    key={team.id}
+                    aria-labelledby={'team-' + team.id}
+                    role={description ? 'button' : undefined}
+                    aria-expanded={description ? expandedTeamId===team.id : undefined}
+                    aria-controls={description ? 'team-description-'+team.id : undefined}
+                    tabIndex={description?0:undefined}
+                    onClick={description ? () => {
+                      if (window.matchMedia('(hover: none), (pointer: coarse), (max-width: 760px)').matches) {
+                        setExpandedTeamId(previous => previous===team.id ? null : team.id);
+                      }
+                    } : undefined}
+                    onKeyDown={description ? event => {
+                      if (event.key==='Enter' || event.key===' ') {
+                        event.preventDefault();
+                        setExpandedTeamId(previous => previous===team.id ? null : team.id);
+                      }
+                    } : undefined}
+                  >
                     <div className="lm-team-card-art" aria-hidden="true">
                       <span className="lm-team-card-initials">{initials||'JG'}</span>
                       <span className="lm-team-card-art-folio">GRÜNDERTEAM / {number}</span>
@@ -427,10 +447,11 @@ export default function HomeClient({ publishedTeams = [] }: { publishedTeams: Pu
                       <span className="lm-team-card-eyebrow">JUGEND GRÜNDET <span>· TEAM {number}</span></span>
                       <h3 id={'team-' + team.id}>{team.name}</h3>
                       <p className={short?'lm-team-card-slogan':'lm-team-card-slogan lm-team-card-slogan-pending'}>{short||'Slogan folgt'}</p>
-                      {description&&<p className="lm-team-card-description-accessible">{description}</p>}
+                      {description&&<p id={'team-description-'+team.id} className="lm-team-card-description-accessible">{description}</p>}
                       <div className="lm-team-card-foot">
                         <span className="lm-team-card-footline" aria-hidden="true"/>
-                        <span>{description?'GESCHÄFTSIDEE ENTDECKEN':'GESCHÄFTSIDEE FOLGT'}</span>
+                        <span className="lm-team-card-desktop-hint">{description?'GESCHÄFTSIDEE ENTDECKEN':'GESCHÄFTSIDEE FOLGT'}</span>
+                        {description&&<span className="lm-team-card-touch-hint">{expandedTeamId===team.id?'GESCHÄFTSIDEE SCHLIESSEN':'ANTIPPEN · GESCHÄFTSIDEE ENTDECKEN'}</span>}
                       </div>
                     </div>
                     {description&&<div className="lm-team-card-reveal" aria-hidden="true">
