@@ -36,15 +36,16 @@ async function refresh(request:NextRequest,redirect:boolean){
     };
     if(!data.access_token||!data.refresh_token||!data.user?.id)return unauthorized(request,redirect);
     // Every renewed token must still belong to a registered juror.
-    const member=await fetch(url+'/rest/v1/jury_members?select=user_id&limit=1',{
+    const member=await fetch(url+'/rest/v1/jury_members?select=user_id,must_change_password&limit=1',{
       headers:{apikey:key,Authorization:'Bearer '+data.access_token},cache:'no-store'
     });
     if(!member.ok)return unauthorized(request,redirect);
-    const profiles=await member.json() as Array<{user_id:string}>;
+    const profiles=await member.json() as Array<{user_id:string;must_change_password:boolean}>;
     if(profiles.length!==1||profiles[0].user_id!==data.user.id)return unauthorized(request,redirect);
+    const next=profiles[0].must_change_password?'/jury/passwort-wechseln':'/jury/dashboard';
     const response=redirect
-      ?NextResponse.redirect(new URL('/jury/dashboard',request.url),303)
-      :NextResponse.json({ok:true});
+      ?NextResponse.redirect(new URL(next,request.url),303)
+      :NextResponse.json({ok:true,redirect:next});
     response.cookies.set('jury_access',data.access_token,{
       ...cookieOptions,maxAge:Math.min(data.expires_in||3600,3600)
     });

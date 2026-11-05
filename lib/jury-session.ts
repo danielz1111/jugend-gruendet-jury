@@ -8,11 +8,11 @@ export const getJurySession=cache(async()=>{
  const headers={apikey:key,Authorization:'Bearer '+token};
  const [userRes,juryRes]=await Promise.all([
   fetch(url+'/auth/v1/user',{headers,cache:'no-store'}),
-  fetch(url+'/rest/v1/jury_members?select=user_id,display_name,is_admin&limit=1',{headers,cache:'no-store'})
+  fetch(url+'/rest/v1/jury_members?select=user_id,display_name,is_admin,must_change_password&limit=1',{headers,cache:'no-store'})
  ]);
  if(!userRes.ok||!juryRes.ok)return null;
  const user=await userRes.json() as {id?:string};
- const jury=await juryRes.json() as Array<{user_id:string;display_name:string;is_admin:boolean}>;
- if(!user.id||jury.length!==1||jury[0].user_id!==user.id)return null;
+ const jury=await juryRes.json() as Array<{user_id:string;display_name:string;is_admin:boolean;must_change_password:boolean}>;
+ if(!user.id||jury.length!==1||jury[0].user_id!==user.id||jury[0].must_change_password)return null;
  return {userId:user.id,displayName:jury[0].display_name,isAdmin:jury[0].is_admin,token};
 });

@@ -11,6 +11,7 @@ import TeamNavigator from './TeamNavigator';
 import LiveEventPanel from './LiveEventPanel';
 import PublicTeamEditor from './PublicTeamEditor';
 import ParentAccessAdmin from './ParentAccessAdmin';
+import JuryAccountAdmin from './JuryAccountAdmin';
 import './JuryStructure.css';
 import './JuryResponsive.css';
 
@@ -319,6 +320,7 @@ export default function PortalHome({
                 Änderungen an den Teamprofilen werden erst nach dem Speichern veröffentlicht.</p>
             </div>
             <div className="jury-v3-admin-content">
+              <JuryAccountAdmin/>
               <ParentAccessAdmin teams={teams}/>
               <PublicTeamEditor teams={teams}/>
               <div className="jury-v3-admin-divider">

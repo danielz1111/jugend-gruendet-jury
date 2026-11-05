@@ -173,10 +173,10 @@ export default function HomeClient({ publishedTeams = [] }: { publishedTeams: Pu
         body: JSON.stringify({ email, password, remember: rememberJury }),
         cache: 'no-store'
       });
-      const result = await response.json() as { error?: string };
+      const result = await response.json() as { error?: string; redirect?: string };
       if (!response.ok) throw new Error(result.error || 'Die Anmeldung ist fehlgeschlagen.');
       setPassword('');
-      window.location.assign('/jury/dashboard');
+      window.location.assign(result.redirect||'/jury/dashboard');
     } catch (error) {
       setLoginError(error instanceof Error ? error.message : 'Die Anmeldung ist fehlgeschlagen.');
       setLoginBusy(false);
@@ -481,7 +481,7 @@ export default function HomeClient({ publishedTeams = [] }: { publishedTeams: Pu
               <input id="lm-login-email" type="email" autoComplete="username" required value={email} onChange={event => setEmail(event.currentTarget.value)} placeholder="name@beispiel.de"/>
               <label htmlFor="lm-login-password">PASSWORT</label>
               <div className="lm-login-password-field"><input id="lm-login-password" type={showPassword?'text':'password'} autoComplete="current-password" required value={password} onChange={event=>{setPassword(event.currentTarget.value);setLoginError('')}} placeholder="Ihr persönliches Passwort"/><button className="lm-login-password-toggle" type="button" aria-label={showPassword?'Passwort verbergen':'Passwort anzeigen'} aria-pressed={showPassword} onClick={()=>setShowPassword(v=>!v)}>{showPassword?<EyeOff size={18} aria-hidden="true"/>:<Eye size={18} aria-hidden="true"/>}</button></div>
-              <a className="lm-jury-password-help" href="/jury/passwort-vergessen">Passwort vergessen oder erstmalig festlegen?</a>
+              <a className="lm-jury-password-help" href="/jury/passwort-vergessen">Passwort vergessen? Administration kontaktieren</a>
               <label className="lm-jury-remember" style={{display:'flex',alignItems:'center',gap:9,fontSize:13,color:'#e7ebe0',cursor:'pointer',margin:'13px 0'}}><input type="checkbox" checked={rememberJury} onChange={event=>setRememberJury(event.currentTarget.checked)} style={{width:17,height:17,accentColor:'#bad639'}}/> Auf diesem Gerät angemeldet bleiben (7 Tage)</label>
               {loginError && <p role="alert" className="lm-login-error">{loginError}</p>}
               <button type="submit" disabled={loginBusy} aria-busy={loginBusy}>{loginBusy ? 'Anmeldung wird geprüft …' : 'Zum persönlichen Juryportal'} <ArrowUpRight size={19}/></button>
