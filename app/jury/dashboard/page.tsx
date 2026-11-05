@@ -47,7 +47,7 @@ export default async function Dashboard(){
       </section>
     </main>
   : <main className="demo">
-      <PortalHome displayName={session.displayName} teams={teams} members={members}
+      <PortalHome displayName={session.displayName} welcomeAddress={session.welcomeAddress} teams={teams} members={members}
         scores={scores} isAdmin={session.isAdmin}/>
     </main>;
 }

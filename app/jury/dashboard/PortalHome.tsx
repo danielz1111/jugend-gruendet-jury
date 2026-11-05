@@ -30,9 +30,9 @@ const navigation = [
 ];
 
 export default function PortalHome({
-  displayName,teams,members,scores,isAdmin
+  displayName,welcomeAddress,teams,members,scores,isAdmin
 }:{
-  displayName:string;teams:Team[];members:Member[];scores:Score[];isAdmin:boolean
+  displayName:string;welcomeAddress:string|null;teams:Team[];members:Member[];scores:Score[];isAdmin:boolean
 }){
   const [area,setArea]=useState<Area>('overview');
   const [activeTeamId,setActiveTeamId]=useState<string|null>(teams[0]?.id||null);
@@ -41,11 +41,15 @@ export default function PortalHome({
   const [detailTarget,setDetailTarget]=useState<'profile'|'materials'|null>(null);
   const headerRef=useRef<HTMLElement|null>(null);
   const selectedTeam=teams.find(team=>team.id===activeTeamId)||teams[0]||null;
-  const salutation=displayName.trim().replace(/[.!]+$/,'');
-  const greeting=/^(Herr|Frau)\b/i.test(salutation)
-    ?salutation:/^D\.\s*Zech$/i.test(salutation)?'Herr Zech':salutation;
-  const welcome=/^Frau\b/i.test(greeting)
-    ?'liebe '+greeting:/^Herr\b/i.test(greeting)?'lieber '+greeting:greeting;
+  // The formal address is explicitly stored per juror; never infer it from
+  // given names or the account's email address.
+  const explicitGreeting=welcomeAddress?.trim();
+  const fallbackName=displayName.trim().replace(/[.!]+$/,'');
+  const welcome=explicitGreeting || (
+    /^(Herr|Frau)\b/i.test(fallbackName)
+      ? /^(Frau)\b/i.test(fallbackName)?'liebe '+fallbackName:'lieber '+fallbackName
+      :fallbackName
+  );
   // Match the public homepage's compact masthead on scrolling.
   useEffect(()=>{
     const onScroll=()=>setHeaderCompact(window.scrollY>140);
