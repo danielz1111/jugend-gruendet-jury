@@ -4,7 +4,7 @@ import {CheckCircle2,ClipboardCopy,KeyRound,LockKeyhole,RefreshCcw,ShieldCheck,U
 import './JuryAccountAdmin.css';
 
 type Status='not_created'|'auth_exists'|'password_change_required'|'active';
-type Member={email:string;name:string;status:Status};
+type Member={email:string;name:string;status:Status;isSubstitute:boolean};
 type Generated={email:string;name:string;temporaryPassword:string};
 const labels:Record<Status,string>={
  not_created:'Noch nicht eingerichtet',
@@ -71,16 +71,16 @@ export default function JuryAccountAdmin(){
    <div className="jury-accounts-list">
     {members.map(m=><article className="jury-accounts-person" key={m.email}>
      <div>
-      <strong>{m.name}</strong>
+      <strong>{m.name}{m.isSubstitute&&<span className="jury-accounts-substitute"> · Ersatzjuror</span>}</strong>
       <span>{m.email}</span>
       <small className={'jury-accounts-status '+m.status}>
        {m.status==='active'?<CheckCircle2 size={14}/>:<LockKeyhole size={14}/>}
-       {labels[m.status]}</small>
+       {labels[m.status]}{m.isSubstitute&&m.status==='not_created'?' · Nur bei Vertretungsbedarf aktivieren':''}</small>
      </div>
      {m.status!=='auth_exists'&&<button type="button" disabled={working!==null}
       onClick={()=>void prepare(m)}>
       {m.status==='not_created'?<UserPlus size={17}/>:<KeyRound size={17}/>}
-      {working===m.email?'Bitte warten …':m.status==='not_created'?'Startpasswort erzeugen':'Passwort zurücksetzen'}
+      {working===m.email?'Bitte warten …':m.status==='not_created'?(m.isSubstitute?'Bei Bedarf aktivieren':'Startpasswort erzeugen'):'Passwort zurücksetzen'}
      </button>}
     </article>)}
    </div>}
