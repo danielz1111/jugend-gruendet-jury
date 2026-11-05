@@ -36,7 +36,7 @@ async function refresh(request:NextRequest,redirect:boolean){
     };
     if(!data.access_token||!data.refresh_token||!data.user?.id)return unauthorized(request,redirect);
     // Every renewed token must still belong to a registered juror.
-    const member=await fetch(url+'/rest/v1/jury_members?select=user_id,must_change_password&limit=1',{
+    const member=await fetch(url+'/rest/v1/jury_members?select=user_id,must_change_password&user_id=eq.'+encodeURIComponent(data.user.id)+'&limit=1',{
       headers:{apikey:key,Authorization:'Bearer '+data.access_token},cache:'no-store'
     });
     if(!member.ok)return unauthorized(request,redirect);
