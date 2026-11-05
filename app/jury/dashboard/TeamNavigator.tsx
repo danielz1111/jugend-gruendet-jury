@@ -6,7 +6,8 @@ import {juryCriteria as criteria, activeJuryCriteria, juryCriterionWeight, type 
 type Team={id:string;name:string;position:number;tagline:string|null;description:string|null;jury_photo_path:string|null};
 type Member={id:string;team_id:string;display_name:string;expert_role:string|null;display_order:number};
 type Score={team_id:string;[key:string]:string|number|null};
-type JuryProgress={submitted_count:number;total_jurors:number;others_average:number|null;own_submitted:boolean};
+type JurorSubmissionStatus={display_name:string;submitted:boolean;is_current_user:boolean};
+type JuryProgress={submitted_count:number;total_jurors:number;others_average:number|null;own_submitted:boolean;jurors:JurorSubmissionStatus[]};
 // Stable example assignments for layout previews only; no database values are changed.
 const exampleAreas=[
  {id:'A',name:'Markt & Zielgruppe'},
@@ -172,7 +173,7 @@ export default function TeamNavigator({teams,members,initialScores,isAdmin,initi
   void loadJuryProgress(current.id);
   const interval=window.setInterval(()=>{
    if(!document.hidden)void loadJuryProgress(current.id);
-  },30000);
+  },10000);
   return ()=>window.clearInterval(interval);
  },[selected,teams]);
 
