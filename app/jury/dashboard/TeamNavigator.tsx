@@ -456,8 +456,20 @@ export default function TeamNavigator({teams,members,initialScores,isAdmin,initi
  </div>
   <div style={{marginTop:20,padding:18,border:'1px solid #d8d4cd',borderRadius:10}}>
  <h3 id="jury-rating-release">Bewertung freigeben</h3>
- {isReleased?<p style={{color:'#18794e',fontWeight:700}}>✓ Bewertung verbindlich freigegeben. Die Punkte sind jetzt gesperrt.</p>:<>
- <p>Deine Punkte werden als Entwurf gespeichert. Erst mit der Freigabe zählen sie zum Juryergebnis.</p>
+ {isReleased?<div>
+ <p style={{color:'#18794e',fontWeight:700}}>✓ Bewertung verbindlich freigegeben. Die Punkte sind jetzt gesperrt.</p>
+ <p>Sie können Ihre eigene Bewertung nochmals zum Bearbeiten öffnen. Die bisher vergebenen Punkte bleiben erhalten. Bis zur erneuten Freigabe zählt die Bewertung nicht zum Juryergebnis.</p>
+ {confirmReopenTeam===team.id?<div style={{padding:15,background:'#fff8eb',border:'1px solid #d8b879',borderRadius:9}}>
+  <p style={{fontWeight:700}}>Bewertung wirklich zurücknehmen?</p>
+  <div style={{display:'flex',gap:10,flexWrap:'wrap'}}>
+   <button type="button" disabled={reopening} onClick={()=>void reopen(team.id)} style={{minHeight:46,padding:'12px 16px',border:0,borderRadius:7,background:'#173d53',color:'#fff',cursor:'pointer'}}>{reopening?'Wird geöffnet …':'Ja, Bewertung erneut öffnen'}</button>
+   <button type="button" disabled={reopening} onClick={()=>{setConfirmReopenTeam(null);setReleaseError('')}} style={{minHeight:46,padding:'12px 16px',border:'1px solid #abc2b9',borderRadius:7,background:'#fff',color:'#173d53',cursor:'pointer'}}>Abbrechen</button>
+  </div>
+ </div>:<button type="button" disabled={reopening} onClick={()=>{setConfirmReopenTeam(team.id);setReleaseError('')}} style={{minHeight:46,padding:'12px 18px',border:'1px solid #315a5f',borderRadius:8,background:'#fff',color:'#173d53',fontWeight:700,cursor:'pointer'}}>Bewertung nochmals ändern</button>}
+ {releaseError&&<p role="alert" style={{color:'#b42318'}}>{releaseError}</p>}
+ </div>:<>
+ <p>Ihre Punkte werden als Entwurf gespeichert. Erst mit der Freigabe zählen sie zum Juryergebnis.</p>
+ {reopenedTeam===team.id&&<p role="status" style={{padding:'11px 14px',background:'#ecf6ef',color:'#22623b',borderRadius:7}}>Bewertung wieder geöffnet. Die bisherigen Punkte sind erhalten geblieben. Nach einer Änderung bitte erneut verbindlich freigeben.</p>}
  <button type="button" disabled={releasing||!activeCriteria.every(c=>scores[team.id]?.[c.key]!==undefined)||activeCriteria.some(c=>status[team.id+':'+c.key]==='saving'||status[team.id+':'+c.key]==='error'||pending[team.id+':'+c.key]!==undefined)}
  onClick={()=>void release(team.id)} style={{background:'#173d53',color:'white',padding:'12px 20px',borderRadius:8,cursor:'pointer',opacity:releasing?0.6:1}}>
  {releasing?'Freigabe läuft …':'Bewertung verbindlich freigeben'}
