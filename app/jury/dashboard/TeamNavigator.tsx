@@ -439,6 +439,17 @@ export default function TeamNavigator({teams,members,initialScores,isAdmin,initi
      <div style={{width:(currentProgress.total_jurors>0?Math.min(100,currentProgress.submitted_count/currentProgress.total_jurors*100):0)+'%',
        height:'100%',background:'#3c7d6e'}}/>
     </div>
+    <div style={{marginTop:18}}>
+     <h4 style={{fontSize:15,margin:'0 0 9px',color:'#173d53'}}>Abgabestand pro Jurymitglied</h4>
+     <p style={{fontSize:12,color:'#667480'}}>Automatische Aktualisierung etwa alle 10 Sekunden</p>
+     <ul style={{listStyle:'none',padding:0,margin:0,display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(210px,1fr))',gap:9}}>
+      {(currentProgress.jurors||[]).map((person,i)=><li key={i}
+       style={{display:'flex',alignItems:'center',justifyContent:'space-between',gap:8,padding:12,borderRadius:8,border:'1px solid '+(person.submitted?'#8fbea1':'#d0d6dc'),background:person.submitted?'#edf8f1':'#f6f7f8'}}>
+       <span style={{fontSize:13,fontWeight:person.is_current_user?700:500,color:'#173d53'}}>{person.display_name}{person.is_current_user?' (Sie)':''}</span>
+       <span style={{fontSize:12,whiteSpace:'nowrap',fontWeight:700,color:person.submitted?'#17613e':'#667480'}}>{person.submitted?'✓ Abgegeben':'○ Offen'}</span>
+      </li>)}
+     </ul>
+    </div>
     {(isAdmin||currentProgress.own_submitted)&&currentProgress.others_average!==null
      ?<div style={{marginTop:16}}>
        <strong>{isAdmin?'Jury-Durchschnitt':'Durchschnitt der anderen Juroren'}: {Number(currentProgress.others_average).toLocaleString('de-DE',{minimumFractionDigits:2,maximumFractionDigits:2})} / 10</strong>
