@@ -16,6 +16,8 @@ export async function GET(req:Request){
  return NextResponse.json(await res.json(),{headers:{'Cache-Control':'no-store'}});
 }
 export async function POST(req:Request){
+ const origin=req.headers.get('origin');
+ if(origin&&origin!==new URL(req.url).origin)return NextResponse.json({error:'Ungültige Herkunft'},{status:403});
  const ctx=await context();if(!ctx)return NextResponse.json({error:'Nicht angemeldet'},{status:401});
  let body:Record<string,unknown>;try{body=await req.json()}catch{return NextResponse.json({error:'Ungültige Anfrage'},{status:400})}
  const teamId=body.team_id,memberId=body.member_id,content=body.content;

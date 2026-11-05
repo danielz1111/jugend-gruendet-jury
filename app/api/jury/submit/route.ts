@@ -2,6 +2,8 @@ import {NextResponse} from 'next/server';
 import {getJurySession} from '../../../../lib/jury-session';
 const keys=['presentation_impact_score','questions_quality_score','questions_confidence_score','questions_reasoning_score'] as const;
 export async function POST(req:Request){
+ const origin=req.headers.get('origin');
+ if(origin&&origin!==new URL(req.url).origin)return NextResponse.json({error:'Ungültige Herkunft'},{status:403});
  const session=await getJurySession();
  if(!session)return NextResponse.json({error:'Nicht angemeldet'},{status:401});
  let body:Record<string,unknown>;

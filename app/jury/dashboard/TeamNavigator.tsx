@@ -5,6 +5,7 @@ import {teamProfiles} from '../../../lib/company-profiles';
 type Team={id:string;name:string;position:number;tagline:string|null;description:string|null;jury_photo_path:string|null};
 type Member={id:string;team_id:string;display_name:string;expert_role:string|null;display_order:number};
 type Score={team_id:string;[key:string]:string|number|null};
+type JuryProgress={submitted_count:number;total_jurors:number;others_average:number|null;own_submitted:boolean};
 // Stable example assignments for layout previews only; no database values are changed.
 const exampleAreas=[
  {id:'A',name:'Markt & Zielgruppe'},
@@ -161,6 +162,25 @@ export default function TeamNavigator({teams,members,initialScores,isAdmin,initi
   finally{setNotesSaving(old=>({...old,[key]:false}));}
  }
 
+ const [juryProgress,setJuryProgress]=useState<Record<string,JuryProgress|null>>({});
+ async function loadJuryProgress(teamId:string){
+  try{
+   const response=await fetch('/api/jury/progress?team_id='+encodeURIComponent(teamId),{cache:'no-store'});
+   if(!response.ok)throw Error('Fortschritt nicht abrufbar');
+   const result=await response.json() as JuryProgress|null;
+   setJuryProgress(current=>({...current,[teamId]:result}));
+  }catch{setJuryProgress(current=>({...current,[teamId]:null}));}
+ }
+ useEffect(()=>{
+  const current=teams[selected];
+  if(!current)return;
+  void loadJuryProgress(current.id);
+  const interval=window.setInterval(()=>{
+   if(!document.hidden)void loadJuryProgress(current.id);
+  },30000);
+  return ()=>window.clearInterval(interval);
+ },[selected,teams]);
+
  const [released,setReleased]=useState<Record<string,boolean>>(()=>Object.fromEntries(initialScores.map(s=>[s.team_id,Boolean(s.submitted_at)])));
  const [releasing,setReleasing]=useState(false);
  const [releaseError,setReleaseError]=useState('');
@@ -170,6 +190,7 @@ export default function TeamNavigator({teams,members,initialScores,isAdmin,initi
    const response=await fetch('/api/jury/submit',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({team_id:teamId})});
    if(!response.ok){const data=await response.json() as {error?:string};throw new Error(data.error||'Freigabe fehlgeschlagen');}
    setReleased(old=>({...old,[teamId]:true}));
+   await loadJuryProgress(teamId);
   }catch(error){setReleaseError(error instanceof Error?error.message:'Freigabe fehlgeschlagen');}
   finally{setReleasing(false);}
  }
@@ -192,6 +213,7 @@ export default function TeamNavigator({teams,members,initialScores,isAdmin,initi
  if(!teams.length)return <section className="demo-score"><h2>Teamdaten noch nicht eingerichtet</h2><p>In Supabase ist derzeit kein Unternehmerteam für die Jury sichtbar. Bitte zunächst die vorbereitete Teamnamen-Migration ausführen. Es werden keine Demo-Teams als echte Daten ausgegeben.</p></section>;
  const team=teams[selected];
  const isReleased=Boolean(released[team.id]);
+ const currentProgress=juryProgress[team.id];
  const teamMembers=members.filter(m=>m.team_id===team.id);
  const isFour=teamMembers.length===4;
  const isSlimpower=team.name.toLowerCase().replace(/[^a-z]/g,'')==='slimpower';
@@ -389,7 +411,36 @@ export default function TeamNavigator({teams,members,initialScores,isAdmin,initi
  return <><div style={{height:16,background:'#e7ded0',borderRadius:12,overflow:'hidden'}}><div className="jury-meter-fill" style={{height:'100%',width:result*10+'%',background:'#c49a45'}}/></div><p><strong>{result.toFixed(2)} / 10</strong> · Automatisch berechnet</p></>;
  })():<p>Noch nicht vollständig bewertet</p>}
  </div>
- <div style={{marginTop:20,padding:18,border:'1px solid #d8d4cd',borderRadius:10}}>
+ <div style={{marginTop:20,padding:18,border:'1px solid #d8d4cd',borderRadius:10,background:'#f8faf8'}} aria-live="polite">
+  <h3>Fortschritt der Jury</h3>
+  {currentProgress===undefined?<p>Fortschritt wird geladen …</p>:currentProgress===null
+   ?<p>Juryfortschritt momentan nicht verfügbar.</p>
+   :<>
+    <p><strong>{currentProgress.submitted_count} von {currentProgress.total_jurors}</strong> regulären Jurybewertungen verbindlich abgegeben</p>
+    <div role="progressbar" aria-label="Abgegebene Jurybewertungen"
+     aria-valuemin={0} aria-valuemax={Math.max(1,currentProgress.total_jurors)}
+     aria-valuenow={currentProgress.submitted_count}
+     style={{height:12,background:'#e2e9e6',borderRadius:8,overflow:'hidden'}}>
+     <div style={{width:(currentProgress.total_jurors>0?Math.min(100,currentProgress.submitted_count/currentProgress.total_jurors*100):0)+'%',
+       height:'100%',background:'#3c7d6e'}}/>
+    </div>
+    {currentProgress.own_submitted&&currentProgress.others_average!==null
+     ?<div style={{marginTop:16}}>
+       <strong>Durchschnitt der anderen Juroren: {Number(currentProgress.others_average).toLocaleString('de-DE',{minimumFractionDigits:2,maximumFractionDigits:2})} / 10</strong>
+       <div role="progressbar" aria-label="Durchschnitt der anderen Juroren"
+         aria-valuemin={0} aria-valuemax={10} aria-valuenow={Number(currentProgress.others_average)}
+         style={{height:12,background:'#e2e9e6',borderRadius:8,overflow:'hidden',marginTop:8}}>
+         <div style={{width:Math.min(100,Number(currentProgress.others_average)*10)+'%',height:'100%',background:'#3c7d6e'}}/>
+       </div>
+      </div>
+     :<p style={{fontSize:13,color:'#667480'}}>
+       {currentProgress.own_submitted
+        ?'Weitere Jurybewertungen stehen noch aus.'
+        :'Der Durchschnitt der anderen Juroren wird erst nach der eigenen verbindlichen Abgabe angezeigt.'}
+      </p>}
+   </>}
+ </div>
+  <div style={{marginTop:20,padding:18,border:'1px solid #d8d4cd',borderRadius:10}}>
  <h3 id="jury-rating-release">Bewertung freigeben</h3>
  {isReleased?<p style={{color:'#18794e',fontWeight:700}}>✓ Bewertung verbindlich freigegeben. Die Punkte sind jetzt gesperrt.</p>:<>
  <p>Deine Punkte werden als Entwurf gespeichert. Erst mit der Freigabe zählen sie zum Juryergebnis.</p>

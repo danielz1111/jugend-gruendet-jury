@@ -2,6 +2,8 @@ import {NextResponse} from 'next/server';
 import {getJurySession} from '../../../../lib/jury-session';
 const keys=['presentation_impact_score','questions_quality_score','questions_confidence_score','questions_reasoning_score'] as const;
 export async function POST(req:Request){
+ const origin=req.headers.get('origin');
+ if(origin&&origin!==new URL(req.url).origin)return NextResponse.json({error:'Ungültige Herkunft'},{status:403});
  const session=await getJurySession();
  if(!session)return NextResponse.json({error:'Nicht angemeldet'},{status:401});
  let body:Record<string,unknown>;
@@ -21,8 +23,10 @@ export async function POST(req:Request){
  if(existing[0]?.submitted_at)return NextResponse.json({error:'Bewertung bereits freigegeben'},{status:409});
  const values:Record<string,number|string|null>={[field as string]:Number(score)};
  const payload=existing.length?{...values,updated_at:new Date().toISOString()}:{team_id,juror_id:session.userId,...values};
- const target=existing.length?url+'/rest/v1/evaluations?id=eq.'+existing[0].id:url+'/rest/v1/evaluations';
+ const target=existing.length?url+'/rest/v1/evaluations?id=eq.'+existing[0].id+'&submitted_at=is.null':url+'/rest/v1/evaluations';
  const res=await fetch(target,{method:existing.length?'PATCH':'POST',headers:{...headers,Prefer:'return=representation'},body:JSON.stringify(payload),cache:'no-store'});
  if(!res.ok)return NextResponse.json({error:'Speichern fehlgeschlagen. Bitte erneut versuchen.'},{status:502});
+ const written=await res.json() as unknown[];
+ if(written.length!==1)return NextResponse.json({error:'Bewertung wurde bereits freigegeben oder verändert. Bitte neu laden.'},{status:409});
  return NextResponse.json({saved:true,field,score});
 }
