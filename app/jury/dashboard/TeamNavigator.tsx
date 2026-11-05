@@ -179,8 +179,11 @@ export default function TeamNavigator({teams,members,initialScores,isAdmin,initi
  const [released,setReleased]=useState<Record<string,boolean>>(()=>Object.fromEntries(initialScores.map(s=>[s.team_id,Boolean(s.submitted_at)])));
  const [releasing,setReleasing]=useState(false);
  const [releaseError,setReleaseError]=useState('');
+ const [reopening,setReopening]=useState(false);
+ const [confirmReopenTeam,setConfirmReopenTeam]=useState<string|null>(null);
+ const [reopenedTeam,setReopenedTeam]=useState<string|null>(null);
  async function release(teamId:string){
-  setReleasing(true);setReleaseError('');
+  setReleasing(true);setReleaseError('');setReopenedTeam(null);
   try{
    const response=await fetch('/api/jury/submit',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({team_id:teamId})});
    if(!response.ok){const data=await response.json() as {error?:string};throw new Error(data.error||'Freigabe fehlgeschlagen');}
@@ -188,6 +191,22 @@ export default function TeamNavigator({teams,members,initialScores,isAdmin,initi
    await loadJuryProgress(teamId);
   }catch(error){setReleaseError(error instanceof Error?error.message:'Freigabe fehlgeschlagen');}
   finally{setReleasing(false);}
+ }
+
+
+ async function reopen(teamId:string){
+  if(reopening||releasing)return;
+  setReopening(true);
+  setReleaseError('');
+  try{
+   const response=await fetch('/api/jury/reopen',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({team_id:teamId}),cache:'no-store'});
+   if(!response.ok){const data=await response.json() as {error?:string};throw new Error(data.error||'Die Bewertung konnte nicht erneut geöffnet werden.');}
+   setReleased(old=>({...old,[teamId]:false}));
+   setConfirmReopenTeam(null);
+   setReopenedTeam(teamId);
+   await loadJuryProgress(teamId);
+  }catch(error){setReleaseError(error instanceof Error?error.message:'Die Bewertung konnte nicht erneut geöffnet werden.');}
+  finally{setReopening(false);}
  }
 
  useEffect(()=>{if(teams[selected]){void loadNotes(teams[selected].id);void loadMaterials(teams[selected].id);}},[selected,teams]);
