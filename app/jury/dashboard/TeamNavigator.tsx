@@ -424,17 +424,17 @@ export default function TeamNavigator({teams,members,initialScores,isAdmin,initi
      <div style={{width:(currentProgress.total_jurors>0?Math.min(100,currentProgress.submitted_count/currentProgress.total_jurors*100):0)+'%',
        height:'100%',background:'#3c7d6e'}}/>
     </div>
-    {currentProgress.own_submitted&&currentProgress.others_average!==null
+    {(isAdmin||currentProgress.own_submitted)&&currentProgress.others_average!==null
      ?<div style={{marginTop:16}}>
-       <strong>Durchschnitt der anderen Juroren: {Number(currentProgress.others_average).toLocaleString('de-DE',{minimumFractionDigits:2,maximumFractionDigits:2})} / 10</strong>
-       <div role="progressbar" aria-label="Durchschnitt der anderen Juroren"
+       <strong>{isAdmin?'Jury-Durchschnitt':'Durchschnitt der anderen Juroren'}: {Number(currentProgress.others_average).toLocaleString('de-DE',{minimumFractionDigits:2,maximumFractionDigits:2})} / 10</strong>
+       <div role="progressbar" aria-label={isAdmin?'Jury-Durchschnitt':'Durchschnitt der anderen Juroren'}
          aria-valuemin={0} aria-valuemax={10} aria-valuenow={Number(currentProgress.others_average)}
          style={{height:12,background:'#e2e9e6',borderRadius:8,overflow:'hidden',marginTop:8}}>
          <div style={{width:Math.min(100,Number(currentProgress.others_average)*10)+'%',height:'100%',background:'#3c7d6e'}}/>
        </div>
       </div>
      :<p style={{fontSize:13,color:'#667480'}}>
-       {currentProgress.own_submitted
+       {isAdmin?'Noch keine Jurybewertungen abgegeben.':currentProgress.own_submitted
         ?'Weitere Jurybewertungen stehen noch aus.'
         :'Der Durchschnitt der anderen Juroren wird erst nach der eigenen verbindlichen Abgabe angezeigt.'}
       </p>}
