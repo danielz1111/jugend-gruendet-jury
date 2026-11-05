@@ -6,6 +6,7 @@ import {CheckCircle2,Eye,EyeOff,KeyRound,LockKeyhole} from 'lucide-react';
 
 export default function JuryErstpasswortAendern(){
  const [password,setPassword]=useState('');
+ const [currentPassword,setCurrentPassword]=useState('');
  const [confirm,setConfirm]=useState('');
  const [show,setShow]=useState(false);
  const [saving,setSaving]=useState(false);
@@ -19,11 +20,11 @@ export default function JuryErstpasswortAendern(){
   try{
    const r=await fetch('/api/jury/password/change',{
     method:'POST',headers:{'Content-Type':'application/json'},
-    body:JSON.stringify({password}),cache:'no-store'
+    body:JSON.stringify({password,currentPassword}),cache:'no-store'
    });
    const data=await r.json() as {error?:string};
    if(!r.ok)throw new Error(data.error||'Passwort konnte nicht gespeichert werden.');
-   setDone(true);setPassword('');setConfirm('');
+   setDone(true);setPassword('');setConfirm('');setCurrentPassword('');
   }catch(e){setError(e instanceof Error?e.message:'Fehler bei der Passwortänderung.');}
   finally{setSaving(false);}
  }
@@ -44,6 +45,9 @@ export default function JuryErstpasswortAendern(){
     <p>Sie haben sich mit Ihrem persönlichen Startpasswort angemeldet.
      Bevor Sie die Unternehmerteams und Juryunterlagen sehen können, legen Sie bitte Ihr eigenes Passwort fest.</p>
     <form onSubmit={save}>
+     <label htmlFor="jury-temporary-password">Startpasswort zur Bestätigung</label>
+     <input id="jury-temporary-password" type="password" autoComplete="current-password"
+      required value={currentPassword} onChange={e=>setCurrentPassword(e.currentTarget.value)}/>
      <label htmlFor="jury-chosen-password">Ihr neues Passwort (mindestens 12 Zeichen)</label>
      <div className="jury-password-field">
       <input id="jury-chosen-password" type={show?'text':'password'} required minLength={12}
