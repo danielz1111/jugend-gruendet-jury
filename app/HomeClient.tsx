@@ -9,6 +9,7 @@ import './HomepageFinalTouches.css';
 import './HomeResponsive.css';
 import JuryShowcase from './JuryShowcase';
 import JourneyTimeline from './JourneyTimeline';
+import InformationLinks from './InformationLinks';
 import {
   ArrowRight, ArrowUpRight, CalendarDays, ChevronDown, Clock3, Compass,
   ExternalLink, Lightbulb, LockKeyhole, MapPin, Menu, Presentation,
@@ -509,8 +510,9 @@ export default function HomeClient({ publishedTeams = [] }: { publishedTeams: Pu
             <div><span>MEHR ENTDECKEN</span><a href="/eltern">Elternportal <ArrowUpRight size={14}/></a><a href="https://www.landheim-ammersee.de/de" target="_blank" rel="noopener noreferrer">Landheim Ammersee <ArrowUpRight size={14}/></a><a href="https://www.jugend-gruendet.de/wettbewerb/" target="_blank" rel="noopener noreferrer">Jugend gründet <ArrowUpRight size={14}/></a></div>
           </div>
           <div className="lm-footer-bottom">
-            <span>© 2026/27 · Schulprojekt am Landheim Ammersee</span>
-            <span>Designvorschau · Bildrechte, Impressum und Datenschutz vor öffentlicher Veröffentlichung abstimmen.</span>
+            <span>© 2026/27 · Jugend gründet am Landheim Ammersee</span>
+            <span className="lm-footer-credit">Konzeption, Projektleitung und technische Umsetzung: Daniel Zech</span>
+            <InformationLinks />
             <a href="#top">NACH OBEN ↑</a>
           </div>
         </div>
