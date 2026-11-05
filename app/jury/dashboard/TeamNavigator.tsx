@@ -2,6 +2,7 @@
 import {useEffect,useState} from 'react';
 import {ArrowLeft,ArrowRight,FileText,Users,LockKeyhole} from 'lucide-react';
 import {teamProfiles} from '../../../lib/company-profiles';
+import {juryCriteria as criteria, activeJuryCriteria, juryCriterionWeight, type JuryScoreKey} from '../../../lib/jury-scoring';
 type Team={id:string;name:string;position:number;tagline:string|null;description:string|null;jury_photo_path:string|null};
 type Member={id:string;team_id:string;display_name:string;expert_role:string|null;display_order:number};
 type Score={team_id:string;[key:string]:string|number|null};
@@ -25,18 +26,12 @@ function exampleAssignment(index:number,teamPosition:number,teamSize:number){
 function initials(name:string){
  return name.trim().split(/\s+/).slice(0,2).map(part=>part.slice(0,1).toUpperCase()).join('')||'–';
 }
-const criteria=[
- {key:'presentation_impact_score',name:'Überzeugungskraft der Präsentation',weight:50},
- {key:'questions_quality_score',name:'Fachliche Qualität der Antworten',weight:50/3},
- {key:'questions_confidence_score',name:'Souveränität und Sicherheit',weight:50/3},
- {key:'questions_reasoning_score',name:'Argumentation und Reaktionsfähigkeit',weight:50/3}
-] as const;
 const hints:Record<string,string>={
- expert_a_score:'Sind Zielgruppe, Kundenproblem und Markt nachvollziehbar beschrieben?',
- expert_b_score:'Ist klar, wie das Produkt bekannt gemacht und verkauft werden soll?',
- expert_c_score:'Sind Kosten, Preisgestaltung, Finanzierung und Ertrag plausibel?',
- expert_d_score:'Ist die Umsetzung technisch und organisatorisch realistisch?',
- expert_e_score:'Sind Aufgabenverteilung, Organisation und Rechtsform nachvollziehbar?',
+ expert_a_score:'Werden Zielgruppe, Kundenproblem und Markt im Pitch verständlich und plausibel erläutert?',
+ expert_b_score:'Wird im Pitch nachvollziehbar erklärt, wie das Produkt bekannt gemacht und verkauft werden soll?',
+ expert_c_score:'Werden Kosten, Preise, Finanzierung und Ertragsaussichten im Pitch plausibel dargestellt?',
+ expert_d_score:'Wird die praktische und technische Umsetzbarkeit im Pitch nachvollziehbar erläutert?',
+ expert_e_score:'Werden Aufgabenverteilung, Organisation und Rechtsform im Pitch verständlich dargestellt?',
  presentation_impact_score:'Ist der Pitch verständlich, überzeugend, gut strukturiert und adressatengerecht?',
  questions_quality_score:'Werden die gestellten Fragen fachlich korrekt und konkret beantwortet?',
  questions_confidence_score:'Reagiert das Team ruhig, sicher und respektvoll auf Nachfragen?',
@@ -196,7 +191,7 @@ export default function TeamNavigator({teams,members,initialScores,isAdmin,initi
  }
 
  useEffect(()=>{if(teams[selected]){void loadNotes(teams[selected].id);void loadMaterials(teams[selected].id);}},[selected,teams]);
- const [scores,setScores]=useState<Record<string,Record<string,number>>>(()=>Object.fromEntries(initialScores.map(s=>[s.team_id,Object.fromEntries(criteria.filter(c=>s[c.key]!==null).map(c=>[c.key,s[c.key] as number]))])));
+ const [scores,setScores]=useState<Record<string,Record<string,number>>>(()=>Object.fromEntries(initialScores.map(s=>[s.team_id,Object.fromEntries(criteria.filter(c=>typeof s[c.key]==='number'&&Number.isInteger(s[c.key])&&Number(s[c.key])>=1&&Number(s[c.key])<=10).map(c=>[c.key,s[c.key] as number]))])));
  const [status,setStatus]=useState<Record<string,'open'|'saving'|'saved'|'error'>>({});
  const [pending,setPending]=useState<Record<string,number>>({});
  async function save(teamId:string,field:string,value:number){
@@ -223,8 +218,8 @@ export default function TeamNavigator({teams,members,initialScores,isAdmin,initi
  const combinedEvidence=expertEvidence[profile?.key||'']?.E;
  const evidence=isFour&&expertTab==='D'&&combinedEvidence?([0,1,2,3].map(i=>[baseEvidence?.[i],combinedEvidence?.[i]].filter(Boolean).join(' ')||null) as [string|null,string|null,string|null,string|null]):baseEvidence;
  const productImage=(materials[team.id]||[]).find(m=>m.media_type.startsWith('image/')&&/visualis|produkt/i.test(m.title+' '+m.original_filename));
- const activeCriteria=criteria;
- const weightFor=(key:string)=>criteria.find(c=>c.key===key)?.weight??0;
+ const activeCriteria=activeJuryCriteria(teamMembers.length);
+ const weightFor=(key:JuryScoreKey)=>juryCriterionWeight(key,teamMembers.length);
  return <div className="demo-shell jury-wide-shell" style={{minHeight:600,marginTop:24,border:'1px solid #e4e0d9'}}>
  <nav className="jury-team-picker" aria-label="Unternehmerteam auswählen"><div className="jury-team-picker-head"><span className="demo-overline">DIE NEUN UNTERNEHMERTEAMS</span><span>Team auswählen · Profil und Unterlagen öffnen sich direkt</span></div><div className="jury-team-grid">{teams.map((t,i)=><button type="button" key={t.id} className={selected===i?'jury-team-tile active':'jury-team-tile'} aria-pressed={selected===i} onClick={()=>{setSelected(i);onTeamSelected?.(t.id);setExpertTab('A');setAttachmentTab('all');if(!adminMode)setMainTab(initialSection)}}><small>{String(t.position).padStart(2,'0')}</small><span className="jury-team-photo" aria-hidden="true">{t.jury_photo_path?<img src={'/api/jury/team-photo/'+t.id} alt="" loading="lazy"/>:<Users size={18}/>}</span><strong>{t.name}</strong><ArrowRight size={16}/></button>)}</div></nav>
  <section className="demo-main">
@@ -383,15 +378,15 @@ export default function TeamNavigator({teams,members,initialScores,isAdmin,initi
  <p style={{fontSize:13,color:'#667480'}}>Grau: offen · Gelb: speichert · Grün: gespeichert · Rot: Fehler</p>
  <p style={{fontSize:13,color:'#526575',lineHeight:1.6}}><strong>Bewertungsorientierung:</strong> {gradeGuide}</p>
  {activeCriteria.map((c,i)=>{
-  const phaseHeader=i===0?<div style={{marginTop:22}}><h3>1 · Präsentation</h3><p>Während des Pitches · 50 % der Gesamtwertung</p></div>:i===1?<div id="jury-rating-questions" style={{marginTop:24,borderTop:'2px solid #d9d4c9',paddingTop:14}}><h3>2 · Juryfragen</h3><p>Während der Fragerunde · 50 % der Gesamtwertung</p></div>:null;
+  const phaseHeader=i===0?<div style={{marginTop:22}}><h3>1 · Fachbereiche und Präsentation</h3><p>Nur den Live-Pitch beurteilen · 70 % der Gesamtwertung</p></div>:i===(isFour?5:6)?<div id="jury-rating-questions" style={{marginTop:24,borderTop:'2px solid #d9d4c9',paddingTop:14}}><h3>2 · Juryfragen</h3><p>Während der Fragerunde · 30 % der Gesamtwertung</p></div>:null;
   const id=team.id+':'+c.key;
   const saved=scores[team.id]?.[c.key];
   const current=pending[id]??saved;
   const state=status[id]||(saved!==undefined?'saved':'open');
   const color=state==='saved'?'#18794e':state==='saving'?'#9c6b16':state==='error'?'#b42318':'#77828b';
   return <div key={c.key}>{phaseHeader}<div style={{border:'1px solid '+color,borderRadius:8,padding:14,marginTop:12,background:state==='saved'?'#f0faf3':state==='saving'?'#fff9e9':state==='error'?'#fff3f2':'#f7f8f9'}}>
-   <div style={{display:'flex',justifyContent:'space-between',gap:8,flexWrap:'wrap'}}><strong>{c.name}</strong><span style={{fontSize:12,color}}>{state==='saved'?'✓ Gespeichert':state==='saving'?'Speichert …':state==='error'?'Fehler':'Offen'}</span></div>
-   <p style={{fontSize:13,color:'#526575',margin:'8px 0 0'}}>{hints[c.key]}</p>
+   <div style={{display:'flex',justifyContent:'space-between',gap:8,flexWrap:'wrap'}}><strong>{isFour&&c.key==='expert_d_score'?'D/E · Umsetzung, Organisation und Rechtsform':c.name}</strong><span style={{fontSize:12,color}}>{state==='saved'?'✓ Gespeichert':state==='saving'?'Speichert …':state==='error'?'Fehler':'Offen'}</span></div>
+   <p style={{fontSize:13,color:'#526575',margin:'8px 0 0'}}>{isFour&&c.key==='expert_d_score'?'Werden Machbarkeit, Umsetzung, Aufgabenverteilung und Organisation im Pitch überzeugend erläutert?':hints[c.key]}</p>
    <div style={{display:'flex',alignItems:'center',gap:12,marginTop:12}}>
     <input type="range" min={1} max={10} step={1} value={current??5} disabled={isReleased} aria-label={c.name} style={{width:'100%',accentColor:color}}
      onChange={event=>{const value=Number(event.currentTarget.value);setPending(old=>({...old,[id]:value}));setStatus(old=>({...old,[id]:'open'}))}}

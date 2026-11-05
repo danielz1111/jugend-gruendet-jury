@@ -1,6 +1,6 @@
 import {NextResponse} from 'next/server';
 import {getJurySession} from '../../../../lib/jury-session';
-const keys=['presentation_impact_score','questions_quality_score','questions_confidence_score','questions_reasoning_score'] as const;
+import {juryScoreKeys as keys} from '../../../../lib/jury-scoring';
 export async function POST(req:Request){
  const origin=req.headers.get('origin');
  if(origin&&origin!==new URL(req.url).origin)return NextResponse.json({error:'Ungültige Herkunft'},{status:403});
@@ -24,7 +24,7 @@ export async function POST(req:Request){
  const entry=rows[0];
  if(!entry)return NextResponse.json({error:'Noch keine Bewertung gespeichert'},{status:409});
  if(entry.submitted_at)return NextResponse.json({submitted:true});
- const required=keys;
+ const required=members.length===4?keys.filter(key=>key!=='expert_e_score'):keys;
  if(!required.every(k=>Number.isInteger(entry[k])&&Number(entry[k])>=1&&Number(entry[k])<=10))return NextResponse.json({error:'Bitte zuerst alle Kriterien bewerten'},{status:409});
  const res=await fetch(url+'/rest/v1/evaluations?id=eq.'+entry.id+'&submitted_at=is.null',{method:'PATCH',headers:{...headers,Prefer:'return=representation'},body:JSON.stringify({submitted_at:new Date().toISOString()}),cache:'no-store'});
  if(!res.ok)return NextResponse.json({error:'Freigabe fehlgeschlagen'},{status:502});
